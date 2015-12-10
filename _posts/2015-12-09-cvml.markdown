@@ -5,11 +5,38 @@ date:   2015-12-09 7:51:0
 categories: Deep Learning
 ---
 
-You’ll find this post in your `_posts` directory. Go ahead and edit it and
-re-build the site to see your changes. You can rebuild the site in many
-different ways, but the most common way is to run `jekyll serve --watch`,
-which launches a web server and auto-regenerates your site when a file is
-updated.
+I have been interested in organizing large sets of unstructured images for
+many years.  I think of this problem as spreading out photos on a large
+table like playing cards.  How should the photos on the table be arranged
+so that they turn from a random mess into an organized collection which can
+be readily searched and extended?
+
+One approach to this organization problem is to build a graph from the
+input images.  Each node in the graph corresponds to some image.  And any
+two images are connected by an edge whose weight value lies in the range 0
+- 100 and indicates similarity.  Two images connected by an edge with
+weight 100 are identical.  Two other images connected by an edge 0 weight
+are totally different.
+
+So given two images, we need a way to compute their similarity.  Several
+years ago, I followed the standard practice within the computer vision
+community at the time of extracting and matching SIFT features to assess
+image overlap.  
+
+
+
+
+
+{% comment %}
+
+![My helpful screenshot 1]({{ site.url }}/blog/images/kermit_graph.png)
+
+
+{% endcomment %}
+
+
+![My helpful screenshot 2]({{ site.url_local }}/blog/images/kermit_graph.png)
+
 
 
 
@@ -40,9 +67,5 @@ alt="IMAGE ALT TEXT HERE" width="360" height="240" border="10" /></a>
 
 
 
-{% comment %}
-{% endcomment %}
 
-
-Does it show up?
 
