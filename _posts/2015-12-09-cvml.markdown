@@ -13,30 +13,36 @@ be readily searched and extended?
 
 One approach to this organization problem is to build a graph from the
 input images.  Each node in the graph corresponds to some image.  And any
-two images are connected by an edge whose weight value lies in the range 0
-- 100 and indicates similarity.  Two images connected by an edge with
-weight 100 are identical.  Two other images connected by an edge 0 weight
-are totally different.
+two images are connected by an edge whose weight value indicates
+similarity.  Two images connected by an edge with a very large weight are
+nearly identical.  Two other images connected by an edge with 0 weight are
+totally different.
 
 So given two images, we need a way to compute their similarity.  Several
-years ago, I followed the standard practice within the computer vision
-community at the time of extracting and matching SIFT features to assess
-image overlap.  
+years ago, I followed standard practices within computer vision at the time
+for extracting and matching SIFT features to assess image overlap.  When
+applied to 10 "Kermit" photos (taken from one of Noah Snavely's bundler
+examples), we derive the image network pictured below:
 
+![Kermit SIFT graph]({{ site.url }}/blog/images/kermit_graph.png)
 
+The edge weights in this figure correspond to numbers of matched SIFT
+features between pairs of images.  Hot-colored edges correspond to greater
+numbers of SIFT feature matches than cool-colored edges, and edges with
+weights less than a cutoff threshold have been suppressed.  Though the
+target scene is basically the same in all 10 pictures, SIFT feature
+matching is more successful for pairs of photos shot at similar
+perspectives.  As extrinsic camera parameters for pairs of images grow more
+dissimilar, the number of matched SIFT features decreases.
 
-
-
-{% comment %}
-
-![My helpful screenshot 1]({{ site.url }}/blog/images/kermit_graph.png)
-
-
-{% endcomment %}
-
-
-![My helpful screenshot 2]({{ site.url_local }}/blog/images/kermit_graph.png)
-
+Image graph construction based upon SIFT feature matching works well
+provided there's reasonably dense coverage of the same physical objects
+within the input imagery set.  SIFT matching generally handles static
+objects in world-space better than deformable ones.  SIFT features are also
+more abundant in highly-textured outdoor scenes than within indoor
+settings.  And SIFT matching generally requires similar illumination
+conditions and sensing frequencies.  If these conditions are satisified,
+large and interesting networks of images can be formed [ref].
 
 
 
@@ -69,3 +75,5 @@ alt="IMAGE ALT TEXT HERE" width="360" height="240" border="10" /></a>
 
 
 
+{% comment %}
+{% endcomment %}
