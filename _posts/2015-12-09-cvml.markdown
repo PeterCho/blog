@@ -1,22 +1,22 @@
 ---
 layout: post
-title:  "Image Graphs"
+title:  "Image Graphs via Deep Learning Feature Descriptor Matching"
 date:   2015-12-09 7:51:0
 categories: Deep Learning
 ---
 
 I have been interested in organizing large sets of unstructured images for
-many years.  I think of this problem as spreading out photos on a large
-table like playing cards.  How should the photos on the table be arranged
-so that they turn from a random mess into an organized collection which can
-be readily searched and extended?
+many years.  Think of this problem as spreading out a large set of photos
+on table like playing cards.  Then how should the photos be arranged so
+that they turn from a random mess into an organized collection which can be
+readily searched and extended?
 
 One approach to this organization problem is to build a graph from the
 input images.  Each node in the graph corresponds to some image.  And any
-two images are connected by an edge whose weight value indicates
+two photos are connected by an edge whose weight value indicates their
 similarity.  Two images connected by an edge with a very large weight are
 nearly identical.  Two other images connected by an edge with 0 weight are
-totally different.
+completely different.
 
 So given two images, we need a way to compute their similarity.  Several
 years ago, I followed standard practices within computer vision at the time
@@ -27,13 +27,14 @@ examples), we derive the image network pictured below:
 ![Kermit SIFT graph]({{ site.url }}/blog/images/kermit_graph.png)
 
 The edge weights in this figure correspond to numbers of matched SIFT
-features between pairs of images.  Hot-colored edges correspond to greater
+features between pairs of images.  Hot-colored edges indicate greater
 numbers of SIFT feature matches than cool-colored edges, and edges with
 weights less than a cutoff threshold have been suppressed.  Though the
-target scene is basically the same in all 10 pictures, SIFT feature
-matching is more successful for pairs of photos shot at similar
-perspectives.  As extrinsic camera parameters for pairs of images grow more
-dissimilar, the number of matched SIFT features decreases.
+target scene is basically the same in all 10 pictures, matching SIFT
+features performs more robustly for pairs of photos shot at similar
+perspectives.  As extrinsic camera parameters for a pair of images diverge,
+the number of SIFT features that can be automatically matched between the
+two pictures typically decreases.
 
 Image graph construction based upon SIFT feature matching works well
 provided there's reasonably dense coverage of the same physical objects
@@ -42,34 +43,72 @@ objects in world-space better than deformable ones.  SIFT features are also
 more abundant in highly-textured outdoor scenes than within indoor
 settings.  And SIFT matching generally requires similar illumination
 conditions and sensing frequencies.  If these conditions are satisified,
-large and interesting networks of images can be formed [ref].
+large and interesting networks of images can be formed [ref].  But if we
+want to relax any of these restrictions on matching photos, we need to find
+a more powerful method for computing image overlap than simply counting
+numbers of local SIFT feature pairs.
 
+We have recently adopted a new approach to generating image descriptors
+based upon popular Convolutional Neural Network (CNN) methods.  In
+particular, we first downsize each image within an input set so that its
+minimum pixel dimension equals 230.  Working with the Caffe deep learning
+framework, we pass the downsized picture into the VGG-16 model [ref].
+Network values at its next-to-last "fc7" layer form a global image
+descriptor.  We make sure to perform a "ReLU" operation on the descriptor
+components.  We also rescale the 4096-dimensional descriptor so that it has
+unit norm.
 
+The dotproduct between two photos' global descriptors provides a simple
+measure of their semantic similarity.  Any dotproduct less than 0.7 is
+ignored.  For image graph building, we must also cut off the quadratic
+growth in number of graph edges as a function of graph nodes.  So given a
+node, we retain all its edges if their number is less than 10.  But for a
+node with more than 10 edges, we retain its top 7 edges with greatest
+weights.  In order to encourage matching of images with significantly
+different pixel yet similar semantic contents, the last 3 edges for the
+node are randomly chosen from among its remaining candidates.  
 
-
-MIT 30K+ image graph:
+We have applied this image similarity metric based upon deep learning
+feature descriptor matching to several different data sets.  The resulting
+image graphs are astonishing!  For example, the network formed from 30K+
+photos shot semi-cooperatively around MIT in summer 2008 is illustrated in
+the YouTube clip below (click on the image to play the video):
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=crWc7GS9c3M
 " target="_blank"><img src="http://img.youtube.com/vi/crWc7GS9c3M/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="360" height="240" border="10" /></a>
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 
-Outdoor nature image graph:
+Here we see thousands of photos shot in an urban setting over a few days
+assembled into a graph.  Deep learning descriptor matching naturally
+clusters different outdoor views of river fronts, city skylines, particular
+building facades and trees plus vegetation.  More remarkably, the global
+approach to image matching groups indoor views on which local SIFT feature
+matching generally fails.  It also links photos shot on the ground with
+aerial video frames.  
+
+The MIT photo set was semi-intentionally collected for 3D reconstruction
+purposes.  A small band of photographers were instructed to rapidly gather
+imagery from multiple views with essentially constant zoom settings.  It's
+consequently not surprising that the MIT image graph looks dense.  A much
+more challenging imagery set was semi-cooperatively collected over a span
+of years around an outdoor nature conservation area in eastern
+Massachusetts called Tidmarsh Farms [ref].  
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=FnEmbDT5kyM
 " target="_blank"><img src="http://img.youtube.com/vi/FnEmbDT5kyM/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="360" height="240" border="10" /></a>
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 
 Grand Canyon flickr image graph:
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=li9ANCM7PNM
 " target="_blank"><img src="http://img.youtube.com/vi/li9ANCM7PNM/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="360" height="240" border="10" /></a>
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 
 India flickr image graph:
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=2spSVHPprPs
 " target="_blank"><img src="http://img.youtube.com/vi/2spSVHPprPs/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="360" height="240" border="10" /></a>
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 
 
 
