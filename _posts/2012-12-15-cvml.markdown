@@ -1,0 +1,22 @@
+---
+layout: post
+title:  "Topic Modeling"
+date:   2012-12-15 12:00:0
+categories: Shallow learning
+---
+
+![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_1a.png)
+
+![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_1b.png)
+
+![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_2a.png)
+
+![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_2b.png)
+
+![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_3a.png)
+
+![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_3b.png)
+
+![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_4a.png)
+
+![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_4b.png)
