@@ -13,7 +13,7 @@ attractors. Additional start and stop signs marked entrance and egress
 points for the maze. Figure 1 pictures the nine signs that were to be
 automatically recognized.
 
-![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_01.jpg)
+![alt text]({{ site.url }}/blog/images/TOC12_recog/figure_01.jpg)
 
 Digital images of the symbols were supplied to the Tech Challenge teams
 several weeks before Game Day. All of the signs exhibit contrasting
@@ -54,7 +54,7 @@ seconds on a Dell Precision M6400 laptop.
 We present algorithmic details for the primary blocks of figure 2 within
 the subsections below.
 
-Color quantization
+## Color quantization
 
 The colorings of the nine TOC12 signs arguably represent their most
 striking characteristics. Searching for particular color combinations
@@ -122,7 +122,7 @@ next.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_05.jpg)
 
-Connected component analysis
+## Connected component analysis
 
 The nine TOC12 symbols exhibit fairly simple morphological
 characteristics. For example, all of their intrinsic aspect ratios are
@@ -181,7 +181,7 @@ following subsection.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_08.jpg)
 
-Sign classification
+## Sign classification
 
 Automatic recognition of objects in imagery represents an active area of
 computer vision research. Over the past two decades, classifiers have been
@@ -253,7 +253,7 @@ recognition high in order to minimize false alarms.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_12.jpg)
 
-Sign recognition results
+## Sign recognition results
 
 We tested the end-to-end algorithm flow in figure 2 on 4.5K+ video frames
 collected during summer 2012. Many of the resulting images contained no
@@ -293,7 +293,7 @@ collected inside Lincoln Lab and the HAFB tennis bubble of the 2’×2’ TOC12
 signs, we estimate that 80% of the frames were correctly classified while
 20% contained recognition errors.
 
-References
+## References
 
 1. L. Neumann and J. Matas, Real-time scene text localization and
 recognition, CVPR 2012.
@@ -311,6 +311,3 @@ with unsupervised feature learning, ICDAR 2011.
 unsupervised feature learning, AISTATS 14, 2011.
 
 6. D. King, dlib C++ library, http://dlib.net/ml.html.
-
-{% comment %}
-{% endcomment %}
