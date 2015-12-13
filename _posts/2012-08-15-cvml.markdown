@@ -1,0 +1,38 @@
+---
+layout: post
+title:  "Sign recognition"
+date:   2012-08-15 12:00:0
+categories: Shallow learning
+---
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_01.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_02.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_03.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_04.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_05.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_06.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_07.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_08.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_09.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_10.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_11.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_12.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_13.jpg)
+
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_14.jpg)
+
+
+{% comment %}
+{% endcomment %}
