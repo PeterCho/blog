@@ -16,13 +16,15 @@ input images.  Each node in the graph corresponds to some image.  And any
 two photos are connected by an edge whose weight value indicates their
 similarity.  Two images connected by an edge with a very large weight are
 nearly identical.  Two other images connected by an edge with 0 weight are
-completely different.
+completely different.So given two images, we need a way to compute their
+similarity.
 
-So given two images, we need a way to compute their similarity.  Several
-years ago, I followed standard practices within computer vision at the time
-for extracting and matching SIFT features to assess image overlap.  When
-applied to 10 "Kermit" photos (taken from one of Noah Snavely's bundler
-examples), we derive the image network pictured below:
+## Local SIFT Feature Matching
+
+Several years ago, I followed standard practices within computer vision at
+the time for extracting and matching SIFT features to assess image overlap.
+When applied to 10 "Kermit" photos (taken from one of Noah Snavely's
+bundler examples), we derive the image network pictured below:
 
 ![Kermit SIFT graph]({{ site.url }}/blog/images/kermit_graph.png)
 
@@ -47,6 +49,8 @@ large and interesting networks of images can be formed [ref].  But if we
 want to relax any of these restrictions on matching photos, we need to find
 a more powerful method for computing image overlap than simply counting
 numbers of local SIFT feature pairs.
+
+## Global CNN Feature Matching
 
 We have recently adopted a new approach to generating image descriptors
 based upon popular Convolutional Neural Network (CNN) methods.  In
@@ -111,8 +115,16 @@ India flickr image graph:
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 
 
+## References
 
+1.  Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long, R. Girshick,
+S. Guadarrama and T. Darrell, "Caffe: Convolutional Architecture for Fast
+Feature Embedding", arXiv:1408.5093, 2014
 
+2.  http://caffe.berkeleyvision.org
+
+3.  K. Simonyan and A. Zisserman, "Very Deep Convolutional Networks for
+Large-Scale Image Recognition", arXiv: 1409.1556, 2015.
 
 {% comment %}
 {% endcomment %}

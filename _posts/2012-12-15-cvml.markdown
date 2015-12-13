@@ -48,7 +48,6 @@ connected components which share some gross theme(s).
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_1b.png)
 
 
-
 Screen shots 2a and 2b show the topics for individual connected components.
 The dominant 4 words in the top 5 topics are displayed above each connected
 component.  Blei's codes return all possible mappings between words,
@@ -62,7 +61,6 @@ connected components in the same row are fairly evident.
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_2a.png)
 
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_2b.png)
-
 
 Screen shots 3a and 3b zoom into one particular connected component which
 is obviously about Syria.  The headlines for the 452 Reuters articles
@@ -85,3 +83,11 @@ for a large, varied corpus of digital pictures in the future.
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_4a.png)
 
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_4b.png)
+
+## References
+
+
+1. D. Blei, "Latent Dirichlet Allocation in C",
+http://www.cs.princeton.edu/~blei/lda-c/
+
+
