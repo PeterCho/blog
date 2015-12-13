@@ -117,13 +117,15 @@ alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 
 ## References
 
-1.  Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long, R. Girshick,
+1.  P. Cho and M. Yee, "Image Search System", 41st AIPR workshop, 2012.
+
+2.  Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long, R. Girshick,
 S. Guadarrama and T. Darrell, "Caffe: Convolutional Architecture for Fast
 Feature Embedding", arXiv:1408.5093, 2014
 
-2.  http://caffe.berkeleyvision.org
+3.  http://caffe.berkeleyvision.org
 
-3.  K. Simonyan and A. Zisserman, "Very Deep Convolutional Networks for
+4.  K. Simonyan and A. Zisserman, "Very Deep Convolutional Networks for
 Large-Scale Image Recognition", arXiv: 1409.1556, 2015.
 
 {% comment %}

@@ -90,4 +90,6 @@ for a large, varied corpus of digital pictures in the future.
 1. D. Blei, "Latent Dirichlet Allocation in C",
 http://www.cs.princeton.edu/~blei/lda-c/
 
+2.  P. Cho and M. Yee, "Image Search System", 41st AIPR workshop, 2012.
+
 
