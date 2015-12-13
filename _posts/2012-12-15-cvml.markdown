@@ -5,17 +5,82 @@ date:   2012-12-15 12:00:0
 categories: Shallow learning
 ---
 
+I've played quite a bit with the 2012 Reuters news articles that you
+pointed me towards before Xmas.  After removing duplicates from the raw
+text files, I found ~43K distinct documents.  I converted each article into
+HTML and pulled out its headline for thumbnail generation purposes.  This
+data set clearly exhibits much more diversity than the 1K astrophysics
+articles I had worked with earlier in December.
+
+Following your suggestion, I used Latent Semantic Analysis to reduce the
+the initial set of ~28K corpus words down to 300 linear combinations.
+TF-IDF on the dimensionally-reduced data then yielded a network among the
+Reuters articles.  I imposed a fairly strict edge-weight threshold on the
+graph and ended up with 273 connected components which had at least 10
+documents.
+
+I next googled around and stumbled upon several articles by Princeton
+professor David Blei on topic modeling in general and Latent Dirichlet
+Allocation in particular.  Blei has publically available C code which
+imports sparse document-word matrices and generates topic distributions
+over the word vocabulary.  I ran Blei's codes on each of the 273 connected
+components' documents.  I was really amazed at how well the first few
+dominant LDA-generated topics seem to summarize tens, hundreds and even
+thousands of articles within each connected component.
+
+I was very curious to see if the connected components could be clustered
+according to basic themes.  After lots of trial and error, I finally
+settled upon synthesizing "documents" from the topic keywords for each
+connected component.  I then re-ran the entire pipeline described above on
+the new set of 273 "topic documents".  Once the machine found a reasonable
+set of clusters for the connected components, I asked it to arrange them in
+a 2D layout rather than in a horizontal row which I've used for every Image
+Search System example to date.
+
+Screen shots 1a and 1b illustrate the 2D layout of all the Reuters
+articles.  (Since I only kept connected components with at least 10
+articles, only ~28K of the original ~43K articles appear in the graph
+viewer.)  Each row of connected components corresponds to a set of
+connected components which share some gross theme(s).
+
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_1a.png)
 
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_1b.png)
+
+
+
+Screen shots 2a and 2b show the topics for individual connected components.
+The dominant 4 words in the top 5 topics are displayed above each connected
+component.  Blei's codes return all possible mappings between words,
+documents and topics.  So it'd be neat if in the future a user could select
+a particular topic and see its corresponding documents light up.  (Delsey
+has also suggested displaying topics as a word-cloud.  This would eliminate
+lots of repetition among topic keywords.)  Thematic relationships between
+connected components in the same row are fairly evident.
+
 
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_2a.png)
 
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_2b.png)
 
+
+Screen shots 3a and 3b zoom into one particular connected component which
+is obviously about Syria.  The headlines for the 452 Reuters articles
+within this particular component seem to all logically relate to one
+another.
+
+
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_3a.png)
 
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_3b.png)
+
+Screen shots 4a and 4b zoom into another connected component about the
+European economic situation.
+
+There are obvious image analogs to nearly every step in this document
+processing pipeline.  So I hope we'll get a chance to do something similar
+for a large, varied corpus of digital pictures in the future.
+
 
 ![alt text]({{ site.url }}/blog/images/topic_modeling/reuters_4a.png)
 
