@@ -5,18 +5,23 @@ date:   2012-08-15 12:00:0
 categories: Shallow learning
 ---
 
-In Summer 2012, I got to participate in a robot technology challenge held
-at Lincoln Laboratory.
+In Summer 2012, I participated in a robot competition organized by Lincoln
+Laboratory's Technology Office.  The competition centered upon developing
+ground robots which could successfully navigate through an indoor maze.
+Among the many problems which needed to be solved for this technology
+challenge, the one which interested me the most was related to automated
+sign recognition.  In particular, robots were expected to identify various
+symbols placed at *a priori* unknown locations within the maze. These signs
+included four hazard symbols which the ground robot was to avoid and three
+bonus symbols which were supposed to function as attractors. Additional
+start and stop signs marked entrance and egress points for the maze. Figure
+1 pictures the nine signs that were to be automatically recognized.
 
-As the ground and aerial robots moved around the maze, they were expected
-to recognize and respond to various symbols placed at a priori unknown
-locations. These signs included four hazard symbols which the ground robot
-was to avoid and three bonus symbols which were supposed to function as
-attractors. Additional start and stop signs marked entrance and egress
-points for the maze. Figure 1 pictures the nine signs that were to be
-automatically recognized.
-
-![alt text]({{ site.url }}/blog/images/TOC12_recog/figure_01.jpg)
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_01.jpg)
+*Fig. 1.  Seven colored plus two black-and-white signs which were to be
+recognized by robots as they moved around the Tech Challenge maze.  We
+refer to these nine signs as "stop", "biohazard", "yellow radiation",
+"water", "gas", "blue radiation", "start", "skull" and "eating utensils".*
 
 Digital images of the symbols were supplied to the Tech Challenge teams
 several weeks before Game Day. All of the signs exhibit contrasting
@@ -38,42 +43,42 @@ that do. Basic shape properties are used to nominate connected pixel
 regions within a video frame that plausibly correspond to a particular
 sign. Such regions become inputs to a set of trained classifiers. Regions
 surviving this final set of filters are marked with bounding box
-annotations that indentify symbols recognized by the machine.
-
+annotations that identify symbols recognized by the machine.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_02.jpg)
+*Fig. 2. Basic algorithm flow for detecting and recognizing the Tech
+Challenge signs.*
+
 
 The algorithm flow in figure 2 was developed on and tested against 4.5K+
-video frames shot inside Lincoln Laboratory and the HAFB tennis bubble
-during summer 2012. Most of our experiments were conducted with images of
-2’×2’ versions of the TOC12 signs collected by hand-held video cameras. We
-intentionally placed the signs in laboratory locations with challenging
-lighting and clutter conditions which we knew would stress automatic
-recognition. During our algorithm development, we also consciously made
-trades between accuracy and speed. The final version of our algorithm chain
-could search a 640×480 video frame for the 9 TOC signs in approximately 6
-seconds on a Dell Precision M6400 laptop.  
+video frames shot during summer 2012. Most of our experiments were
+conducted with images of 2’×2’ versions of the signs collected by hand-held
+video cameras. We intentionally placed the signs in locations with
+challenging lighting and clutter conditions which we knew would stress
+automatic recognition. During our algorithm development, we also
+consciously made trades between accuracy and speed. The final version of
+our algorithm chain could search a 640×480 video frame for the 9 TOC signs
+in approximately 6 seconds on a Dell Precision M6400 laptop.
 
 We present algorithmic details for the primary blocks of figure 2 within
 the subsections below.
 
 ## Color quantization
 
-The colorings of the nine TOC12 signs arguably represent their most
-striking characteristics. Searching for particular color combinations
-within input imagery is consequently an obvious first step for automatic
-symbol recognition. However, color analysis of passive targets is
-complicated by unknown illumination sources as well as sensor response
-functions that vary from camera to camera. Though the intrinsic RGB values
-for each of the signs in figure 1 are a priori known, their mapping to
-measured RGB pixel outputs are not. Indeed, such color analysis perils are
-widely-appreciated in the computer vision community. Researchers therefore
-often try to avoid RGB pitfalls by working with grey-scale versions of
-input images.
+The colorings of the nine signs arguably represent their most striking
+characteristics. Searching for particular color combinations within input
+imagery is consequently an obvious first step for automatic symbol
+recognition. However, color analysis of passive targets is complicated by
+unknown illumination sources as well as sensor response functions that vary
+from camera to camera. Though the intrinsic RGB values for each of the
+signs in figure 1 are *a priori* known, their mapping to measured RGB pixel
+outputs are not. Indeed, such color analysis perils are widely-appreciated
+in the computer vision community. Researchers therefore often try to avoid
+RGB pitfalls by working with grey-scale versions of input images.
 
-Nevertheless, the gross colorings of the TOC12 symbols are so salient that
-they cannot be ignored. So we first quantize three-dimensional color space
-in order to reduce image output sensitivity to illumination and sensor
+Nevertheless, the gross colorings of the symbols are so salient that they
+cannot be ignored. So we first quantize three-dimensional color space in
+order to reduce image output sensitivity to illumination and sensor
 response variables. Recall that 24-bit images can have 2563=16,777,216
 color combinations per pixel. Rather than describe three-dimensional color
 space in terms of Cartesian red, blue and green coordinates, it is often
@@ -86,6 +91,12 @@ two-dimensional slice through HSV space with hue=0 is displayed in figure
 3.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_03.jpg)
+*Fig. 3.  A two-dimensional slice through HSV color space corresponding to
+zero hue.  Saturation and value coordinates range from 0 to 100 along the
+horizontal and vertical axes.  For each of 7 quantized hues, four
+subregions (e.g. "red", "light red", "dark red" and "grey-red) are defined
+within the SV plane.  "Grey" and "black" regions also correspond to color
+space points with relatively low saturations and low values.*
 
 The figure also displays cuts within the saturation-value plane that define
 quantized color sectors. The upper right region corresponding to S > 50 and
@@ -106,7 +117,10 @@ requires essentially no real-time computation and proceeds very
 quickly. Figure 4 presents one example of a video frame before and after
 quantization.
 
-![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_04.jpg)
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_04.jpg) *Fig. 4.
+General color quantization.  (a) One representative video frame containing
+four signs.  (b) Color-quantized result after replacing every pixel's RGB
+values with one of 33 discrete triples.*
 
 It is advantageous to allow the precise borders for the 33 quantized
 sectors in 3D color space to depend upon the nine symbols. For instance
@@ -124,16 +138,20 @@ properties become inputs to connected component analysis which we consider
 next.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_05.jpg)
+*Fig. 5.  Color quantization results for the "stop" sign.  All pixels in
+figure 4b whose quantized colors do not correspond to red or light-red are
+replaced by a purple coloring.  The machine ignores all purple pixels when
+it continues to search for a "stop" symbol in figure 4a.*
 
 ## Connected component analysis
 
-The nine TOC12 symbols exhibit fairly simple morphological
-characteristics. For example, all of their intrinsic aspect ratios are
-1:1. Projecting signs from world-space into video cameras angled at
-arbitrary perspectives introduces 2D aspect ratio variations. But for roll,
-pitch and yaw angles that yield sign views which the machine has any
-realistic chance of recognizing, projected sign aspect ratios range around
-a small neighborhood of 1:1.
+The nine symbols exhibit fairly simple morphological characteristics. For
+example, all of their intrinsic aspect ratios are 1:1. Projecting signs
+from world-space into video cameras angled at arbitrary perspectives
+introduces 2D aspect ratio variations. But for roll, pitch and yaw angles
+that yield sign views which the machine has any realistic chance of
+recognizing, projected sign aspect ratios range around a small neighborhood
+of 1:1.
 
 
 
@@ -158,9 +176,12 @@ type. Only components whose measurements are consistent with these ranges
 are retained for subsequent processing.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_06.jpg)
+*Fig. 6.  Connected components within a binary version of figure 5 are
+color coded here.  Note that the "stop" sign corresponds to a single
+connected component in this view.*
 
-All of the TOC12 symbols also exhibit strong internal edge content. As the
-background behind any symbol is a priori unknown, we cannot assume that
+All of the symbols also exhibit strong internal edge content. As the
+background behind any symbol is *a priori* unknown, we cannot assume that
 detecting the square edges of the sign itself is straightforward. But under
 reasonable illumination conditions, our machine can be expected to locate
 edges inside a sign. Moreover as figure 1 illustrates, such internal edges
@@ -170,7 +191,11 @@ colors as a function of sign type. White edge results are illustrated in
 figure 7. As anticipated, the machine found strong internal edges within
 the foreground “stop” sign.
 
-![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_07.jpg) The
+![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_07.jpg) 
+*Fig. 7.  Purple coloring indicates strong edge contents for connected
+components in figure 5b that border upon regions with white or light grey
+quantized colors.  note that such edges occur inside the "stop" sign.*
+
 
 After iterating over all connected components in figure 6 and rejecting
 those whose shape and edge contents are grossly inconsistent with the
@@ -179,10 +204,13 @@ the symbol of interest. Orange, red and green bounding boxes mark those
 regions in figure 8. At this stage in the algorithm flow, much more
 discriminating tests need to be performed on the surviving candidates in
 order for the machine to determine if any of them actually contain a “stop”
-sign. So we describe the classifier used to recognize TOC12 symbols in the
+sign. So we describe the classifier used to recognize symbols in the
 following subsection.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_08.jpg)
+*Fig. 8.  Orange, red and green bounding boxes mark candidate regions
+possibly contaiing the "stop" sign which share the symbol's basic color,
+edge and shape properties.*
 
 ## Sign classification
 
@@ -206,15 +234,15 @@ recognition and real-time speech translation [3].  Moreover, unsupervised
 learning algorithms have been demonstrated to recognize text characters
 within uncooperatively-collected images as well as other approaches
 involving carefully hand-selected features [4]. So we adopt this general
-strategy for recognizing TOC12 signs within video frames.
+strategy for recognizing signs within video frames.
 
 The basic components of our sign classifier subsystem are presented in
 figure 9 which is adapted from [2]. We first synthesize a large corpus of
 training examples for each symbol to be recognized. The training sets must
 incorporate expected variations for a sign which can reasonably be expected
-to appear within test video frames.  We consequently start with the TOC12
-symbols in figure 1, rotate each in three-dimensions by random roll, pitch
-and yaw angles, and then project into an image plane. The coloring of the
+to appear within test video frames.  We consequently start with the symbols
+in figure 1, rotate each in three-dimensions by random roll, pitch and yaw
+angles, and then project into an image plane. The coloring of the
 background plane, lighting color plus direction, and gaussian noise content
 are all randomized. Finally, some variable amount of smearing is
 intentionally introduced in order to simulate motion blur. Representative
@@ -222,8 +250,18 @@ examples from 15,000 synthesized “stop” sign images 32×32 pixels in size
 are shown in figure 10.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_09.jpg)
+*Fig. 9.  Basic procedure for training a classifier to recognize different
+instances of the "stop" sign.  Thousands of synthesized variations of the
+symbol are first used to generate a feature dictionary via unsupervised
+learning.  The dictionary subsequently becomes an input to an encoder which
+converts pixel pathces into high-dimenisonal feature vectors.  Such feature
+vectors along with "stop sign" or "non-stop sign" labels are used to train
+a linear Support Vector Machine.  Once trained, the SVM can classify new
+pixel patches whose labels are a priori unknown.*
+
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_10.jpg)
+*Fig. 10.  Synthetically generated views of the "stop" sign.*
 
 A variant of K-means clustering is performed on 8×8 pixel patches sampled
 from the synthesized training images [4]. We choose K=1024 and refine the
@@ -234,6 +272,8 @@ curves and holes that transcend the rotation, coloring and blurring
 variations within the training set.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_11.jpg)
+*Fig. 11.  8x8 pixel patch elements from the "stop" sign dictionary
+generated via unsupervised feature learning.*
 
 As figure 9 indicates, the dictionary becomes input to an encoder which
 converts 32×32 image regions into feature vectors. The encoder loops over
@@ -244,17 +284,20 @@ together within 3×3 regions of the 32×32 image. The encoder’s output
 feature vectors are consequently 9K dimensional.
 
 The last step in sign classification step involves a Support Vector
-Machine. For each TOC12 sign, feature vectors associated with 15K
-synthesized examples and 96K non-sign examples harvested from random
-internet pictures are used to train a linear SVM. We employ the dlib
-library to compute probabilistic decision functions for all nine symbols in
-figure 1 [6]. New image regions may subsequently be classified as a TOC12
-sign or not based upon probabilities output by the nine decision functions
-(see figure 12). We intentionally set probability thresholds for sign
-recognition high in order to minimize false alarms.
+Machine. For each sign, feature vectors associated with 15K synthesized
+examples and 96K non-sign examples harvested from random internet pictures
+are used to train a linear SVM. We employ the dlib library to compute
+probabilistic decision functions for all nine symbols in figure 1 [6]. New
+image regions may subsequently be classified as a sign or not based upon
+probabilities output by the nine decision functions (see figure 12). We
+intentionally set probability thresholds for sign recognition high in order
+to minimize false alarms.
 
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_12.jpg)
+*Fig. 12.  The trained SVM correctly classifies one of the three candidate
+regions in figure 8 as corresponding to the "stop" sign and rejects the
+other two.*
 
 ## Sign recognition results
 
@@ -268,7 +311,7 @@ qualitatively assessing its performance.
 
 Figure 13 displays 25 representative examples of successful sign
 recognition results. The bounding boxes appearing in this figure enclose
-genuine TOC12 symbols. Moreover, the boxes’ colorings indicate correct sign
+genuine symbols. Moreover, the boxes’ colorings indicate correct sign
 identities: cyan, blue, yellow, white, purple, brick red and cream
 correspond to the “stop”, “biohazard”, “yellow radiation”, “water”, “gas”,
 “blue radiation”, “start”, “skull” and “eating utensils” signs. The
@@ -281,6 +324,8 @@ demonstrate a nontrivial automated recognition capability.
 
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_13.jpg)
+*Fig. 13.  Representative examples of successful sign recognition from the
+algorithm flow of figure 2.*
 
 Of course, several missed detections are evident in figure 13. Since we
 intentionally set recognition thresholds in order to minimize false alarms,
@@ -289,28 +334,29 @@ figure 14 exhibits representative examples of sign recognition failures
 which include several incorrect classifications and a few false alarms.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_14.jpg)
+*Fig. 14.  Representative examples of sign recognition failures include
+false positives and false negatives.*
 
-During this year’s Tech Challenge, we did not attempt to quantify the ratio
-of recognition system successes to failures. But for the 4.5K+ video frames
-collected inside Lincoln Lab and the HAFB tennis bubble of the 2’×2’ TOC12
-signs, we estimate that 80% of the frames were correctly classified while
-20% contained recognition errors.
+As part of the robotic maze Tech Challenge, we did not attempt to quantify
+either sign recognition precision or recall. But for the 4.5K+ video frames
+collected of the 2’×2’ signs, we estimate that 80% of the frames were
+correctly classified while 20% contained recognition errors.
 
 ## References
 
-1. L. Neumann and J. Matas, Real-time scene text localization and
-recognition, CVPR 2012.
+1. L. Neumann and J. Matas, *Real-time scene text localization and
+recognition*, CVPR 2012.
 
-2. A. Coates, Demystifying unsupervised feature learning, Stanford
+2. A. Coates, *Demystifying unsupervised feature learning*, Stanford
 University Ph.D. thesis, 2012.
 
-3. New York Times, Great Strides for Deep Learning, 26 Nov 2012.
+3. New York Times, *Great Strides for Deep Learning*, 26 Nov 2012.
 
 4. A. Coates, B. Carpenter, C. Case, S. Satheesh, B. Suresh, T. Wang,
-D. Wu, and A. Ng, Text detection and character recognition in scene images
-with unsupervised feature learning, ICDAR 2011.
+D. Wu, and A. Ng, *Text detection and character recognition in scene images
+with unsupervised feature learning*, ICDAR 2011.
 
-5. A. Coates, H. Lee and A. Ng, An analysis of single-layer netowrks in
-unsupervised feature learning, AISTATS 14, 2011.
+5. A. Coates, H. Lee and A. Ng, *An analysis of single-layer netowrks in
+unsupervised feature learning*, AISTATS 14, 2011.
 
-6. D. King, dlib C++ library, http://dlib.net/ml.html.
+6. D. King, *dlib C++ library*, http://dlib.net/ml.html.
