@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Sign Recognition via Unsupervised Feature Learning"
+title:  "Recognizing Signs via Unsupervised Feature Learning"
 date:   2012-08-15 12:00:0
 categories: unsupervised feature learning
 ---

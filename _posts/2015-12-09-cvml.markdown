@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Image Graphs via Matching of Deep Learning Feature Descriptors"
+title:  "Constructing Image Graphs via Deep Learning Feature Descriptors"
 date:   2015-12-09 7:51:0
 categories: Deep Learning
 ---
