@@ -1,32 +1,35 @@
 ---
 layout: post
-title:  "Image Graphs via Deep Learning Feature Descriptor Matching"
+title:  "Image Graphs via Matching of Deep Learning Feature Descriptors"
 date:   2015-12-09 7:51:0
 categories: Deep Learning
 ---
 
 I have been interested in organizing large sets of unstructured images for
-many years.  Think of this problem as spreading out a large set of photos
-on table like playing cards.  Then how should the photos be arranged so
-that they turn from a random mess into an organized collection which can be
-readily searched and extended?
+many years.  It's instructive to think about this problem as spreading out
+a large set of photos on table like playing cards.  Then how should the
+photos be arranged so that they turn from a random mess into an organized
+collection which can be readily searched and extended?
 
-One approach to this organization problem is to build a graph from the
-input images.  Each node in the graph corresponds to some image.  And any
-two photos are connected by an edge whose weight value indicates their
-similarity.  Two images connected by an edge with a very large weight are
-nearly identical.  Two other images connected by an edge with 0 weight are
-completely different.So given two images, we need a way to compute their
+One approach to this jigsaw puzzle is to build a graph from the input
+images.  Each node in the graph corresponds to some image.  Photo pairs are
+connected by an edge whose weight value indicates their similarity.  An
+edge with a very large weight links two images which nearly identical.  On
+the other hand, two images connected by an edge with nearly zero weight are
+totally different.  So given two images, we need a way to compute their
 similarity.
 
 ## Local SIFT Feature Matching
 
 Several years ago, I followed standard practices within computer vision at
-the time for extracting and matching SIFT features to assess image overlap.
-When applied to 10 "Kermit" photos (taken from one of Noah Snavely's
+the time for extracting and matching SIFT features to assess image overlap
+[1].  When applied to 10 "Kermit" photos (taken from one of Noah Snavely's
 bundler examples), we derive the image network pictured below:
 
-![Kermit SIFT graph]({{ site.url }}/blog/images/kermit_graph.png)
+![Kermit SIFT graph]({{ site.url }}/blog/images/kermit_graph.png) 
+*Fig. 1.  Image graph generated via SIFT feature matching for 10 kermit 
+photos.*
+
 
 The edge weights in this figure correspond to numbers of matched SIFT
 features between pairs of images.  Hot-colored edges indicate greater
@@ -45,50 +48,55 @@ objects in world-space better than deformable ones.  SIFT features are also
 more abundant in highly-textured outdoor scenes than within indoor
 settings.  And SIFT matching generally requires similar illumination
 conditions and sensing frequencies.  If these conditions are satisified,
-large and interesting networks of images can be formed [ref].  But if we
-want to relax any of these restrictions on matching photos, we need to find
-a more powerful method for computing image overlap than simply counting
-numbers of local SIFT feature pairs.
+large and interesting networks of images can be formed [2].  But if we want
+to relax any of these restrictions on matching photos, we need to use a
+more powerful method for assessing image similarity than simply counting
+numbers of local SIFT feature pairs.  
 
 ## Global CNN Feature Matching
 
-We have recently adopted a new approach to generating image descriptors
-based upon popular Convolutional Neural Network (CNN) methods.  In
-particular, we first downsize each image within an input set so that its
+A newly popular way to generate descriptors for entire images is based upon
+Convolutional Neural Networks [ref].  We apply this approach to image graph
+generation by first downsizing each image within an input set so that its
 minimum pixel dimension equals 230.  Working with the Caffe deep learning
-framework, we pass the downsized picture into the VGG-16 model [ref].
-Network values at its next-to-last "fc7" layer form a global image
-descriptor.  We make sure to perform a "ReLU" operation on the descriptor
-components.  We also rescale the 4096-dimensional descriptor so that it has
-unit norm.
+framework [3,4], we then pass the downsized picture into the VGG-16 model
+[5].  Network values at its next-to-last "fc7" layer form a global image
+descriptor.  We rescale the resulting 4096-dimensional descriptor so that
+it has unit norm.
 
-The dotproduct between two photos' global descriptors provides a simple
-measure of their semantic similarity.  Any dotproduct less than 0.7 is
-ignored.  For image graph building, we must also cut off the quadratic
-growth in number of graph edges as a function of graph nodes.  So given a
-node, we retain all its edges if their number is less than 10.  But for a
-node with more than 10 edges, we retain its top 7 edges with greatest
+The dotproduct between two photos' global descriptors provides a convenient
+measure of their semantic similarity.  We ignore any dotproduct value less
+than 0.7.  For building large image networks, we must also cut off the
+quadratic growth in number of graph edges as a function of graph nodes.  So
+given a node, we retain all its edges if their number is less than 10.  But
+for a node with more than 10 edges, we retain its top 7 edges with greatest
 weights.  In order to encourage matching of images with significantly
 different pixel yet similar semantic contents, the last 3 edges for the
-node are randomly chosen from among its remaining candidates.  
+node are randomly chosen from among its remaining candidates.
 
 We have applied this image similarity metric based upon deep learning
-feature descriptor matching to several different data sets.  The resulting
-image graphs are astonishing!  For example, the network formed from 30K+
-photos shot semi-cooperatively around MIT in summer 2008 is illustrated in
-the YouTube clip below (click on the image to play the video):
+feature descriptors to several different data sets.  The resulting image
+graphs are astonishing!  For example, a network formed from 30K+ photos
+shot semi-cooperatively around MIT in summer 2008 is illustrated in figure
+2:
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=crWc7GS9c3M
-" target="_blank"><img src="http://img.youtube.com/vi/crWc7GS9c3M/0.jpg" 
+" target="_blank"><img src="http://img.youtube.com/vi/crWc7GS9c3M/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. 2.  Image graph for 30K+ photos shot around MIT.  Click on image
+above in order to play the YouTube video.*
 
-Here we see thousands of photos shot in an urban setting over a few days
-assembled into a graph.  Deep learning descriptor matching naturally
-clusters different outdoor views of river fronts, city skylines, particular
-building facades and trees plus vegetation.  More remarkably, the global
-approach to image matching groups indoor views on which local SIFT feature
-matching generally fails.  It also links photos shot on the ground with
-aerial video frames.  
+In the figure's video clip, we see thousands of photos shot in an urban
+setting over a few days.  As the movie plays, pop-up YouTube annotations
+point out various interesting aspects of the image network as well as some
+mechanics of the synchronized web browser and graph viewer [2].  Note that
+deep learning descriptor matching naturally clusters different outdoor
+views of river fronts, city skylines, particular building facades plus
+trees and vegetation.  More remarkably, the global approach to image
+matching groups together indoor views.  In contrast, local SIFT feature
+matching generally fails for pictures containing significant interior wall
+content due to their lack of texture.  Global CNN features also link photos
+shot on the ground with aerial video frames.
 
 The MIT photo set was semi-intentionally collected for 3D reconstruction
 purposes.  A small band of photographers were instructed to rapidly gather
@@ -96,37 +104,153 @@ imagery from multiple views with essentially constant zoom settings.  It's
 consequently not surprising that the MIT image graph looks dense.  A much
 more challenging imagery set was semi-cooperatively collected over a span
 of years around an outdoor nature conservation area in eastern
-Massachusetts called Tidmarsh Farms [ref].  
+Massachusetts called Tidmarsh Farms [6].  Its photo network is displayed in
+figure 3.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=FnEmbDT5kyM
 " target="_blank"><img src="http://img.youtube.com/vi/FnEmbDT5kyM/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. 3.  Image graph for 7K+ outdoor nature photos.  Click on image
+above in order to play video*
 
-Grand Canyon flickr image graph:
+At the start of the figure's video, we observe that the image graph breaks
+apart into multiple connected components.  The number of different
+components and number of nodes within each component depends upon the edge
+weight threshold for the entire network which we again set to 0.7.  After
+the virtual camera zooms into the first connected component, we see
+pictures of individual flowers appearing within one particular cluster of
+graph nodes.  Local SIFT feature matching cannot match images of flowers
+that represent different physical instances of different types.  Yet the
+CNN feature descriptors for these images sufficiently overlap that
+different examples of flowers are semantically linked within the deep
+learning network.
+
+Colored subgroups of nodes generally represent semantically distinct
+clusters.  For example, we observe many different views of streams and
+marshes in another part of the image graph's first connected component.  As
+the user clicks on nodes in the graph viewer, their corresponding images
+are displayed in the web browser's main window.  The thumbnail carousel
+located below the browser's main window displays the current node's nearest
+neighbors within the image graph.  And the thumbnails are ordered according
+to their CNN feature descriptors' dotproducts with the current node's
+global feature descriptor.  So each carousel update effectively lists the
+response to an image search query.
+
+Towards the end of the video clip, the graph viewer is translated and its
+thumbnails are enlarged so that pictures belonging to different connected
+components within the image graph can be seen.  We observe that
+semantically-distinct photo subsets are contained within each connected
+component which share very little overlap with other components' images.  
+
+Unlike the first MIT photo set which was collected over a relatively small
+area in a few days, the Tidmarsh Farms pictures were taken over a much
+larger region in space and time.  But both data sets were gathered
+semi-intentionally and semi-cooperatively for scientific documentation
+purposes.  In contrast, pictures harvested from the internet exhibit no *a
+priori* coordination in their collection.  Yet image graphs based upon
+global CNN feature matching do a surprisingly good job of organizing large
+numbers of uncooperatively-collected pictures.
+
+Figure 4 illustrates the image graph constructed from 14K+ photos of the
+Grand Canyon downloaded from flickr:
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=li9ANCM7PNM
-" target="_blank"><img src="http://img.youtube.com/vi/li9ANCM7PNM/0.jpg" 
+" target="_blank"><img src="http://img.youtube.com/vi/li9ANCM7PNM/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. 4.  Image graph for 14K+ Grand Canyon flickr photos.  Click on
+image above in order to play video.*
 
-India flickr image graph:
+After the graph viewer zooms into the image graph's first component, many
+wide-angle shots of the Grand Canyon taken by different people at different
+times are seen clustered together.  As the user clicks on nodes in the
+graph, their associated images are displayed in the browser's main window,
+and thumbnails for their nearest neighbors are rank-ordered within the
+carousel.
+
+Approximately 1.5 minutes into the video clip, a YouTube annotation
+proclaims that the currently selected ground photo has an aerial video
+frame as one of its nearest neighbors.  Our Grand Canyon imagery contains a
+few thousand video frames gathered by a FLIR camera over the Grand Canyon
+in addition to many thousands of flickr ground photos [2].  Because the
+Grand Canyon is so vast, the angular discrepancy between views of distant
+points from the rim and from 10,000 feet above the Canyon can be 35 degrees
+or less.  So local SIFT feature matching could just barely succeed to link
+one ground photo with one airborne frame [2].  But many more connections
+between the airborne and ground sensors' outputs are established by the
+deep learning approach to image matching.  Indeed, the movie displays
+multiple links between one gold-colored cluster of nodes corresponding
+mostly to ground photos and an adjacent purple-colored node cluster
+containing mostly aerial video frames.
+
+The most intriguing connections within the Grand Canyon image graph are
+revealed near the end of the movie in figure 4.  The aerial FLIR camera
+collected video frames in both the visible frequency band and mid-wave
+infrared (wavelength = 3 - 5 microns).  SIFT features in the infrared
+(IR)differ significantly from their electro-optical (EO) counterparts.  So
+no matches between Grand Canyon images in the IR and EO bands can be
+established via local SIFT matching [2].  But as figure 4 illustrates, CNN
+feature matching successfully links IR and EO views.  I believe this
+encouraging example motivates future research into multi-spectral imagery
+search and fusion.
+
+The final organization problem we consider is based upon our most disparate
+data set consisting of 30K+ photos of India downloaded from flickr.  All of
+its images were uncooperatively gathered, and we have no obviously useful
+*a priori* metadata for any of these internet pictures.  The network
+generated by matching CNN features is displayed in figure 5:
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=2spSVHPprPs
 " target="_blank"><img src="http://img.youtube.com/vi/2spSVHPprPs/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. 5.  Image graph for 30K+ India flickr photos.  Click on
+image above in order to play video.*
+
+At the start of this figure's video, we again observe that the image graph
+breaks apart into multiple connected components which is unsurprising given
+that its photos were uncooperatively-collected.  The initial picture
+appearing in the web browser's main window is of a fireworks explosion
+against black sky.  Carousel thumbnails for its closest neighbors within
+the image graph are differently colored and shaped firecracker bursts.
+Though we have not explicitly attempted matching SIFT features on such
+firecracker pictures, it's very unlikely local features would connect
+images with qualitiately different local features yet similar semantic
+contents.  We also observe that one firecracker explosion picture has a
+photo of an isolated flower among its nearest neighbors.  Given that the
+appearance of a firecracker explosion is similar to a flower, such linking
+between two different semantic categories is not unreasonable.  On the
+other hand, nodes corresponding to firecracker pictures appear fairly close
+within the graph viewer to nodes for very different scenes such as sunsets
+and oceans.  We believe that such juxtaposition problems stem from graph
+layout rather than graph formation.  Improving graph layout is left for
+future work.
+
+In other parts of the image graph's first connected component, we see good
+organization of photos containing various groups of people.  Similarly,
+random pictures of ground transportation (e.g. motorbikes, cars, trucks)
+are compellingly clustered together.  Other connected components within the
+India image graph contain qualitatively different subjects - monkeys, food
+dishes, and artistic smoke swirls.  So the deep learning approach to
+imagery organization can indeed reconstruct partial yet sensible "jigsaw
+puzzles" from large input sets of seemingly random input pictures.
 
 
 ## References
 
-1.  P. Cho and M. Yee, "Image Search System", 41st AIPR workshop, 2012.
+1.  D.G. Lowe, *Distinctive image features from scale-invariant keypoints*,
+International Journal of Computer Vision (2004), 91-110.
 
-2.  Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long, R. Girshick,
-S. Guadarrama and T. Darrell, "Caffe: Convolutional Architecture for Fast
-Feature Embedding", arXiv:1408.5093, 2014
+2.  P. Cho and M. Yee, *Image Search System*, 41st AIPR workshop, 2012.
 
-3.  http://caffe.berkeleyvision.org
+3.  Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long, R. Girshick,
+S. Guadarrama and T. Darrell, *Caffe: Convolutional Architecture for Fast
+Feature Embedding*, arXiv:1408.5093, 2014.
 
-4.  K. Simonyan and A. Zisserman, "Very Deep Convolutional Networks for
-Large-Scale Image Recognition", arXiv: 1409.1556, 2015.
+4.  See http://caffe.berkeleyvision.org.
+
+5.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
+Large-Scale Image Recognition*, arXiv: 1409.1556, 2015.
+
+6. See www.tidmarshfarms.com.
 
 {% comment %}
 {% endcomment %}

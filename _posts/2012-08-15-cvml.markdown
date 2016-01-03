@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Sign Recognition via Shallow Learning"
+title:  "Sign Recognition via Unsupervised Feature Learning"
 date:   2012-08-15 12:00:0
-categories: Shallow learning
+categories: unsupervised feature learning
 ---
 
 In Summer 2012, I participated in a robot competition organized by Lincoln
