@@ -1,0 +1,110 @@
+---
+layout: post
+title:  "Detecting Faces via Deep Semantic Segmentation"
+date:   2016-01-10 12:00:0
+categories: Deep Learning
+---
+
+Face detection represents an important problem in computer vision and
+machine learning which has been studied for decades [1 - 4].  In the early
+2000s, most approaches generally involved learning templates which could
+locate gross facial features such as eyes, noses and mouths.
+Template-based methods work well on test images that contain unobstructed
+faces of comparable scale and orientation as those used to train the
+filters.  But such shallow learning methods suffer from having to train
+multiple templates for different facial poses.
+
+We are interested in experimenting with recent deep learning approaches to
+face detection which can handle a wider variety of facial poses and
+expressions as well as tolerate occlusion.  In this blog entry, we
+investigate semantically segmenting images using a deep convolutional
+network into facial and background classes.  Though our initial face
+segmentation results are far from perfect, we believe they are sufficiently
+encouraging to warrant further consideration.
+
+After briefly surveying publically available imagery datasets on the web
+[5], we decided to gather our own "faces-in-the-wild" collection which
+exhibits significant variation along multiple dimensions.  To date, we have
+quasi-intentionally downloaded and labeled 3K+ photos from Google Images
+containing multiple different faces.  This set includes people with varying
+attributes (e.g. gender, age, ethnicity) performing different activities
+(e.g. talking, drinking, sleeping) in disparate settings (e.g. sports
+stadiums, rural villages, dance halls).  We also attempted to include faces
+in many different poses (e.g. looking upwards, sideways, away from camera)
+as well as occluding objects (e.g. hats, sunglasses, hands).  Some
+historical pictures were intentionally included along with modern
+black-and-white photos.  Finally, we made sure to include many scenes
+containing crowds of people whose faces range across multiple scales.
+
+After assembling our "faces-in-the-wild" corpus, we drew bounding boxes
+around every face we could identify using Davis King's nice image labeling
+tool [6].  For faces oriented towards the camera, we usually extended the
+bounding box from below the hairline and to above the chin.  For faces in
+profile, we typically draw a box from the nose to the ear.  And for faces
+oriented away from the camera, we tried to draw bounding boxes which
+captured the front part of a person's head but not the rear.
+Representative examples of our training images and bounding box labels are
+illustrated in fig 1.
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/training/training_faces.png)
+*Fig. 1.  Representative examples of training images containing a variety
+of faces.  
+
+
+
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/training/training_performance.jpg)
+*Fig. 2a.  Training curves.*
+
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/training/validation_performance.jpg)
+*Fig. 2b.  Validation curves.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/good_easy/four_men_standing_montage.jpg)
+*Fig. 3a.  Face segmentation results.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/good_easy/ailey_dancers_montage.jpg)
+*Fig. 3b.  Face segmentation results.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/good_challenging/runners_montage.jpg)
+*Fig. 4a.  Face segmentation results.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/good_challenging/beer_drinkers_montage.jpg)
+*Fig. 4b.  Face segmentation results.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/good_challenging/commuter_crowd_montage.jpg)
+*Fig. 4c.  Face segmentation results.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/good_challenging/baseball_spectators_montage.jpg)
+*Fig. 4d.  Face segmentation results.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/problems/circle_partial_faces_montage.jpg)
+*Fig. 5a.  Face segmentation results.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/problems/missed_guys_montage.jpg)
+*Fig. 5b.  Face segmentation results.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/problems/false_positives_montage.jpg)
+*Fig. 5c.  Face segmentation results.*
+
+
+## References
+
+1.  M. A. Turk and A. P. Pentland, *Face recognition using eigenfaces*, CVPR 1991.
+
+2.  P. Viola and M. Jones, *Robust Real-time Object Detection*, IJCV 2001.
+
+3.  P. F. Felzenszwalb and D. P. Huttenlocher, *Pictorial structures for object recognition*, IJCV 2005.
+
+4.  S. Zafeiriou, C. Zhang and Z. Zhang, *A survey on face detection in the wild: past, present
+and future*,  Computer Vision and Image Understanding  (2015).
+
+5.  See https://facedetection.com/datasets/.
+
+6. D. King, *dlib C++ library*, http://dlib.net/ml.html.
+
+2. L.-C. Chen, G. Papandreou, I Kokkinos, K. Murphy and A. L. Yuille,
+*Semantic image segmentation with deep convolutional nets and fully
+connected CRFs*, http://arxiv.org/abs/1412.7062, 2015.
+
+
