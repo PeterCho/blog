@@ -1,26 +1,26 @@
 ---
 layout: post
-title:  "Detecting Faces via Deep Semantic Segmentation"
+title:  "Detecting Faces via Deep Semantic Segmentation of Images"
 date:   2016-01-10 12:00:0
 categories: Deep Learning
 ---
 
-Face detection represents an important problem in computer vision and
-machine learning which has been studied for decades [1 - 4].  In the early
-2000s, most approaches generally involved learning templates which could
-locate gross facial features such as eyes, noses and mouths.
-Template-based methods work well on test images that contain unobstructed
-faces of comparable scale and orientation as those used to train the
-filters.  But such shallow learning methods suffer from having to train
-multiple templates for different facial poses.
+Face detection is an important problem in computer vision which has been
+studied for decades [1 - 4].  In the early 2000s, most methods for
+detecting faces generally involved learning templates which could locate
+gross facial features such as eyes, noses and mouths.  Template-based
+approaches work well on test images that contain unobstructed faces of
+comparable scale and orientation as those used to train the filters.  But
+such shallow learning methods suffer from having to train multiple
+templates for different facial poses.
 
 We are interested in experimenting with recent deep learning approaches to
 face detection which can handle a wider variety of facial poses and
 expressions as well as tolerate occlusion.  In this blog entry, we
 investigate semantically segmenting images using a deep convolutional
 network into facial and background classes.  Though our initial face
-segmentation results are far from perfect, we believe they are sufficiently
-encouraging to warrant further consideration.
+segmentation results are far from flawless, we believe they are
+sufficiently encouraging to warrant further consideration.
 
 After briefly surveying publically available imagery datasets on the web
 [5], we decided to gather our own "faces-in-the-wild" collection which
@@ -46,9 +46,9 @@ captured the front part of a person's head but not the rear.
 Representative examples of our training images and bounding box labels are
 illustrated in fig 1.
 
-![Faces]({{ site.url }}/blog/images/face_segmentation/training/training_faces.png)
+![Faces]({{ site.url}}/blog/images/face_segmentation/training/training_faces.png) 
 *Fig. 1.  Representative examples of training images containing a variety
-of faces.  
+of different face types.*
 
 In order to perform semantic image segmentation, we work with the DeepLab
 framework which is a deep learning system built on top of Caffe [7 - 9].
@@ -70,49 +70,88 @@ tiles and masks.  80% of the tile and mask pairs are devoted to network
 training, while 20% are reserved for validation.
 
 DeepLab training fine-tunes the weight and bias parameters of a pre-trained
-network which is a variant of the VGG-16 model [10].  The only
-hyperparameter which we attempt to adjust using our validation data is the
-learning rate.
-
-
-
+network which is a variant of the VGG-16 model [10].  We adopt a batch size
+of 30 which is the maximum value our hardware memory capacity can
+accomodate given our input tile size.  The only training hyperparameter
+which we attempted to adjust using training and validation data is the
+learning rate.  We did not observe any dramatic change in validation
+accuracy metrics as we varied the learning rate parameter by a factor of 20
+and trained on a subset of input image tiles.  We therefore set the base
+learning rate to 0.0005 which was near the low end of our experimental
+interval.  Figure 2a displays the resulting loss function over 20 training
+epochs in orange:
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/training/training_performance.jpg)
-*Fig. 2a.  Pixel-level performance curves and loss function for training set of image tiles and masks
-plotted as function of training epoch.*
+*Fig. 2a.  Pixel-level performance curves and loss function for training
+set of image tiles and masks plotted as function of training epoch.*
 
+During network training, DeepLab periodically reports pixel-level
+segmentation accuracy values for 3 different metrics.  They are displayed
+by the red, blue and green curves for the training and validation data sets
+in figures 2a and 2b.  The validation values for the 3 metric values are
+somewhat smaller than the corresponding training values after 20 epochs.
+So DeepLab/caffe's use of dropout appears to have successfully prevented
+network overfitting.  We also note that the validation value for average
+class recall is less than one.  But given that we annotated faces using
+bounding boxes rather than more snuggly fitting polygons, we should not
+expect pixel-level recall to approach unity.  If human faces were exactly
+modeled by ellipses inside each of our rectangular bounding boxes, recall
+would equal PI/4 = 0.785. It's amusing to note that the 0.9ish pixel-level
+recall value observed in figure 2b lies halfway between unity and the
+ellipse approximation.
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/training/validation_performance.jpg)
-*Fig. 2b.  Pixel-level performance curves for validation set of image tiles and masks
-plotted as function of training epoch.*
+*Fig. 2b.  Pixel-level performance curves for validation set of image tiles
+and masks plotted as function of training epoch.*
 
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/good_easy/four_men_standing_montage.jpg)
-*Fig. 3a.  Face segmentation results.*
+*Fig. 3a.  Segmentation results for 4 faces oriented straight towards the camera.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/good_easy/ailey_dancers_montage.jpg)
-*Fig. 3b.  Face segmentation results.*
+*Fig. 3b.  Segmentation results for 10 faces oriented towards the camera
+at various roll angles.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/good_challenging/runners_montage.jpg)
-*Fig. 4a.  Face segmentation results.*
+*Fig. 4a.  Segmentation results for 7 faces not generally  pointing towards
+the camera.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/good_challenging/beer_drinkers_montage.jpg)
-*Fig. 4b.  Face segmentation results.*
+*Fig. 4b.  Segmentation results for 4 faces which are partially occluded or clipped.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/good_challenging/commuter_crowd_montage.jpg)
-*Fig. 4c.  Face segmentation results.*
+*Fig. 4c.  Segmentation results for many forward-oriented and nearly
+overlapping faces in a crowd.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/good_challenging/baseball_spectators_montage.jpg)
-*Fig. 4d.  Face segmentation results.*
+*Fig. 4d.  Segmentation results for crowd faces exhibiting a wide variety of
+expressions and poses.*
+
+
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/problems/circle_partial_faces_montage.jpg)
-*Fig. 5a.  Face segmentation results.*
+*Fig. 5a.  Segmentation results exhibiting relatively small overlap with
+genuine face content.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/problems/missed_guys_montage.jpg)
-*Fig. 5b.  Face segmentation results.*
+*Fig. 5b.  Segmentation results exhibiting completely missed faces and
+merging of individuals' facial regions.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/problems/false_positives_montage.jpg)
-*Fig. 5c.  Face segmentation results.*
+*Fig. 5c.  Segmentation results exhibiting significant false positive content.*
+
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/single_face/segmented_woman_face.jpg)
+*Fig. 6a.  Segmentation result for a canonicially-oriented face.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/single_face/horiz_quarters_montage.jpg)
+*Fig. 6b.  Segmentation results for one, two and three quarter 
+crops along the horizontal axis of the face in figure 6a.*
+
+![Faces]({{ site.url }}/blog/images/face_segmentation/single_face/vert_quarters_montage.jpg)
+*Fig. 6c.  Segmentation result for one, two and three quarter 
+crops along the vertical axis of the face in figure 6a.*
+
 
 
 ## References
