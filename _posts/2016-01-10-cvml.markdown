@@ -47,8 +47,8 @@ Representative examples of our training images and bounding box labels are
 illustrated in fig 1.
 
 ![Faces]({{ site.url}}/blog/images/face_segmentation/training/training_faces.png) 
-*Fig. 1.  Representative examples of training images containing a variety
-of different face types.*
+*Fig. 1.  Representative examples of labeled training images containing various
+different face types.*
 
 In order to perform semantic image segmentation, we work with the DeepLab
 framework which is a deep learning system built on top of Caffe [7 - 9].
@@ -83,7 +83,7 @@ epochs in orange:
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/training/training_performance.jpg)
 *Fig. 2a.  Pixel-level performance curves and loss function for training
-set of image tiles and masks plotted as function of training epoch.*
+set of image tiles and masks.*
 
 During network training, DeepLab periodically reports pixel-level
 segmentation accuracy values for 3 different metrics.  They are displayed
@@ -102,7 +102,7 @@ ellipse approximation.
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/training/validation_performance.jpg)
 *Fig. 2b.  Pixel-level performance curves for validation set of image tiles
-and masks plotted as function of training epoch.*
+and masks.*
 
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/good_easy/four_men_standing_montage.jpg)
@@ -130,18 +130,19 @@ expressions and poses.*
 
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/problems/circle_partial_faces_montage.jpg)
-*Fig. 5a.  Segmentation results exhibiting relatively small overlap with
-genuine face content.*
+*Fig. 5a.  Problematic segmentation results exhibiting relatively small
+overlap with genuine face content.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/problems/missed_guys_montage.jpg)
-*Fig. 5b.  Segmentation results exhibiting completely missed faces and
-merging of individuals' facial regions.*
+*Fig. 5b.  Problematic segmentation results exhibiting completely missed
+faces as well as merging of individual face regions.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/problems/false_positives_montage.jpg)
-*Fig. 5c.  Segmentation results exhibiting significant false positive content.*
+*Fig. 5c.  Problematic segmentation results exhibiting significant false
+positive content.*
 
 
-![Faces]({{ site.url }}/blog/images/face_segmentation/single_face/segmented_woman_face.jpg)
+![Faces]({{ site.url }}/blog/images/face_segmentation/single_face/padded_segmented_face.jpg)
 *Fig. 6a.  Segmentation result for a canonicially-oriented face.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/single_face/horiz_quarters_montage.jpg)
@@ -150,20 +151,20 @@ crops along the horizontal axis of the face in figure 6a.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/single_face/vert_quarters_montage.jpg)
 *Fig. 6c.  Segmentation result for one, two and three quarter 
-crops along the vertical axis of the face in figure 6a.*
+cropss along the vertical axis of the face in figure 6a.*
 
 
 
 ## References
 
-1.  M. A. Turk and A. P. Pentland, *Face recognition using eigenfaces*, CVPR 1991.
+1.  M. A. Turk and A. P. Pentland, *Face recognition using eigenfaces*, CVPR, 1991.
 
-2.  P. Viola and M. Jones, *Robust Real-time Object Detection*, IJCV 2001.
+2.  P. Viola and M. Jones, *Robust Real-time Object Detection*, IJCV, 2001.
 
 3.  P. F. Felzenszwalb and D. P. Huttenlocher, *Pictorial structures for object recognition*, IJCV 2005.
 
 4.  S. Zafeiriou, C. Zhang and Z. Zhang, *A survey on face detection in the wild: past, present
-and future*,  Computer Vision and Image Understanding  (2015).
+and future*,  Computer Vision and Image Understanding, 2015.
 
 5.  See https://facedetection.com/datasets/.
 
