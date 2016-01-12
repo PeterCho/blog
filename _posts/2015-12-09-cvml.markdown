@@ -14,9 +14,9 @@ collection which can be readily searched and extended?
 One approach to this jigsaw puzzle is to build a graph from the input
 images.  Each node in the graph corresponds to some image.  Photo pairs are
 connected by an edge whose weight value indicates their similarity.  An
-edge with a very large weight links two images which nearly identical.  On
-the other hand, two images connected by an edge with nearly zero weight are
-totally different.  So given two images, we need a way to compute their
+edge with a very large weight links two images which are nearly identical.
+On the other hand, two images connected by an edge with almost zero weight
+are totally different.  So given two images, we need a way to compute their
 similarity.
 
 ## Local SIFT Feature Matching
@@ -24,7 +24,7 @@ similarity.
 Several years ago, I followed standard practices within computer vision at
 the time for extracting and matching SIFT features to assess image overlap
 [1].  When applied to 10 "Kermit" photos (taken from one of Noah Snavely's
-bundler examples), we derive the image network pictured below:
+bundler examples [2]), we derive the image network pictured below:
 
 ![Kermit SIFT graph]({{ site.url }}/blog/images/kermit_graph.png) 
 *Fig. 1.  Image graph generated via SIFT feature matching for 10 kermit 
@@ -35,20 +35,20 @@ The edge weights in this figure correspond to numbers of matched SIFT
 features between pairs of images.  Hot-colored edges indicate greater
 numbers of SIFT feature matches than cool-colored edges, and edges with
 weights less than a cutoff threshold have been suppressed.  Though the
-target scene is basically the same in all 10 pictures, matching SIFT
-features performs more robustly for pairs of photos shot at similar
+static world scene is the same in all 10 Kermit pictures, SIFT feature
+matching works more robustly for pairs of photos shot at similar
 perspectives.  As extrinsic camera parameters for a pair of images diverge,
 the number of SIFT features that can be automatically matched between the
 two pictures typically decreases.
 
 Image graph construction based upon SIFT feature matching works well
 provided there's reasonably dense coverage of the same physical objects
-within the input imagery set.  SIFT matching generally handles static
+within the input imagery set.  SIFT matching generally handles rigid
 objects in world-space better than deformable ones.  SIFT features are also
 more abundant in highly-textured outdoor scenes than within indoor
 settings.  And SIFT matching generally requires similar illumination
 conditions and sensing frequencies.  If these conditions are satisified,
-large and interesting networks of images can be formed [2].  But if we want
+large and interesting networks of images can be formed [3].  But if we want
 to relax any of these restrictions on matching photos, we need to use a
 more powerful method for assessing image similarity than simply counting
 numbers of local SIFT feature pairs.  
@@ -56,11 +56,11 @@ numbers of local SIFT feature pairs.
 ## Global CNN Feature Matching
 
 A newly popular way to generate descriptors for entire images is based upon
-Convolutional Neural Networks [ref].  We apply this approach to image graph
+Convolutional Neural Networks [4,5].  We apply this approach to image graph
 generation by first downsizing each image within an input set so that its
 minimum pixel dimension equals 230.  Working with the Caffe deep learning
-framework [3,4], we then pass the downsized picture into the VGG-16 model
-[5].  Network values at its next-to-last "fc7" layer form a global image
+framework [6,7], we then pass the downsized picture into the VGG-16 model
+[8].  Network values at its next-to-last "fc7" layer form a global image
 descriptor.  We rescale the resulting 4096-dimensional descriptor so that
 it has unit norm.
 
@@ -104,7 +104,7 @@ imagery from multiple views with essentially constant zoom settings.  It's
 consequently not surprising that the MIT image graph looks dense.  A much
 more challenging imagery set was semi-cooperatively collected over a span
 of years around an outdoor nature conservation area in eastern
-Massachusetts called Tidmarsh Farms [6].  Its photo network is displayed in
+Massachusetts called Tidmarsh Farms [9].  Its photo network is displayed in
 figure 3.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=FnEmbDT5kyM
@@ -239,18 +239,28 @@ puzzles" from large input sets of seemingly random input pictures.
 1.  D.G. Lowe, *Distinctive image features from scale-invariant keypoints*,
 International Journal of Computer Vision (2004), 91-110.
 
-2.  P. Cho and M. Yee, *Image Search System*, 41st AIPR workshop, 2012.
+2. See www.cs.cornell.edu/~snavely/bundler/ .
 
-3.  Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long, R. Girshick,
+3.  P. Cho and M. Yee, *Image Search System*, 41st AIPR workshop, 2012.
+
+4.  P. Sermanet, D. Eigen, X. Zhang, M. Mathieu, R. Fergus,
+and Y. LeCun. *Overfeat: Integrated recognition, localization
+and detection using convolutional networks*, ICLR, 2014.
+
+5.  A.S. Razavian, H. Azizpour, J. Sullivan and S. Carlsson, *CNN features
+off-the-shelf: an astounding baseline for recognition*, arXiv 1403.6382v3,
+2014.
+
+6.  Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long, R. Girshick,
 S. Guadarrama and T. Darrell, *Caffe: Convolutional Architecture for Fast
 Feature Embedding*, arXiv:1408.5093, 2014.
 
-4.  See http://caffe.berkeleyvision.org.
+7.  See http://caffe.berkeleyvision.org.
 
-5.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
+8.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
 Large-Scale Image Recognition*, arXiv: 1409.1556, 2015.
 
-6. See www.tidmarshfarms.com.
+9. See www.tidmarshfarms.com.
 
 {% comment %}
 {% endcomment %}
