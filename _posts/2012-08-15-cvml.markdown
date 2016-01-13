@@ -265,7 +265,7 @@ A variant of K-means clustering is performed on 8×8 pixel patches sampled
 from the synthesized training images [4]. We choose K=1024 and refine the
 clusters over 15 iterations. The unsupervised learning algorithm generates
 a dictionary of 1024 features (see figure 11). These dictionary elements
-capture essential properties of the “stop” sign symbol such as its edges,
+capture basic properties of the “stop” sign symbol such as its edges,
 curves and holes that transcend the rotation, coloring and blurring
 variations within the training set.
 
@@ -314,11 +314,11 @@ identities: cyan, blue, yellow, white, purple, brick red and cream
 correspond to the “stop”, “biohazard”, “yellow radiation”, “water”, “gas”,
 “blue radiation”, “start”, “skull” and “eating utensils” signs. The
 backgrounds in some of the pictures appearing in figure 13 are highly
-cluttered. Moreover, 500+ of the 4.5K+ views were collected from the second
-floor of LL’s library atrium looking downwards towards ground level. These
-pictures were intended to mimic shots gathered by the airship as it looked
-down upon the maze. We believe the results presented in the figure
-demonstrate a nontrivial automated recognition capability.
+cluttered. Moreover, 500+ of the 4.5K+ views were collected from a second
+floor atrium looking downwards towards ground level. These pictures were
+intended to mimic shots gathered by an airship's camera as it looked down
+upon the maze. We believe the results presented in the figure demonstrate a
+nontrivial automated recognition capability.
 
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_13.jpg)
@@ -326,10 +326,11 @@ demonstrate a nontrivial automated recognition capability.
 algorithm flow of figure 2.*
 
 Of course, several missed detections are evident in figure 13. Since we
-intentionally set recognition thresholds in order to minimize false alarms,
-such errors are neither unexpected nor overly worrisome. On the other hand,
-figure 14 exhibits representative examples of sign recognition failures
-which include several incorrect classifications and a few false alarms.
+intentionally boosted recognition thresholds in order to minimize false
+alarms, such errors are neither unexpected nor overly worrisome. On the
+other hand, figure 14 exhibits representative examples of sign recognition
+failures which include several incorrect classifications and a few false
+alarms.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_14.jpg)
 *Fig. 14.  Representative examples of sign recognition failures include
