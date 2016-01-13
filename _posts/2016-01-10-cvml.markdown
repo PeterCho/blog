@@ -50,7 +50,7 @@ illustrated in figure 1.
 different face types.*
 
 In order to perform semantic image segmentation, we work with the DeepLab
-framework which is a deep learning system built on top of Caffe [7 - 9].
+framework which is a learning system built on top of Caffe [7 - 9].
 DeepLab combines deep neural network (DNN) responses with densely connected
 conditional random fields (CRF).  As we seek only to perform gross face
 detection, we choose to not employ DeepLab's CRF functionality which is
@@ -72,13 +72,13 @@ During training, DeepLab fine-tunes the weight and bias parameters of a
 pre-trained DNN which is a variant of the VGG-16 model [10].  We adopt a
 batch size of 30 which is the maximum value our hardware memory capacity
 can accomodate given our input tile size.  The only training hyperparameter
-which we attempted to adjust using training and validation data is the
-learning rate.  We did not observe any dramatic change in validation
-accuracy metrics as we varied the learning rate parameter from 0.00033 to
-0.016 and trained on a subset of input image tiles.  We therefore
-conservatively set the base learning rate to 0.0005.  Otherwise, we work
-with default DeepLab hyperparameters such as 0.9 momentum and 0.0005 weight
-decay values along with a step learning rate policy [8].
+which we attempted to adjust using training and validation data was the
+learning rate.  We observed relatively small changes in validation accuracy
+metrics as we varied the learning rate parameter from 0.00005 to 0.016 and
+trained on a subset of input image tiles.  The optimal value for the base
+learning rate uncovered by these tests turned out to be 0.0005.  For all
+other hyperparameters, we retained DeepLab defaults such as 0.9 momentum
+and 0.0005 weight decay along with a step learning rate policy [8].
 
 The loss function quantifying the discrepancy between our weakly-supervised
 bounding box inputs and the network's background/foreground segmentation
@@ -201,7 +201,7 @@ crops along the horizontal axis of the face in figure 6a.*
 
 ![Faces]({{ site.url }}/blog/images/face_segmentation/single_face/vert_quarters_montage.jpg)
 *Fig. 6c.  Segmentation result for one, two and three quarter 
-cropss along the vertical axis of the face in figure 6a.*
+crops along the vertical axis of the face in figure 6a.*
 
 
 ## References
