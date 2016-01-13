@@ -57,8 +57,8 @@ video cameras. We intentionally placed the signs in locations with
 challenging lighting and clutter conditions which we knew would stress
 automatic recognition. During our algorithm development, we also
 consciously made trades between accuracy and speed. The final version of
-our algorithm chain could search a 640×480 video frame for the 9 TOC signs
-in approximately 6 seconds on a Dell Precision M6400 laptop.
+our algorithm chain could search a 640×480 video frame for the 9 signs in
+approximately 6 seconds on a Dell Precision M6400 laptop.
 
 We present algorithmic details for the primary blocks of figure 2 within
 the subsections below.
@@ -79,16 +79,16 @@ RGB pitfalls by working with grey-scale versions of input images.
 Nevertheless, the gross colorings of the symbols are so salient that they
 cannot be ignored. So we first quantize three-dimensional color space in
 order to reduce image output sensitivity to illumination and sensor
-response variables. Recall that 24-bit images can have 2563=16,777,216
-color combinations per pixel. Rather than describe three-dimensional color
-space in terms of Cartesian red, blue and green coordinates, it is often
-more useful to work instead with hue, saturation and value coordinates. Hue
-is an angular coordinate which ranges from 0° to 360° and intuitively
-correlates with colors of the rainbow. Saturation is a coordinate ranging
-from 0 to 100 which measures admixture of white. The value coordinate also
-ranges from 0 to 100 and indicates color brightness or darkness. A
-two-dimensional slice through HSV space with hue=0 is displayed in figure
-3.
+response variables. Recall that 24-bit images can have
+256x256x256=16,777,216 color combinations per pixel. Rather than describe
+three-dimensional color space in terms of Cartesian red, blue and green
+coordinates, it is often more useful to work instead with hue, saturation
+and value coordinates. Hue is an angular coordinate which ranges from 0° to
+360° and intuitively correlates with colors of the rainbow. Saturation is a
+coordinate ranging from 0 to 100 which measures admixture of white. The
+value coordinate also ranges from 0 to 100 and indicates color brightness
+or darkness. A two-dimensional slice through HSV space with hue=0 is
+displayed in figure 3.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_03.jpg)
 *Fig. 3.  A two-dimensional slice through HSV color space corresponding to
@@ -153,8 +153,6 @@ that yield sign views which the machine has any realistic chance of
 recognizing, projected sign aspect ratios range around a small neighborhood
 of 1:1.
 
-
-
 Other symbol shape properties such as number of interior holes represent
 topological invariants that theoretically remain constant independent of
 viewing geometry. For instance, the red “stop” sign in figure 1 exhibits
@@ -166,8 +164,7 @@ holes when it looks for a “stop” symbol in an image.  In contrast,
 connected components containing many holes are unlikely to correspond to a
 “stop” sign.
 
-
-connected regions within a binary version of figure 5 are color-coded in
+The connected regions within a binary version of figure 5 are color-coded in
 figure 6. For each connected component, we follow [1] and compute the
 region’s aspect ratio, compactness, number of holes and number of
 horizontal crossings. The region’s values for these variables are compared
@@ -194,7 +191,7 @@ the foreground “stop” sign.
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_07.jpg) 
 *Fig. 7.  Purple coloring indicates strong edge contents for connected
 components in figure 5b that border upon regions with white or light grey
-quantized colors.  note that such edges occur inside the "stop" sign.*
+quantized colors.  Note that such edges occur inside the "stop" sign.*
 
 
 After iterating over all connected components in figure 6 and rejecting
@@ -209,7 +206,7 @@ following subsection.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_08.jpg)
 *Fig. 8.  Orange, red and green bounding boxes mark candidate regions
-possibly contaiing the "stop" sign which share the symbol's basic color,
+possibly containing the "stop" sign which share the symbol's basic color,
 edge and shape properties.*
 
 ## Sign classification
@@ -232,9 +229,10 @@ recognition tasks [2]. Such unsupervised feature learning has been applied
 to a wide range of problems including human face identification, voice
 recognition and real-time speech translation [3].  Moreover, unsupervised
 learning algorithms have been demonstrated to recognize text characters
-within uncooperatively-collected images as well as other approaches
-involving carefully hand-selected features [4]. So we adopt this general
-strategy for recognizing signs within video frames.
+within uncooperatively-collected images.  The performance of such
+unsupervised algorithms can beat other approaches based upon carefully
+hand-selected features [4]. So we adopt this general strategy for
+recognizing signs within video frames.
 
 The basic components of our sign classifier subsystem are presented in
 figure 9 which is adapted from [2]. We first synthesize a large corpus of
@@ -254,7 +252,7 @@ are shown in figure 10.
 instances of the "stop" sign.  Thousands of synthesized variations of the
 symbol are first used to generate a feature dictionary via unsupervised
 learning.  The dictionary subsequently becomes an input to an encoder which
-converts pixel pathces into high-dimenisonal feature vectors.  Such feature
+converts pixel patches into high-dimensional feature vectors.  Such feature
 vectors along with "stop sign" or "non-stop sign" labels are used to train
 a linear Support Vector Machine.  Once trained, the SVM can classify new
 pixel patches whose labels are a priori unknown.*
