@@ -49,7 +49,6 @@ annotations that identify symbols recognized by the machine.
 *Fig. 2. Basic algorithm flow for detecting and recognizing the Tech
 Challenge signs.*
 
-
 The algorithm flow in figure 2 was developed on and tested against 4.5K+
 video frames shot during summer 2012. Most of our experiments were
 conducted with images of 2’×2’ versions of the signs collected by hand-held
@@ -114,13 +113,7 @@ black. Thus the total number of our quantized colors equals 7×4+5=33. The
 mapping between 16M+ RGB values to the color labels is stored in
 precalculated lookup tables. So color quantization for any input image
 requires essentially no real-time computation and proceeds very
-quickly. Figure 4 presents one example of a video frame before and after
-quantization.
-
-![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_04.jpg) *Fig. 4.
-General color quantization.  (a) One representative video frame containing
-four signs.  (b) Color-quantized result after replacing every pixel's RGB
-values with one of 33 discrete triples.*
+quickly. 
 
 It is advantageous to allow the precise borders for the 33 quantized
 sectors in 3D color space to depend upon the nine symbols. For instance
@@ -133,15 +126,8 @@ liberalized definitions for “red” and “light red” when it looks for the
 
 Only pixels whose quantized labels match the dominant color content for a
 specified symbol are passed from the first block in our algorithm flow to
-the second (see figure 5). Such pixels along with the sign’s basic shape
-properties become inputs to connected component analysis which we consider
-next.
-
-![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_05.jpg)
-*Fig. 5.  Color quantization results for the "stop" sign.  All pixels in
-figure 4b whose quantized colors do not correspond to red or light-red are
-replaced by a purple coloring.  The machine ignores all purple pixels when
-it continues to search for a "stop" symbol in figure 4a.*
+the second. Such pixels along with the sign’s basic shape properties become
+inputs to connected component analysis which we consider next.
 
 ## Connected component analysis
 
@@ -158,24 +144,17 @@ topological invariants that theoretically remain constant independent of
 viewing geometry. For instance, the red “stop” sign in figure 1 exhibits
 two islands of white pixels surrounded by a sea of red pixels. When
 projected onto a finite-sized image plane, the number of interior white
-holes can actually increase (see figure 4a). Nevertheless, our machine can
-reasonably search for connected pixel regions containing 2 or 3 interior
-holes when it looks for a “stop” symbol in an image.  In contrast,
-connected components containing many holes are unlikely to correspond to a
-“stop” sign.
+holes can actually increase. Nevertheless, our machine can reasonably
+search for connected pixel regions containing 2 or 3 interior holes when it
+looks for a “stop” symbol in an image.  In contrast, connected components
+containing many holes are unlikely to correspond to a “stop” sign.
 
-The connected regions within a binary version of figure 5 are color-coded in
-figure 6. For each connected component, we follow [1] and compute the
-region’s aspect ratio, compactness, number of holes and number of
-horizontal crossings. The region’s values for these variables are compared
-with empirically determined reasonable ranges as a function of symbol
-type. Only components whose measurements are consistent with these ranges
-are retained for subsequent processing.
-
-![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_06.jpg)
-*Fig. 6.  Connected components within a binary version of figure 5 are
-color coded here.  Note that the "stop" sign corresponds to a single
-connected component in this view.*
+For each connected component, we follow [1] and compute the region’s aspect
+ratio, compactness, number of holes and number of horizontal crossings. The
+region’s values for these variables are compared with empirically
+determined reasonable ranges as a function of symbol type. Only components
+whose measurements are consistent with these ranges are retained for
+subsequent processing.
 
 All of the symbols also exhibit strong internal edge content. As the
 background behind any symbol is *a priori* unknown, we cannot assume that
@@ -184,30 +163,16 @@ reasonable illumination conditions, our machine can be expected to locate
 edges inside a sign. Moreover as figure 1 illustrates, such internal edges
 all have a side which is white, black or purple. So we search for strong
 edges within video frames that are adjacent to one of these three internal
-colors as a function of sign type. White edge results are illustrated in
-figure 7. As anticipated, the machine found strong internal edges within
-the foreground “stop” sign.
+colors as a function of sign type. 
 
-![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_07.jpg) 
-*Fig. 7.  Purple coloring indicates strong edge contents for connected
-components in figure 5b that border upon regions with white or light grey
-quantized colors.  Note that such edges occur inside the "stop" sign.*
-
-
-After iterating over all connected components in figure 6 and rejecting
-those whose shape and edge contents are grossly inconsistent with the
-“stop” sign, only 3 candidate regions remain which might plausibly contain
-the symbol of interest. Orange, red and green bounding boxes mark those
-regions in figure 8. At this stage in the algorithm flow, much more
-discriminating tests need to be performed on the surviving candidates in
-order for the machine to determine if any of them actually contain a “stop”
-sign. So we describe the classifier used to recognize symbols in the
-following subsection.
-
-![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_08.jpg)
-*Fig. 8.  Orange, red and green bounding boxes mark candidate regions
-possibly containing the "stop" sign which share the symbol's basic color,
-edge and shape properties.*
+After iterating over all connected components and rejecting those whose
+shape and edge contents are grossly inconsistent with the “stop” sign, only
+a few candidate regions remain which might plausibly contain the symbol of
+interest.  At this stage in the algorithm flow, much more discriminating
+tests need to be performed on the surviving candidates in order for the
+machine to determine if any of them actually contain a “stop” sign. So we
+describe the classifier used to recognize symbols in the following
+subsection.
 
 ## Sign classification
 
@@ -235,7 +200,7 @@ hand-selected features [4]. So we adopt this general strategy for
 recognizing signs within video frames.
 
 The basic components of our sign classifier subsystem are presented in
-figure 9 which is adapted from [2]. We first synthesize a large corpus of
+figure 4 which is adapted from [2]. We first synthesize a large corpus of
 training examples for each symbol to be recognized. The training sets must
 incorporate expected variations for a sign which can reasonably be expected
 to appear within test video frames.  We consequently start with the symbols
@@ -245,10 +210,10 @@ background plane, lighting color plus direction, and gaussian noise content
 are all randomized. Finally, some variable amount of smearing is
 intentionally introduced in order to simulate motion blur. Representative
 examples from 15,000 synthesized “stop” sign images 32×32 pixels in size
-are shown in figure 10.
+are shown in figure 5.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_09.jpg)
-*Fig. 9.  Basic procedure for training a classifier to recognize different
+*Fig. 4.  Basic procedure for training a classifier to recognize different
 instances of the "stop" sign.  Thousands of synthesized variations of the
 symbol are first used to generate a feature dictionary via unsupervised
 learning.  The dictionary subsequently becomes an input to an encoder which
@@ -259,7 +224,7 @@ pixel patches whose labels are a priori unknown.*
 
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_10.jpg)
-*Fig. 10.  Synthetically generated views of the "stop" sign.*
+*Fig. 5.  Synthetically generated views of the "stop" sign.*
 
 A variant of K-means clustering is performed on 8×8 pixel patches sampled
 from the synthesized training images [4]. We choose K=1024 and refine the
@@ -270,10 +235,10 @@ curves and holes that transcend the rotation, coloring and blurring
 variations within the training set.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_11.jpg)
-*Fig. 11.  8x8 pixel patch elements from the "stop" sign dictionary
+*Fig. 6.  8x8 pixel patch elements from the "stop" sign dictionary
 generated via unsupervised feature learning.*
 
-As figure 9 indicates, the dictionary becomes input to an encoder which
+As figure 4 indicates, the dictionary becomes input to an encoder which
 converts 32×32 image regions into feature vectors. The encoder loops over
 all 8×8 pixel patches within an input image, projects each onto the
 dictionary’s K elements, and performs a soft, non-linear reduction onto
@@ -287,15 +252,9 @@ examples and 96K non-sign examples harvested from random internet pictures
 are used to train a linear SVM. We employ the dlib library to compute
 probabilistic decision functions for all nine symbols in figure 1 [6]. New
 image regions may subsequently be classified as a sign or not based upon
-probabilities output by the nine decision functions (see figure 12). We
-intentionally set probability thresholds for sign recognition high in order
-to minimize false alarms.
-
-
-![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_12.jpg)
-*Fig. 12.  The trained SVM correctly classifies one of the three candidate
-regions in figure 8 as corresponding to the "stop" sign and rejects the
-other two.*
+probabilities output by the nine decision functions. We intentionally set
+probability thresholds for sign recognition high in order to minimize false
+alarms.
 
 ## Sign recognition results
 
@@ -307,7 +266,7 @@ in Nov 2012, we unfortunately did not have time to quantify the precision
 and recall of our sign recognition system. So we settled instead for
 qualitatively assessing its performance.
 
-Figure 13 displays 25 representative examples of successful sign
+Figure 7 displays some representative examples of successful sign
 recognition results. The bounding boxes appearing in this figure enclose
 genuine symbols. Moreover, the boxes’ colorings indicate correct sign
 identities: cyan, blue, yellow, white, purple, brick red and cream
@@ -322,21 +281,21 @@ nontrivial automated recognition capability.
 
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_13.jpg)
-*Fig. 13.  Representative examples of successful sign recognition from the
+*Fig. 7.  Representative examples of successful sign recognition from the
 algorithm flow of figure 2.*
 
-Of course, several missed detections are evident in figure 13. Since we
+Of course, several missed detections are evident in figure 7. Since we
 intentionally boosted recognition thresholds in order to minimize false
 alarms, such errors are neither unexpected nor overly worrisome. On the
-other hand, figure 14 exhibits representative examples of sign recognition
-failures which include several incorrect classifications and a few false
+other hand, figure 8 exhibits representative examples of sign recognition
+failures which include incorrect classifications and a few false
 alarms.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_14.jpg)
-*Fig. 14.  Representative examples of sign recognition failures include
+*Fig. 8.  Representative examples of sign recognition failures include
 false positives and false negatives.*
 
-As part of the robotic maze Tech Challenge, we did not attempt to quantify
+As part of the robotic maze competition, we did not attempt to quantify
 either sign recognition precision or recall. But for the 4.5K+ video frames
 collected of the 2’×2’ signs, we estimate that 80% of the frames were
 correctly classified while 20% contained recognition errors.
