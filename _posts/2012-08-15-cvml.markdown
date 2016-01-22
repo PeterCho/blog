@@ -5,17 +5,17 @@ date:   2012-08-15 12:00:0
 categories: unsupervised feature learning
 ---
 
-In Summer 2012, I participated in a robot competition organized by Lincoln
-Laboratory's Technology Office.  The competition centered upon developing
-ground robots which could successfully navigate through an indoor maze.
-Among the many problems which needed to be solved for this technology
-challenge, the one which interested me the most was related to automated
-sign recognition.  In particular, robots were expected to identify various
-symbols placed at *a priori* unknown locations within the maze. These signs
-included four hazard symbols which the ground robot was to avoid and three
-bonus symbols which were supposed to function as attractors. Additional
-start and stop signs marked entrance and egress points for the maze. Figure
-1 pictures the nine signs that were to be automatically recognized.
+In Summer 2012, I participated in a competition that centered upon
+developing ground robots which could successfully navigate through an
+indoor maze.  Among the many problems which needed to be solved for this
+technology challenge, the one which interested me the most was related to
+automated sign recognition.  In particular, robots were expected to
+identify various symbols placed at *a priori* unknown locations within the
+maze. These signs included four hazard symbols which the ground robot was
+to avoid and three bonus symbols which were supposed to function as
+attractors. Additional start and stop signs marked entrance and egress
+points for the maze. Figure 1 pictures the nine signs that were to be
+automatically recognized.
 
 ![Signs]({{ site.url }}/blog/images/TOC12_recog/figure_01.jpg)
 *Fig. 1.  Seven colored plus two black-and-white signs which were to be
