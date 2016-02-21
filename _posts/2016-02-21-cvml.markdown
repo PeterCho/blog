@@ -9,6 +9,8 @@ categories: Deep Learning
 Automatically recognizing text in the wild is a problem which has fasinated
 me for years.  
 
+![Digits]({{ site.url }}/blog/images/digit_recog/mnist_digit_examples.png)
+*Fig. X.  Examples MNIST digits.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/svhn_digit_examples.png)
 *Fig. X.  Examples SVHN digits.*
