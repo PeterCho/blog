@@ -10,28 +10,28 @@ Automatically recognizing text in the wild is a problem which has fasinated
 me for years.  
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/mnist_digit_examples.png)
-*Fig. X.  Examples MNIST digits.*
+*Fig. 1.  Representative examples MNIST digits.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/svhn_digit_examples.png)
-*Fig. X.  Examples SVHN digits.*
+*Fig. 2a.  Representative examples SVHN digits.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/bad_svhn_labels.png)
-*Fig. X.  Examples of mis-labeled SVHN digits.*
+*Fig. 2b.  Examples of SVHN digits which either are unrecognizable or incorrectly wrongly labeled.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png)
-*Fig. X.  Synthetically generated digits.*
+*Fig. 3.  Representative examples of synthetically generated digits.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/training_performance.jpg)
-*Fig. X.  Loss function for synthetically generated digits.*
+*Fig. 4a.  Loss function for synthetically generated digits.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/validation_performance.jpg)
-*Fig. X.  Validation accuracy for synthetically generated digits.*
+*Fig. 4b.  Validation accuracy for synthetically generated digits.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/correctly_classified_svhn.png)
-*Fig. X.  Examples of correctly-classified SVHN digits.*
+*Fig. 5a.  Representative examples of correctly-classified SVHN digits.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/incorrectly_classified_svhn.png)
-*Fig. X.  Examples of incorrectly-classified SVHN digits.*
+*Fig. 5b.  Representative examples  of incorrectly-classified SVHN digits.*
 
 
 ## References
@@ -39,3 +39,10 @@ me for years.
 1.  Y. Netzer, T. Wang, A. Coates, A. Bissacco, B. Wu and A. Y. Ng,
 *Reading Digits in Natural Images with Unsupervised Feature Learning*, NIPS
 Workshop on Deep Learning and Unsupervised Feature Learning, (2011).
+
+2.  M. Jaderberg, K. Simonyan, A. Vedaldi and A. Zisserman, *Synthetic data
+and artificial neural networks for natiural scene text recognition*, arXiv
+1406.2227v4 (2014).
+
+3.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
+Large-Scale Image Recognition*, arXiv 1409.1556, 2015.
