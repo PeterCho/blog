@@ -1,0 +1,34 @@
+---
+layout: post
+title:  "Recognizing Digits via Synthetic Character Generation and Deep
+Network Finetuning"
+date:   2016-02-21 12:00:0
+categories: Deep Learning
+---
+
+Automatically recognizing text in the wild is a problem which has fasinated
+me for years.  
+
+
+
+![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png)
+*Fig. X.  Synthetically generated digits.*
+
+![Digits]({{ site.url }}/blog/images/digit_recog/training_performance.jpg)
+*Fig. X.  Loss function for synthetically generated digits.*
+
+![Digits]({{ site.url }}/blog/images/digit_recog/validation_performance.jpg)
+*Fig. X.  Validation accuracy for synthetically generated digits.*
+
+![Digits]({{ site.url }}/blog/images/digit_recog/correctly_classified_svhn.png)
+*Fig. X.  Examples of correctly-classified SVHN digits.*
+
+![Digits]({{ site.url }}/blog/images/digit_recog/incorrectly_classified_svhn.png)
+*Fig. X.  Examples of incorrectly-classified SVHN digits.*
+
+
+
+
+## References
+
+1.  M. A. Turk and A. P. Pentland, *Face recognition using eigenfaces*, CVPR, (1991).

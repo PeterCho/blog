@@ -2,7 +2,6 @@
 title: Fun with Machine Learning, Computer Vision and Graphics
 email: peter.leslie.cho@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
-  Various ideas, problems and projects in machine learning. computer vision and computer graphics that I find interesting.  Hopefully you may too...
 baseurl: "/blog/" # the subpath of your site, e.g. /blog/
 # baseurl: "" # the subpath of your site, e.g. /blog/
 # url_github: "http://petercho.github.io" # the base hostname & protocol for your site
