@@ -6,43 +6,84 @@ date:   2016-02-21 12:00:0
 categories: Deep Learning
 ---
 
-Automatically recognizing text in the wild is a problem which has fasinated
-me for years.  
+Automatic digit recognition is a classic problem which lies at the
+intersection of machine learning and computer vision.  One of the earliest
+applications of Convolutional Neural Networks (CNNs) was to recognizing
+hand-written digits on envelopes [1].  Lecun and collaborators assembled
+their well-known MNIST data set consisting of 60K examples of greyscale
+digits superposed against 28x28 white pixel backgrounds.  (A few examples
+of MNIST image chips are displayed in figure 1.)  In 1998, these authors
+developed CNNs which could classify input chips as corresponding to digits
+0, 1, 2, ..., 9 with accuracies around 99.3%.  Over the past few years,
+researchers have refined CNNs to classify MNIST digits with accuracies
+close to 99.8% [2].
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/mnist_digit_examples.png)
-*Fig. 1.  Representative examples MNIST digits.*
+*Fig. 1.  Representative examples of MNIST digit image chips.*
+
+In 2011, a team of Stanford researchers harvested a set of digits from
+Google Street View imagery which they dubbed the Street View House Numbers
+(SVHN) data set [3,4].  As figure 2a illustrates, SVHN digits exhibit
+significantly more variation and complexity compared to their MNIST
+predecessors.  Consequently, classifying the former is much more
+challenging than the latter.  SVHN digit recognition accuracies around 98%
+have been reported in the recent literature [2].
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/svhn_digit_examples.png)
-*Fig. 2a.  Representative examples SVHN digits.*
+*Fig. 2.  Representative examples of SVHN digit image chips.*
+
+Unfortunately, we have found a non-negligible number of labeling errors
+within the SVHN data set.  In some cases, not enough genuine text content
+exists within chips for them to be meaningfully assigned digit labels.  In
+other instances, the assigned labels are obviously wrong.  Figure 3
+presents examples of both sorts of problems.  In order to use SVHN image
+chips for classifier testing purposes, we introduce a "non-character" label
+in addition to the 0 - 9 digit labels.  We have also carefully
+doublechecked the label assignments for 3000 SVHN image chips and corrected
+a number of labeling errors.  We work only with this cleaned subset of 3000
+SVHN chips in our digit classification experiments.
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/bad_svhn_labels.png)
-*Fig. 2b.  Examples of SVHN digits which either are unrecognizable or incorrectly wrongly labeled.*
+*Fig. 3.  Examples of SVHN image chips which either are unrecognizable or
+incorrectly labeled.  The originally assigned label for each chip appears
+as the first digit in its JPG image filename.*
 
-![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png)
-*Fig. 3.  Representative examples of synthetically generated digits.*
 
-![Digits]({{ site.url }}/blog/images/digit_recog/training_performance.jpg)
-*Fig. 4a.  Loss function for synthetically generated digits.*
 
-![Digits]({{ site.url }}/blog/images/digit_recog/validation_performance.jpg)
-*Fig. 4b.  Validation accuracy for synthetically generated digits.*
 
-![Digits]({{ site.url }}/blog/images/digit_recog/correctly_classified_svhn.png)
-*Fig. 5a.  Representative examples of correctly-classified SVHN digits.*
+![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png) 
+*Fig. 4.  Representative examples of synthetically generated digits.*
 
-![Digits]({{ site.url }}/blog/images/digit_recog/incorrectly_classified_svhn.png)
-*Fig. 5b.  Representative examples  of incorrectly-classified SVHN digits.*
+![Digits]({{ site.url }}/blog/images/digit_recog/training_performance.jpg)    
+*Fig. 5a.  Loss function for synthetically generated digits.*
+
+![Digits]({{ site.url}}/blog/images/digit_recog/validation_performance.jpg)   
+*Fig. 5b.  Validation accuracy for synthetically generated digits.*
+
+![Digits]({{ site.url}}/blog/images/digit_recog/correctly_classified_svhn.png) 
+*Fig. 6a.  Representative examples of correctly-classified SVHN digits.*
+
+![Digits]({{ site.url}}/blog/images/digit_recog/incorrectly_classified_svhn.png) 
+*Fig. 6b.  Representative examples  of incorrectly-classified SVHN digits.*
 
 
 ## References
 
-1.  Y. Netzer, T. Wang, A. Coates, A. Bissacco, B. Wu and A. Y. Ng,
+1.  Y. LeCun, L. Bottou, Y. Bengio and P. Haffner, *Gradient-based learning
+applied to document recognition*, Proc of IEEE (1998).
+
+2.  See
+http://rodrigob.github.io/are_we_there_yet/build/classification_datasets_results.html .
+
+3.  See http://ufldl.stanford.edu/housenumbers/ .
+
+4.  Y. Netzer, T. Wang, A. Coates, A. Bissacco, B. Wu and A. Y. Ng,
 *Reading Digits in Natural Images with Unsupervised Feature Learning*, NIPS
 Workshop on Deep Learning and Unsupervised Feature Learning, (2011).
 
-2.  M. Jaderberg, K. Simonyan, A. Vedaldi and A. Zisserman, *Synthetic data
+5.  M. Jaderberg, K. Simonyan, A. Vedaldi and A. Zisserman, *Synthetic data
 and artificial neural networks for natiural scene text recognition*, arXiv
 1406.2227v4 (2014).
 
-3.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
+6.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
 Large-Scale Image Recognition*, arXiv 1409.1556, 2015.
