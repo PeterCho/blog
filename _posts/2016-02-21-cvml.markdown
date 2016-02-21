@@ -10,6 +10,11 @@ Automatically recognizing text in the wild is a problem which has fasinated
 me for years.  
 
 
+![Digits]({{ site.url }}/blog/images/digit_recog/svhn_digit_examples.png)
+*Fig. X.  Examples SVHN digits.*
+
+![Digits]({{ site.url }}/blog/images/digit_recog/bad_svhn_labels.png)
+*Fig. X.  Examples of mis-labeled SVHN digits.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png)
 *Fig. X.  Synthetically generated digits.*
