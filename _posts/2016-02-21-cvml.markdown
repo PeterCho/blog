@@ -50,24 +50,85 @@ SVHN chips in our digit classification experiments.
 incorrectly labeled.  The originally assigned label for each chip appears
 as the first digit in its JPG image filename.*
 
-
 ## Synthetic Digit Chip Generation
 
+Digit recognition represents a special case of the more general problem of
+recognizing "text in-the-wild".  Many academics regard standard optical
+character recognition in highly-cooperative settings such as book scanning
+to be a solved problem.  But automatically reading real-world text
+appearing street signs, store fronts, posters, roadway surfaces, etc
+remains an outstanding technical challenge.
+
+The currently most popular and successful approach to object recognition in
+computer vision involves supervised training of CNNs.  Since CNNs typically
+involve millions of free parameters, vast numbers of labeled samples are
+needed to train these data-hungry models.  Unfortunately, generating large
+training sets is laborious and error-prone.  So finding alternatives to
+brute-force labeling of training examples is of significant practical
+interest.
+
+The source for much text-in-the wild can often be traced to computers.  For
+instance, commercial print shops use computers to virtually design and then
+physically print placards for their customers.  So for the particular case
+of text, it is reasonable to ask if synthetically generated characters and
+strings could serve as a source of CNN training data.  If this question has
+an affirmative answer, vast quantities of text training examples could be
+generated with much less effort than by cropping and labeling images of
+real-world text.
+
+Other authors have previously trained CNNs via synthetically generated text
+and reported encouraging recognition results [Jaderberg].  We build upon
+this earlier work and extend it in some new directions.  In particular,
+Jaderberg et al describe in some detail their approach to synthesizing text
+strings [Jaderberg].  They choose to work with greyscale foregrounds, and
+they intentionally introduce potentially confusing background content.  We
+will instead work with colored foregrounds superposed against a larger
+variety of backgrounds.
+
+To begin, we choose 113 true type and open type fonts which we regard as
+"reasonable" approximations to text that frequently appears in the wild.
+32 of these fonts mimic human handwriting, while the regularity of the
+remaining 81 fonts looks like they could only have been written by a
+machine.  These two broad categories of writing styles roughly correspond
+to those encountered among the MNIST and SVHN digits.  Figures 4a and 4b
+exhibit examples of "handwriting" and "computer" fonts that we adopt for
+digit synthesis.
+
+![Digits]({{ site.url }}/blog/images/digit_recog/handwriting_fonts.png) 
+*Fig. 4a.  Representative examples of "handwriting" fonts used for synthetic
+digit generation.*
+
+![Digits]({{ site.url }}/blog/images/digit_recog/computer_fonts.png) 
+*Fig. 4b.  Representative examples of "computer" fonts used for synthetic
+digit generation.*
+
+Looping over a large set of digit characters, we next select an image
+chip's width and aspect ratio according to exponential and gaussian
+distributions. The chip's background is either extracted from 375 internet
+images of different textures (e.g. brick, concrete, glass, marble, metal,
+stone, stucco, wood, etc), or it is set to a random color with possible
+vertical and/or horizontal lines.  We next pick text and stroke colors
+quasi-randomly.  The foregorund colors are forced to be acceptable with the
+previously-selected background color according to a pre-trained SVM
+decision rule.  The text character is then synthesized against black or
+white backgrounds.
+
+
 ![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png) 
-*Fig. 4.  Representative examples of synthetically generated digits.*
+*Fig. 5.  Representative examples of synthetically generated digits.*
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/training_performance.jpg)    
-*Fig. 5a.  Loss function for synthetically generated digits.*
+*Fig. 6a.  Loss function for synthetically generated digits.*
 
 ![Digits]({{ site.url}}/blog/images/digit_recog/validation_performance.jpg)   
-*Fig. 5b.  Validation accuracy for synthetically generated digits.*
+*Fig. 6b.  Validation accuracy for synthetically generated digits.*
 
 ![Digits]({{ site.url}}/blog/images/digit_recog/correctly_classified_svhn.png) 
-*Fig. 6a.  Representative examples of correctly-classified SVHN digits.*
+*Fig. 7a.  Representative examples of correctly-classified SVHN digits.*
 
 ![Digits]({{ site.url}}/blog/images/digit_recog/incorrectly_classified_svhn.png) 
 
-*Fig. 6b.  Representative examples of incorrectly-classified SVHN digits.
+*Fig. 7b.  Representative examples of incorrectly-classified SVHN digits.
 The output label for each chip appears as the last digit in its JPG image
 filename.*
 
@@ -87,7 +148,7 @@ filename.*
 |**9**  |  0  	|  3  	|  0	|  0  	|  1  	|  11  	|  1	|  0  	|  0  	|  4  	|  565 	|
 
 
-*Fig. 7.  Classified digits' confusion matrix*
+*Fig. 8.  Classified digits' confusion matrix*
 
 
 ## Ensemble Averaging
@@ -104,7 +165,7 @@ filename.*
 |   7		|  704 		| 0.9217  	| 626  		| 0.9165	|
 |   8		|  706 		| 0.9215  	| 606  		| 0.9192	|
 
-*Fig. 8.  Ensemble performance statistics*
+*Fig. 9.  Ensemble performance statistics*
 
 
 ## References
@@ -118,7 +179,7 @@ http://rodrigob.github.io/are_we_there_yet/build/classification_datasets_results
 3.  See http://ufldl.stanford.edu/housenumbers/ .
 
 4.  Y. Netzer, T. Wang, A. Coates, A. Bissacco, B. Wu and A. Y. Ng,
-*Reading Digits in Natural Images with Unsupervised Feature Learning*, NIPS
+*Reading digits in natural images with unsupervised feature learning*, NIPS
 Workshop on Deep Learning and Unsupervised Feature Learning, (2011).
 
 5.  M. Jaderberg, K. Simonyan, A. Vedaldi and A. Zisserman, *Synthetic data
@@ -126,6 +187,7 @@ and artificial neural networks for natiural scene text recognition*, arXiv
 1406.2227v4 (2014).
 
 6.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
-Large-Scale Image Recognition*, arXiv 1409.1556, 2015.
+Large-Scale Image Recognition*, arXiv 1409.1556, (2015).
 
-
+7.  T. G. Dietterich, *Ensemble methods in machine learning,* In Multiple
+classifier systems, pages 1–15. Springer, (2000).
