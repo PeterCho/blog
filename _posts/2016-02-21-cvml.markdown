@@ -152,18 +152,38 @@ figure 2.
 
 ## DNN Model Finetuning
 
-Starting with the classic paper of Lecun et al [1], CNN approaches to
-digit recognition have usually involved architecting and training
-customized networks.  We are interested in asking how well simply
-finetuning a previously trained deep neural network (DNN) can work.  
+Starting with the classic paper of Lecun et al [1], CNN approaches to digit
+recognition have usually involved architecting and training customized
+networks.  We are interested in asking how well simply finetuning a
+previously trained deep neural network (DNN) can work.  So we start with
+the VGG-16 model [6] and replace its last layer holding 1000 ImageNet
+classification categories with a new layer corresponding to the 11 labels
+non-char, 0, 1, 2, ..., 9.  
 
 
+Using the caffe framework [caffe], we then
+retrain this modified VGG model using O(140K) synthesized image chips.  20%
+of the synthetic data is reserved for model validation.  Consequently, each
+of our 11 labeled categories has O(10K) synthetically generated training
+samples.
+
+The training loss function and validation accuracy are displayed over 3
+epochs in figures 6a and 6b:
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/training_performance.jpg)    
 *Fig. 6a.  Loss function for synthetically generated digits.*
 
 ![Digits]({{ site.url}}/blog/images/digit_recog/validation_performance.jpg)   
 *Fig. 6b.  Validation accuracy for synthetically generated digits.*
+
+
+Talk about VGG performance on SVHN and MNIST when finetuning is performed
+on actual SVHN and MNIST chips.  5% better than synthetic results.  But
+then note performance of these specialized networks on each other.  Very
+bad results.  So synthetic approach offers opportunity for developing a
+universal classifier!
+
+
 
 ![Digits]({{ site.url}}/blog/images/digit_recog/correctly_classified_svhn.png) 
 *Fig. 7a.  Representative examples of correctly-classified SVHN digits.*
@@ -231,5 +251,7 @@ and artificial neural networks for natiural scene text recognition*, arXiv
 6.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
 Large-Scale Image Recognition*, arXiv 1409.1556, (2015).
 
-7.  T. G. Dietterich, *Ensemble methods in machine learning,* In Multiple
+7.  See http://caffe.berkeleyvision.orig.
+
+8.  T. G. Dietterich, *Ensemble methods in machine learning,* In Multiple
 classifier systems, pages 1–15. Springer, (2000).
