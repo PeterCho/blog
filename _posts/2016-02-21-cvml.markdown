@@ -6,7 +6,7 @@ date:   2016-02-21 12:00:0
 categories: Deep Learning
 ---
 
-## Digit Image Chips
+## Digit Chip Data
 
 Automatic digit recognition is a classic problem which lies at the
 intersection of machine learning and computer vision.  One of the earliest
@@ -102,20 +102,62 @@ digit generation.*
 *Fig. 4b.  Representative examples of "computer" fonts used for synthetic
 digit generation.*
 
-Looping over a large set of digit characters, we next select an image
-chip's width and aspect ratio according to exponential and gaussian
-distributions. The chip's background is either extracted from 375 internet
-images of different textures (e.g. brick, concrete, glass, marble, metal,
-stone, stucco, wood, etc), or it is set to a random color with possible
-vertical and/or horizontal lines.  We next pick text and stroke colors
-quasi-randomly.  The foregorund colors are forced to be acceptable with the
-previously-selected background color according to a pre-trained SVM
-decision rule.  The text character is then synthesized against black or
-white backgrounds.
+Looping over a large set of digit characters, we select an image chip's
+width and aspect ratio according to exponential and gaussian
+distributions. The chip's background is then either extracted from 375
+internet images of different textures (e.g. brick, concrete, glass, marble,
+metal, stone, stucco, wood, etc), or it is set to a random color which may
+contain a few vertical and/or horizontal lines.  We next quasi-randomly
+pick text and stroke colors.  The foreground colors are required to be
+acceptable with the previously-selected background color according to a
+pre-trained SVM decision rule.  
 
+The text character is initially synthesized against black or white
+backgrounds depending upon the foreground color's brightness.  The
+character is next rotated in three dimensions.  Azimuth, elevation and roll
+angles are random variables selected from gaussian distributions chosen to
+simulate camera views of text in the wild.  The rotated synthetic character
+is subsequently projected back into a 2D image plane.  At least 60% of the
+text charater's foreground content is required to actually appear inside
+the rotated image chip.  If the foreground fraction is less than 25%, the
+image chip's classification label is reset to "non-character".  Rotated
+characters with foreground content between 25% - 60% are discarded.
+Non-text image chips are also intentionally generated with frequency
+comparable to 1/n_classes.
+
+Surviving text character foregrounds are superposed onto nontrivial
+backgrounds.  Separate color channel averaging is performed near the text
+character's border.  The RGB content of the superposed image is compared
+with that of progenitor background chip.  If the two RGB contents do not
+significantly differ, the candidate text chip is rejected.
+
+In the final steps of the synthetic digit generation pipeline, image chips
+are intentionally corrupted.  For example, we pick a random line passing
+through some small fraction of the chips.  Intensities for all pixels lying
+below this line are then decreased by 50% relative to their original
+values.  The resulting chips appear to include simulated solar shadows.
+Random gaussian noise is also added to all image chips.  And random
+blurring is performed on a percentage of the final image chips.
+
+This entire synthetic text character formation procedure runs fairly
+quickly.  Our linux computer generates 100K+ simulated digits in less than
+30 minutes.  Figure 5 illustrates representative examples of synthetic
+digit as well as non-character image chips.  Although we cannot expect to
+capture all possible variations exhibited by text in the real world, the
+synthetic chips in figure 5 look qualitatively similar to the SVHN chips in
+figure 2.
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png) 
 *Fig. 5.  Representative examples of synthetically generated digits.*
+
+## DNN Model Finetuning
+
+Starting with the classic paper of Lecun et al [1], CNN approaches to
+digit recognition have usually involved architecting and training
+customized networks.  We are interested in asking how well simply
+finetuning a previously trained deep neural network (DNN) can work.  
+
+
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/training_performance.jpg)    
 *Fig. 6a.  Loss function for synthetically generated digits.*
@@ -133,39 +175,39 @@ The output label for each chip appears as the last digit in its JPG image
 filename.*
 
 
-|       | non	| 0 	| 1	|  2 	|  3	|  4 	|  5 	|  6 	|  7  	|  8 	| 9 	|
-|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
-|**non**| 251   |  28  	| 12  	|  4  	|  2  	|  9   	| 16  	|  7  	|  2  	| 10  	|  28 	|
-|**0**	|  7  	| 775 	|  6  	|  0  	|  0  	|  2   	|  0  	|  1  	|  0  	|  1  	|  0  	|
-|**1** 	|  3  	|  1  	| 760 	|  2  	|  1  	|  52  	|  5  	|  0  	|  2  	|  0  	|  2	|
-|**2**	|  6  	|  2 	|  11	|1317 	|  0  	|  10  	|  0	|  0  	|  2  	|  6  	|  32 	|
-|**3**	|  6	|  1  	|  4	|  3  	| 922 	|  9  	| 85	|  17 	|  11 	| 19  	|   6  	|
-|**4**  |  2  	|  1  	|  24	|  24 	|  0  	| 632  	|  0	|  6  	|  3  	|  0  	|   4  	|
-|**5**	|  8  	|  3  	|  0	|  0  	|  1  	|  6   	| 970 	|  43 	|  0  	|  0  	|   1  	|
-|**6**  |  8  	|  15 	|  0	|  2  	|  4  	|  0   	|  3	| 748 	|  0  	|  31 	|   2  	|
-|**7**  |  10 	|  1  	| 103	|  17 	|  2  	|  9   	|  0	|  0  	| 556 	|  1  	|   6  	|
-|**8**	|  0  	|  16 	|  0	|  0  	|  4  	|  0   	|  3	|  3  	|  0  	| 676 	|   9  	|
-|**9**  |  0  	|  3  	|  0	|  0  	|  1  	|  11  	|  1	|  0  	|  0  	|  4  	|  565 	|
-
-
-*Fig. 8.  Classified digits' confusion matrix*
-
-
 ## Ensemble Averaging
 
 |  number   	| SVHN    	| Correct    	| MNIST  	| Correct 	|
-|  models  	| errors   	| fraction   	| errors 	| fraction  	|
+|  models  	| errors   	| percentage   	| errors 	| percentage  	|
 |:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
-|   1		|  828 		| 0.9080  	| 708  		| 0.9056	|
-|   2		|  771 		| 0.9143  	| 664  		| 0.9114	|
-|   3 		|  752 		| 0.9164  	| 644  		| 0.9136	|
-|   4 		|  729 		| 0.9190  	| 641  		| 0.9141	|
-|   5		|  717 		| 0.9203  	| 641		| 0.9145	|
-|   6		|  723 		| 0.9196  	| 644  		| 0.9141	|
-|   7		|  704 		| 0.9217  	| 626  		| 0.9165	|
-|   8		|  706 		| 0.9215  	| 606  		| 0.9192	|
+|   1		|  828 		| 90.80  	| 708  		| 90.56	|
+|   2		|  771 		| 91.43  	| 664  		| 91.14	|
+|   3 		|  752 		| 91.64  	| 644  		| 91.36	|
+|   4 		|  729 		| 91.90  	| 641  		| 91.41	|
+|   5		|  717 		| 92.03  	| 641		| 91.45	|
+|   6		|  723 		| 91.96  	| 644  		| 91.41	|
+|   7		|  704 		| 92.17  	| 626  		| 91.65	|
+|   8		|  706 		| 92.15  	| 606  		| 91.92	|
 
-*Fig. 9.  Ensemble performance statistics*
+*Fig. 8.  Ensemble performance statistics*
+
+
+|       | non	| 0 	| 1	|  2 	|  3	|  4 	|  5 	|  6 	|7  	|  8 	| 9 	| n_incorrect | percent incorrect |
+|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----------:|:-----------------:|
+|**non**| 262   |  30  	| 15  	|  5  	|  0  	|  4   	| 15  	|  6  	| 2	| 12  	|  18 	| 107         |  29.00 |
+|**0**	|  6  	| 780 	|  6  	|  0  	|  0  	|  0   	|  0  	|  0  	| 0	|  0  	|  0  	| 12          | 1.52   |
+|**1** 	|  2  	|  0  	| 771 	|  0  	|  0  	|  48  	|  6  	|  0  	| 0	|  0  	|  1	| 57 	      |  6.88  |
+|**2**	|  2  	|  0 	|  12	|1325 	|  0  	|  13  	|  0	|  0  	| 0	|  9  	|  25 	| 61          | 4.40 |
+|**3**	|  9	|  1  	|  3	|  3  	| 954 	|  7  	| 54	|  20 	| 9	| 15  	|   8  	| 129         | 1.19 |
+|**4**  |  6  	|  0  	|  27	|  22 	|  0  	| 629  	|  0	|  3  	| 3	|  2  	|   4  	| 67 	      | 9.63 |
+|**5**	|  9  	|  3  	|  0	|  0  	|  0  	|  6   	| 984 	|  30 	| 0	|  0  	|   0  	| 48 	      | 4.65 |
+|**6**  |  7  	|  15 	|  0	|  0  	|  3  	|  0   	|  3	| 764 	| 0	|  21 	|   0  	| 49          | 6.03 |
+|**7**  |  9 	|  3  	|  93	|  9 	|  3  	|  9   	|  0	|  0	|575 	|  0  	|   4  	| 130 	      | 18.44|
+|**8**	|  0  	|  12 	|  0	|  0  	|  3  	|  0   	|  0	|  6  	| 0	| 681 	|   9  	| 30 	      | 4.22 |
+|**9**  |  0  	|  6 	|  3	|  0  	|  0  	|  5  	|  0	|  0  	| 0	|  2 	|  569 	| 16          | 2.73 |
+
+
+*Fig. 9.  Classified SVHN digits' confusion matrix for 8-model ensemble.*
 
 
 ## References
