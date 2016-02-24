@@ -103,14 +103,16 @@ digit generation.*
 digit generation.*
 
 Looping over a large set of digit characters, we select an image chip's
-width and aspect ratio according to exponential and gaussian
-distributions. The chip's background is then either extracted from 375
-internet images of different textures (e.g. brick, concrete, glass, marble,
-metal, stone, stucco, wood, etc), or it is set to a random color which may
-contain a few vertical and/or horizontal lines.  We next quasi-randomly
-pick text and stroke colors.  The foreground colors are required to be
-acceptable with the previously-selected background color according to a
-pre-trained SVM decision rule.  
+width and aspect ratio according to exponential and gaussian distributions.
+The chip's pixel width is required to lie within the interval [27,80],
+while its aspect ratio is confined to the interval [0.35, 0.85].  The
+chip's background is then either extracted from 375 internet images of
+different textures (e.g. brick, concrete, glass, marble, metal, stone,
+stucco, wood, etc), or it is set to a random color which may contain a few
+vertical and/or horizontal lines.  We next quasi-randomly pick text and
+stroke colors.  The foreground colors are required to be acceptable with
+the previously-selected background color according to a pre-trained SVM
+decision rule.
 
 The text character is initially synthesized against black or white
 backgrounds depending upon the foreground color's brightness.  The
@@ -212,7 +214,7 @@ filename.*
 *Fig. 8.  Ensemble performance statistics*
 
 
-|       | non	| 0 	| 1	|  2 	|  3	|  4 	|  5 	|  6 	|7  	|  8 	| 9 	| n_incorrect | percent incorrect |
+|       | non	| 0 	| 1	|  2 	|  3	|  4 	|  5 	|  6 	|7	|  8 	| 9 	| # incorrect | % incorrect |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----------:|:-----------------:|
 |**non**| 262   |  30  	| 15  	|  5  	|  0  	|  4   	| 15  	|  6  	| 2	| 12  	|  18 	| 107         |  29.00 |
 |**0**	|  6  	| 780 	|  6  	|  0  	|  0  	|  0   	|  0  	|  0  	| 0	|  0  	|  0  	| 12          | 1.52   |
