@@ -300,8 +300,9 @@ rotation were first detected and removed, we suspect our trained ensemble
 would much less frequently misclassify "7" as "1".  So to make further
 progress, it makes more sense to investigate detection and extraction of
 entire numerals from images in the wild rather than continue concentrating
-upon individual digit recognition.  Semantic image segmentation offers a
-potentially attractive mechanism for text in the wild detection.
+upon individual digit recognition.  Semantic image segmentation techniques
+like those we discussed in our previous blog post potentially offer an
+attractive mechanism for detecting text in the wild.
 
 Finally, we have focused upon DNN model finetuning in this blog post
 primarily for convenience.  But it would not be surprising if specialized
