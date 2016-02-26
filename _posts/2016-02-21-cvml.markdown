@@ -149,7 +149,7 @@ capture all possible variations exhibited by text in the real world, the
 synthetic chips in figure 5 look qualitatively similar to the SVHN chips in
 figure 2.
 
-![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png) 
+![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png)  
 *Fig. 5.  Representative examples of synthetically generated digits.*
 
 ## DNN Model Finetuning
@@ -162,42 +162,84 @@ the VGG-16 model [6] and replace its last layer holding 1000 ImageNet
 classification categories with a new layer corresponding to the 11 labels
 non-char, 0, 1, 2, ..., 9.  
 
+Working within the caffe framework [7], we retrain the slightly modified
+VGG-16 model using O(140K) synthesized image chips.  We reserve 20% of the
+synthetic data for model validation.  Consequently, each of our 11 labeled
+categories, including the non-character class, has O(10K) synthetically
+generated training samples.
 
-Using the caffe framework [caffe], we then
-retrain this modified VGG model using O(140K) synthesized image chips.  20%
-of the synthetic data is reserved for model validation.  Consequently, each
-of our 11 labeled categories has O(10K) synthetically generated training
-samples.
-
-The training loss function and validation accuracy are displayed over 3
-epochs in figures 6a and 6b:
+We synthesized a dozen different sets of O(140K) digit image chips and
+finetuned the modified VGG-16 model on each of them.  Figure 6 displays the
+training loss function and validation accuracy over 3 epochs for one
+representative run of model finetuning:
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/training_performance.jpg)    
-*Fig. 6a.  Loss function for synthetically generated digits.*
-
 ![Digits]({{ site.url}}/blog/images/digit_recog/validation_performance.jpg)   
-*Fig. 6b.  Validation accuracy for synthetically generated digits.*
+*Fig. 6.  Loss function and validation accuracy for synthetically
+generated digits plotted against fine tuning epoch.*
 
-
-Talk about VGG performance on SVHN and MNIST when finetuning is performed
-on actual SVHN and MNIST chips.  5% better than synthetic results.  But
-then note performance of these specialized networks on each other.  Very
-bad results.  So synthetic approach offers opportunity for developing a
-universal classifier!
-
-
+After finetuning multiple VGG-16 models, we performed inference using the
+retrained models on our cleaned set of 3000 SVHN digit chips.  We could
+then evaluate the synthetically-trained models' accuracy on real-world
+data.  For example, one of the finetuned models correctly classified 2724
+of the 3000 SVHN digits which implies a precision accuracy of 90.80%.
+(Representative examples of SVHN chips correctly and incorrectly classified
+by a synthetically-trained VGG-16 model are presented in figures 7a and
+7b.)  This same model correctly classified 2249 of 2500 MNIST digits to
+yield a 89.96% recognition rate on a different real-world data set.
 
 ![Digits]({{ site.url}}/blog/images/digit_recog/correctly_classified_svhn.png) 
-*Fig. 7a.  Representative examples of correctly-classified SVHN digits.*
+*Fig. 7a.  Representative examples of SVHN digits correctly classified by a
+VGG-16 model finetuned on synthetic data.*
 
 ![Digits]({{ site.url}}/blog/images/digit_recog/incorrectly_classified_svhn.png) 
 
-*Fig. 7b.  Representative examples of incorrectly-classified SVHN digits.
-The output label for each chip appears as the last digit in its JPG image
-filename.*
+*Fig. 7b.  Representative examples of SVHN digits incorrectly classified by
+a VGG-16 model finetuned on synthetic data.  The model's inference label
+for each chip appears as the last digit in its JPG image filename.*
 
+It is interesting to compare these recognition rates from one
+synthetically-trained model with those corresponding to VGG-16 models
+finetuned on genuine SVHN and MNIST image chips.  Therefore, we finetuned
+VGG-16 on a set of O(60K) SVHN digits which contained no non-character
+chips.  Its recognition performance on the set of 3000 held-out SVHN chips
+was 96.63%.  But this same model only correctly classified 59.44% of our
+2500 test MNIST digits.  Similarly, ...[we need to compute analogous
+figures for a VGG-16 model finetuned on O(60K) real MNIST digits].
+
+These comparisons demonstrate an important potential for synthetic data to
+yield a **_universal_** text classifier.  Training a classifier on particular
+imagery populations (e.g. SVHN digits, MNIST digits, etc ) will presumably
+always yield higher recognition rates at test time on those same
+populations.  But training a classifier on synthetic data offers the hope
+for recognizing text across all populations at reasonably high precision
+and recall.
 
 ## Ensemble Averaging
+
+Averaging predictions from multiple trained models has long been known to
+improve performance relative to any single classifier [8].  For digit
+recognition, we can readily synthesize different sets of training data and
+finetune models on each one.  We then perform inference using an ensemble
+of models with some method for combining their predictions.  We have
+experimented with simple voting, arithmetic and geometric averaging of
+probability distributions, and winner-takes-all schemes.  To our surprise,
+we empirically found winner-takes-all works best.  In this approach, the
+classification label is set based on the highest-valued classification
+score from all ensemble model predictions.
+
+Figure 8 tabulates digit recognition performance for ensembles containing 1
+through 8 models randomly selected from 12 finetuned VGG-16 models.  For
+each test sample in our sets of 3000 cleaned SVHN images and 2500 MNIST
+images, we randomly select models without replacement 3 times to form
+ensembles of sizes specified in the table's rows.  The total number of
+classification errors made on 9000 SVHN and 7500 MNIST tests are presented
+in the table's second and fourth columns.  As the number of models within
+the ensembles increases from 1 to 8, the recognition performance of our
+synthetically trained VGG-16 models increases by 1.3% on both SVHN and
+MNIST digit chips.  We did not observe any statistically significant
+performance improvement when the number of ensemble models was increased
+beyond 8.
 
 |  number   	| SVHN    	| Correct    	| MNIST  	| Correct 	|
 |  models  	| errors   	| percentage   	| errors 	| percentage  	|
@@ -211,8 +253,21 @@ filename.*
 |   7		|  704 		| 92.17  	| 626  		| 91.65	|
 |   8		|  706 		| 92.15  	| 606  		| 91.92	|
 
-*Fig. 8.  Ensemble performance statistics*
+*Fig. 8.  Digit recognition performance for ensembles of finetuned VGG-16
+models.*
 
+## Future Work
+
+In order to improve digit recognition via synthetic character generation,
+there are several avenues worth exploring in the future.  Firstly, the
+confusion matrix presented in figure 9 provides some clues.  Each row in
+the matrix corresponds to some SVHN digit type or non-character, while its
+columns show how those types were classified by the 8-model ensemble.  The
+final column in figure 9 clearly indicates that much more work is needed in
+order to minimize the number of non-character image chips which are
+incorrectly classified as digit chips.  Presumably, the false positive
+error rate can be brought down by including more non-character chips in the
+training sets.  
 
 |       | non	| 0 	| 1	|  2 	|  3	|  4 	|  5 	|  6 	|7	|  8 	| 9 	| # incorrect | % incorrect |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----------:|:-----------------:|
@@ -228,9 +283,28 @@ filename.*
 |**8**	|  0  	|  12 	|  0	|  0  	|  3  	|  0   	|  0	|  6  	| 0	| 681 	|   9  	| 30 	      | 4.22 |
 |**9**  |  0  	|  6 	|  3	|  0  	|  0  	|  5  	|  0	|  0  	| 0	|  2 	|  569 	| 16          | 2.73 |
 
-
 *Fig. 9.  Classified SVHN digits' confusion matrix for 8-model ensemble.*
 
+We further observe from the confusion matrix that "7" is the most
+problematic digit, for it is frequently misidentified as "1".  Two examples
+of such erroneous "7" misclassification are displayed in figure 7b.  In
+these cases, the "7" digits belong to numerals which are slanted upwards
+rather than aligned with the horizontal axis.  If the numerals' nontrivial
+rotation were first detected and removed, we suspect that our trained
+ensemble would much less frequently misclassify "7" as "1".  So to make
+further progress, we believe it more sense to investigate detection and
+extraction of entire numerals from images in the wild rather than continue
+concentrating upon individual digit recognition.  
+
+Finally, we have focused upon DNN model finetuning in this blog post
+primarily for convenience.  But it would not be surprising if specialized
+networks architected were found to yield superior performance for text
+recognition applications.  Since arbitrarily large volumes of synthetic
+text can be generated, training such specialized networks from scratch
+should be straightforward.
+
+We intend to return to all these interesting avenues for further research
+in the future.
 
 ## References
 
