@@ -8,24 +8,24 @@ categories: Deep Learning
 
 ## Digit Chip Data
 
-Automatic digit recognition is a classic problem which lies at the
-intersection of machine learning and computer vision.  One of the earliest
-applications of Convolutional Neural Networks (CNNs) was to recognizing
-hand-written digits on envelopes [1].  Lecun and collaborators assembled
-their well-known MNIST data set consisting of 60K examples of greyscale
-digits superposed against 28x28 white pixel backgrounds.  (A few examples
-of MNIST image chips are displayed in figure 1.)  In 1998, these authors
-developed CNNs which could classify input chips as corresponding to digits
-0, 1, 2, ..., 9 with accuracies around 99.3%.  Over the past few years,
-researchers have refined CNNs to classify MNIST digits with accuracies
-close to 99.8% [2].
+Automatic digit recognition is a classic problem at the intersection of
+machine learning and computer vision.  One of the earliest applications of
+Convolutional Neural Networks (CNNs) was to recognizing hand-written digits
+[1].  Lecun and collaborators assembled their well-known "Modified NIST
+(MNIST)" data set consisting of 60K examples of greyscale digits superposed
+against 28x28 white pixel backgrounds.  (A few examples of MNIST image
+chips are displayed in figure 1.)  In 1998, these authors developed CNNs
+which could classify input chips as corresponding to digits 0, 1, 2, ..., 9
+with accuracies around 99.3%.  Over the past few years, researchers have
+refined CNNs to classify MNIST digits with accuracies approaching 99.8%
+[2].
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/mnist_digit_examples.png)
 *Fig. 1.  Representative examples of MNIST digit image chips.*
 
 In 2011, a team of Stanford researchers harvested a set of digits from
 Google Street View imagery which they dubbed the Street View House Numbers
-(SVHN) data set [3,4].  As figure 2a illustrates, SVHN digits exhibit
+(SVHN) data set [3,4].  As figure 2 illustrates, SVHN digits exhibit
 significantly more variation and complexity compared to their MNIST
 predecessors.  Consequently, classifying the former is much more
 challenging than the latter.  SVHN digit recognition accuracies around 98%
@@ -38,17 +38,21 @@ Unfortunately, we have found a non-negligible number of labeling errors
 within the SVHN data set.  In some cases, not enough genuine text content
 exists within chips for them to be meaningfully assigned digit labels.  In
 other instances, the assigned labels are obviously wrong.  Figure 3
-presents examples of both sorts of problems.  In order to use SVHN image
-chips for classifier testing purposes, we introduce a "non-character" label
-in addition to the 0 - 9 digit labels.  We have also carefully
-doublechecked the label assignments for 3000 SVHN image chips and corrected
-a number of labeling errors.  We work only with this cleaned subset of 3000
-SVHN chips in our digit classification experiments.
+presents examples of both problems:
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/bad_svhn_labels.png)
 *Fig. 3.  Examples of SVHN image chips which either are unrecognizable or
 incorrectly labeled.  The originally assigned label for each chip appears
 as the first digit in its JPG image filename.*
+
+
+In order to use SVHN image chips for classifier testing purposes, we
+introduce a "non-character" label in addition to the original 0 - 9 digit
+labels.  We have also carefully doublechecked the label assignments for
+3000 SVHN image chips and corrected a number of labeling errors.  We only
+work with this cleaned subset of 3000 SVHN chips in our digit
+classification experiments.
+
 
 ## Synthetic Digit Chip Generation
 
@@ -64,8 +68,7 @@ computer vision involves supervised training of CNNs.  Since CNNs typically
 involve millions of free parameters, vast numbers of labeled samples are
 needed to train these data-hungry models.  Unfortunately, generating large
 training sets is laborious and error-prone.  So finding alternatives to
-brute-force labeling of training examples is of significant practical
-interest.
+brute-force labeling of training examples is of great practical interest.
 
 The source for much text-in-the wild can often be traced to computers.  For
 instance, commercial print shops use computers to virtually design and then
@@ -77,22 +80,22 @@ generated with much less effort than by cropping and labeling images of
 real-world text.
 
 Other authors have previously trained CNNs via synthetically generated text
-and reported encouraging recognition results [Jaderberg].  We build upon
-this earlier work and extend it in some new directions.  In particular,
-Jaderberg et al describe in some detail their approach to synthesizing text
-strings [Jaderberg].  They choose to work with greyscale foregrounds, and
-they intentionally introduce potentially confusing background content.  We
-will instead work with colored foregrounds superposed against a larger
-variety of backgrounds.
+and reported encouraging recognition results [5].  We build upon this
+earlier work and extend it in new directions.  In particular, Jaderberg et
+al describe in some detail their approach to synthesizing text strings [5].
+They choose to work with greyscale foregrounds, and they intentionally
+introduce potentially confusing background content.  We will instead work
+with colored foregrounds superposed against a larger variety of
+backgrounds.
 
 To begin, we choose 113 true type and open type fonts which we regard as
 "reasonable" approximations to text that frequently appears in the wild.
-32 of these fonts mimic human handwriting, while the regularity of the
-remaining 81 fonts looks like they could only have been written by a
-machine.  These two broad categories of writing styles roughly correspond
-to those encountered among the MNIST and SVHN digits.  Figures 4a and 4b
-exhibit examples of "handwriting" and "computer" fonts that we adopt for
-digit synthesis.
+Among the 113 fonts, 32 mimic human handwriting, while the regularity of
+the remaining 81 looks like they could only have been written by a machine.
+These two broad categories of writing styles roughly correspond to those
+encountered among the MNIST and SVHN digits.  Figures 4a and 4b exhibit
+examples of "handwriting" and "computer" fonts that we adopt for digit
+synthesis.
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/handwriting_fonts.png) 
 *Fig. 4a.  Representative examples of "handwriting" fonts used for synthetic
@@ -110,7 +113,7 @@ chip's background is then either extracted from 375 internet images of
 different textures (e.g. brick, concrete, glass, marble, metal, stone,
 stucco, wood, etc), or it is set to a random color which may contain a few
 vertical and/or horizontal lines.  We next quasi-randomly pick text and
-stroke colors.  The foreground colors are required to be acceptable with
+stroke colors.  The foreground colors are required to be visible against
 the previously-selected background color according to a pre-trained SVM
 decision rule.
 
@@ -125,21 +128,22 @@ the rotated image chip.  If the foreground fraction is less than 25%, the
 image chip's classification label is reset to "non-character".  Rotated
 characters with foreground content between 25% - 60% are discarded.
 Non-text image chips are also intentionally generated with frequency
-comparable to 1/n_classes.
+comparable to 1/n_classes = 1/10. 
 
 Surviving text character foregrounds are superposed onto nontrivial
-backgrounds.  Separate color channel averaging is performed near the text
+backgrounds.  Individual color channel averaging is performed near the text
 character's border.  The RGB content of the superposed image is compared
 with that of progenitor background chip.  If the two RGB contents do not
-significantly differ, the candidate text chip is rejected.
+significantly differ so that the foreground digit can at least barely be
+seen against its background, the candidate text chip is rejected.
 
 In the final steps of the synthetic digit generation pipeline, image chips
 are intentionally corrupted.  For example, we pick a random line passing
 through some small fraction of the chips.  Intensities for all pixels lying
 below this line are then decreased by 50% relative to their original
-values.  The resulting chips appear to include simulated solar shadows.
-Random gaussian noise is also added to all image chips.  And random
-blurring is performed on a percentage of the final image chips.
+values.  The resulting chips thus include simulated solar shadows.  Random
+gaussian noise is also added to all image chips.  And random blurring is
+performed on a percentage of the final chips.
 
 This entire synthetic text character formation procedure runs fairly
 quickly.  Our linux computer generates 100K+ simulated digits in less than
@@ -149,36 +153,37 @@ capture all possible variations exhibited by text in the real world, the
 synthetic chips in figure 5 look qualitatively similar to the SVHN chips in
 figure 2.
 
-![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png)  
-*Fig. 5.  Representative examples of synthetically generated digits.*
+![Digits]({{ site.url }}/blog/images/digit_recog/synthesized_digits.png)
+*Fig. 5.  Representative examples of synthetically generated digit and
+non-character chips.*
 
 ## DNN Model Finetuning
 
-Starting with the classic paper of Lecun et al [1], CNN approaches to digit
+Starting with the 1998 paper of Lecun et al [1], CNN approaches to digit
 recognition have usually involved architecting and training customized
 networks.  We are interested in asking how well simply finetuning a
-previously trained deep neural network (DNN) can work.  So we start with
-the VGG-16 model [6] and replace its last layer holding 1000 ImageNet
-classification categories with a new layer corresponding to the 11 labels
-non-char, 0, 1, 2, ..., 9.  
+previously trained deep neural network (DNN) can work.  So we begin with
+the VGG-16 model on ImageNet photos [6] and replace its last layer holding
+1000 classification categories with a new layer corresponding to the 11
+labels "non-character", "0", "1", ..., "9".
 
-Working within the caffe framework [7], we retrain the slightly modified
-VGG-16 model using O(140K) synthesized image chips.  We reserve 20% of the
+Working within the caffe framework [7], we retrain the modified VGG-16
+model using O(140K) synthesized image chips.  We reserve 20% of the
 synthetic data for model validation.  Consequently, each of our 11 labeled
 categories, including the non-character class, has O(10K) synthetically
 generated training samples.
 
-We synthesized a dozen different sets of O(140K) digit image chips and
-finetuned the modified VGG-16 model on each of them.  Figure 6 displays the
-training loss function and validation accuracy over 3 epochs for one
-representative run of model finetuning:
+We synthesize a dozen independent sets of O(140K) digit image chips and
+finetune the VGG-16 model on each of them.  Figure 6 displays the training
+loss function and validation accuracy over 3 epochs for one representative
+run of model finetuning:
 
 ![Digits]({{ site.url }}/blog/images/digit_recog/training_performance.jpg)    
 ![Digits]({{ site.url}}/blog/images/digit_recog/validation_performance.jpg)   
 *Fig. 6.  Loss function and validation accuracy for synthetically
 generated digits plotted against fine tuning epoch.*
 
-After finetuning multiple VGG-16 models, we performed inference using the
+After finetuning the dozen VGG-16 models, we performed inference using the
 retrained models on our cleaned set of 3000 SVHN digit chips.  We could
 then evaluate the synthetically-trained models' accuracy on real-world
 data.  For example, one of the finetuned models correctly classified 2724
@@ -202,18 +207,19 @@ It is interesting to compare these recognition rates from one
 synthetically-trained model with those corresponding to VGG-16 models
 finetuned on genuine SVHN and MNIST image chips.  Therefore, we finetuned
 VGG-16 on a set of O(60K) SVHN digits which contained no non-character
-chips.  Its recognition performance on the set of 3000 held-out SVHN chips
-was 96.63%.  But this same model only correctly classified 59.44% of our
-2500 test MNIST digits.  Similarly, ...[we need to compute analogous
-figures for a VGG-16 model finetuned on O(60K) real MNIST digits].
+chips.  Its recognition performance on the cleaned set of 3000 SVHN chips
+which were held-out from training was 96.63%.  But this same model only
+correctly classified 59.44% of our 2500 test MNIST digits.  Similarly,
+...[we need to compute analogous figures for a VGG-16 model finetuned on
+O(60K) real MNIST digits].
 
 These comparisons demonstrate an important potential for synthetic data to
-yield a **_universal_** text classifier.  Training a classifier on particular
+yield a **_universal_** text classifier.  Classifiers trained on particular
 imagery populations (e.g. SVHN digits, MNIST digits, etc ) will presumably
 always yield higher recognition rates at test time on those same
-populations.  But training a classifier on synthetic data offers the hope
-for recognizing text across all populations at reasonably high precision
-and recall.
+populations than classifiers trained on synthetic data.  But synthetically
+trained models offer the hope for recognizing text across all populations
+at reasonably high precision and recall.
 
 ## Ensemble Averaging
 
@@ -258,16 +264,16 @@ models.*
 
 ## Future Work
 
-In order to improve digit recognition via synthetic character generation,
-there are several avenues worth exploring in the future.  Firstly, the
-confusion matrix presented in figure 9 provides some clues.  Each row in
-the matrix corresponds to some SVHN digit type or non-character, while its
-columns show how those types were classified by the 8-model ensemble.  The
-final column in figure 9 clearly indicates that much more work is needed in
-order to minimize the number of non-character image chips which are
-incorrectly classified as digit chips.  Presumably, the false positive
-error rate can be brought down by including more non-character chips in the
-training sets.  
+In order to further improve digit recognition via synthetic character
+generation, there are several avenues worth exploring in the future.
+Firstly, the confusion matrix presented in figure 9 provides some clues.
+Each row in the matrix corresponds to some SVHN digit type or
+non-character, while its columns show how those types were classified by
+the 8-model ensemble.  The final column in figure 9 clearly indicates that
+much more work is needed in order to minimize the number of non-character
+image chips which are incorrectly classified as digit chips.  Presumably,
+the false positive error can be brought down by including more
+non-character chips in the training sets.
 
 |       | non	| 0 	| 1	|  2 	|  3	|  4 	|  5 	|  6 	|7	|  8 	| 9 	| # incorrect | % incorrect |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----------:|:-----------------:|
@@ -290,21 +296,22 @@ problematic digit, for it is frequently misidentified as "1".  Two examples
 of such erroneous "7" misclassification are displayed in figure 7b.  In
 these cases, the "7" digits belong to numerals which are slanted upwards
 rather than aligned with the horizontal axis.  If the numerals' nontrivial
-rotation were first detected and removed, we suspect that our trained
-ensemble would much less frequently misclassify "7" as "1".  So to make
-further progress, we believe it more sense to investigate detection and
-extraction of entire numerals from images in the wild rather than continue
-concentrating upon individual digit recognition.  
+rotation were first detected and removed, we suspect our trained ensemble
+would much less frequently misclassify "7" as "1".  So to make further
+progress, it makes more sense to investigate detection and extraction of
+entire numerals from images in the wild rather than continue concentrating
+upon individual digit recognition.  Semantic image segmentation offers a
+potentially attractive mechanism for text in the wild detection.
 
 Finally, we have focused upon DNN model finetuning in this blog post
 primarily for convenience.  But it would not be surprising if specialized
-networks architected were found to yield superior performance for text
-recognition applications.  Since arbitrarily large volumes of synthetic
-text can be generated, training such specialized networks from scratch
-should be straightforward.
+network architectures were found to yield superior performance compared to
+VGG-16 for text recognition applications.  Since arbitrarily large volumes
+of synthetic text can be generated, training such specialized networks from
+scratch should be straightforward.
 
-We intend to return to all these interesting avenues for further research
-in the future.
+We look forward to investigating these interesting avenues for further
+research in the future.
 
 ## References
 
