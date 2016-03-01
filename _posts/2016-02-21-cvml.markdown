@@ -213,7 +213,7 @@ correctly classified 59.44% of our 2500 test MNIST digits.  The analogous
 results for a VGG-16 model finetuned on 50K genuine MNIST digits are even
 more striking.  This last fine-tuned model's 99.33% recognition rate on
 held-out MNIST digits is comparable to customized MNIST CNNs' performances.
-But it only correctly classified 19.2% of our cleaned 3000 test SVHN
+But it only correctly classified 19.43% of our cleaned 3000 test SVHN
 digits!
 
 These comparisons demonstrate an important potential for synthetic data to
