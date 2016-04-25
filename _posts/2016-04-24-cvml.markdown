@@ -6,33 +6,80 @@ date:   2016-04-25 12:00:0
 categories: Deep Learning
 ---
 
-## Digit Chip Data
+## Synthetic text imagery generation
 
 Automatic digit recognition is a classic problem at the intersection of
 machine learning and computer vision.  One of the earliest applications of
 Convolutional Neural Networks (CNNs) was to recognizing hand-written digits
-[1].  Lecun and collaborators assembled their well-known "Modified NIST
-(MNIST)" data set consisting of 60K examples of greyscale digits superposed
-against 28x28 white pixel backgrounds.  (A few examples of MNIST image
-chips are displayed in figure 1.)  In 1998, these authors developed CNNs
-which could classify input chips as corresponding to digits 0, 1, 2, ..., 9
-with accuracies around 99.3%.  Over the past few years, researchers have
-refined CNNs to classify MNIST digits with accuracies approaching 99.8%
-[2].
+[1].  
 
-![Digits]({{ site.url }}/blog/images/digit_recog/mnist_digit_examples.png)
-*Fig. 1.  Representative examples of MNIST digit image chips.*
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/synthetic_phrases.png)
+*Fig. 1.  Representative examples of synthetically generated text phrases.*
 
 In 2011, a team of Stanford researchers harvested a set of digits from
-Google Street View imagery which they dubbed the Street View House Numbers
-(SVHN) data set [3,4].  As figure 2 illustrates, SVHN digits exhibit
-significantly more variation and complexity compared to their MNIST
-predecessors.  Consequently, classifying the former is much more
-challenging than the latter.  SVHN digit recognition accuracies around 98%
 have been reported in the recent literature [2].
 
-![Digits]({{ site.url }}/blog/images/digit_recog/svhn_digit_examples.png)
-*Fig. 2.  Representative examples of SVHN digit image chips.*
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/char_word_masks.png)
+*Fig. 2.  Horizontal and vertical text character masks.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/composite_image_00068.png)
+*Fig. 3a.  Synthetic text phrases randomly superposed on background internet image.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/composite_image_00081.png)
+*Fig. 3b.  Synthetic text phrases randomly superposed on background internet image.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0055___segmented_image_00055.jpg)
+*Fig. 4a.  Segmentation results for text-in-wild image.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0062___segmented_image_00062.jpg)
+*Fig. 4b.  Segmentation results for text-in-wild image.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0101___segmented_image_00101.jpg)
+*Fig. 4c.  Segmentation results for text-in-wild image.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0116___segmented_image_00116.jpg)
+*Fig. 4d.  Segmentation results for text-in-wild image.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0149___segmented_image_00149.jpg)
+*Fig. 4e.  Segmentation results for text-in-wild image.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_1.jpg)
+*Fig. 5a.  Segmentation results for text-in-wild image at original pixel resolution.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_2.jpg)
+*Fig. 5b.  Segmentation results for text-in-wild image at half-sized and double-sized pixel resolution.*
+
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0006___bboxes_0006.jpg)
+*Fig. 6a.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0243___bboxes_0243.jpg)
+*Fig. 6b.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0290___bboxes_0290.jpg)
+*Fig. 6c.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0294___bboxes_0294.jpg)
+*Fig. 6d.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0305___bboxes_0305.jpg)
+*Fig. 6e.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/recall_prec/recall_dens.jpg)
+*Fig. 7a.  Bounding box recall distribution for 306 text-in-wild test images.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/recall_prec/precision_dens.jpg)
+*Fig. 7b.  Text pixel precision for 306 text-in-wild test images.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/non-English/montage_segmented_image_00044_chinese___segmented_image_000066_chinese.jpg)
+*Fig. 8a.  Semantic segmentation of Chinese text from classifier trained on
+synthetic English phrases.*
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/non-English/montage_segmented_image_00052_greek___segmented_image_000068_arabic.jpg)
+*Fig. 8b.  Semantic segmentation of Greek and Arabic text from classifier trained on
+synthetic English phrases.*
+
+
 
 ## References
 
