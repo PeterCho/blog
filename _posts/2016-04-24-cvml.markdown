@@ -1,0 +1,40 @@
+---
+layout: post
+title:  "Localizing Text-in-the-Wild via Synthetic Phrase Generation and
+Semantic Segmentation"
+date:   2016-04-25 12:00:0
+categories: Deep Learning
+---
+
+## Digit Chip Data
+
+Automatic digit recognition is a classic problem at the intersection of
+machine learning and computer vision.  One of the earliest applications of
+Convolutional Neural Networks (CNNs) was to recognizing hand-written digits
+[1].  Lecun and collaborators assembled their well-known "Modified NIST
+(MNIST)" data set consisting of 60K examples of greyscale digits superposed
+against 28x28 white pixel backgrounds.  (A few examples of MNIST image
+chips are displayed in figure 1.)  In 1998, these authors developed CNNs
+which could classify input chips as corresponding to digits 0, 1, 2, ..., 9
+with accuracies around 99.3%.  Over the past few years, researchers have
+refined CNNs to classify MNIST digits with accuracies approaching 99.8%
+[2].
+
+![Digits]({{ site.url }}/blog/images/digit_recog/mnist_digit_examples.png)
+*Fig. 1.  Representative examples of MNIST digit image chips.*
+
+In 2011, a team of Stanford researchers harvested a set of digits from
+Google Street View imagery which they dubbed the Street View House Numbers
+(SVHN) data set [3,4].  As figure 2 illustrates, SVHN digits exhibit
+significantly more variation and complexity compared to their MNIST
+predecessors.  Consequently, classifying the former is much more
+challenging than the latter.  SVHN digit recognition accuracies around 98%
+have been reported in the recent literature [2].
+
+![Digits]({{ site.url }}/blog/images/digit_recog/svhn_digit_examples.png)
+*Fig. 2.  Representative examples of SVHN digit image chips.*
+
+## References
+
+1.  Y. LeCun, L. Bottou, Y. Bengio and P. Haffner, *Gradient-based learning
+applied to document recognition*, Proc of IEEE (1998).
