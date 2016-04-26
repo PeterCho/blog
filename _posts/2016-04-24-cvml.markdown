@@ -19,64 +19,93 @@ Convolutional Neural Networks (CNNs) was to recognizing hand-written digits
 In 2011, a team of Stanford researchers harvested a set of digits from
 have been reported in the recent literature [2].
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/char_word_masks.png)
-*Fig. 2.  Horizontal and vertical text character masks.*
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/syntext/padded_char_word_masks.png)
+*Fig. 2.  (a) Synthetically generated text phrases containing 15 words and
+spanning 5 lines.  (b) Horizontal character masks are color-coded according
+to letter spatial relationships.  Starting [stopping] characters in words
+are colored blue [green].  Middle characters inside words are colored red.
+Single character words are colored orange.  Spaces between words are
+colored pink.  (c) Text line masks are color-coded according to vertical
+spatial relationships.  Upper [lower] half of text characters are colored
+blue [red].
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/composite_image_00068.png)
-*Fig. 3a.  Synthetic text phrases randomly superposed on background internet image.*
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/montage_composite_image_00068___composite_image_00081.jpg)
+*Fig. 3.  Synthetic text phrases randomly superposed on background internet images.*
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/composite_image_00081.png)
-*Fig. 3b.  Synthetic text phrases randomly superposed on background internet image.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0055___segmented_image_00055.jpg)
-*Fig. 4a.  Segmentation results for text-in-wild image.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0062___segmented_image_00062.jpg)
-*Fig. 4b.  Segmentation results for text-in-wild image.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0101___segmented_image_00101.jpg)
-*Fig. 4c.  Segmentation results for text-in-wild image.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0116___segmented_image_00116.jpg)
-*Fig. 4d.  Segmentation results for text-in-wild image.*
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0149___segmented_image_00149.jpg)
-*Fig. 4e.  Segmentation results for text-in-wild image.*
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/fullsized_segs/montage_text_img0149___segmented_image_00149.jpg)
+*Fig. 4.  Horizontal text segmentation results for test images.  Starting
+[stopping] letters within words are tinted yellow [blue].  Middle letters
+inside words are tinted [green].  Spaces between words are colored orange.
+
+
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/vert_full_segs/montage_horiz_segmented_image_00076___vert_segmented_image_00076.jpg)
+
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/vert_full_segs/montage_horiz_segmented_image_00201___vert_segmented_image_00201.jpg)
+*Fig. 5.  Individual word versus vertical text line segmentation results
+for text images.  Colored tinting for horizontal characters appearing on
+the left hand-side of these image pairs follows the same pattern as in
+figure 4.  The top [bottom] half of text lines are tinted blue [yellow]
+within the right hand-side of the image pairs.
+
+
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_1.jpg)
-*Fig. 5a.  Segmentation results for text-in-wild image at original pixel resolution.*
+*Fig. 6a.  Individual word segmentation results for one particular test
+image at its original pixel resolution.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_2.jpg)
-*Fig. 5b.  Segmentation results for text-in-wild image at half-sized and double-sized pixel resolution.*
+*Fig. 6b.  Word segmentation results for the test image at half-sized and double-sized pixel resolutions.*
 
-
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0006___bboxes_0006.jpg)
-*Fig. 6a.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
-
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0243___bboxes_0243.jpg)
-*Fig. 6b.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
-
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0290___bboxes_0290.jpg)
-*Fig. 6c.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
-
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0294___bboxes_0294.jpg)
-*Fig. 6d.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0305___bboxes_0305.jpg)
-*Fig. 6e.  Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
+*Fig. 7.  Text pixel segmentation results for a test image aggregated
+from original, half-sized and double-sized pixel resolutions.*
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/recall_prec/recall_dens.jpg)
-*Fig. 7a.  Bounding box recall distribution for 306 text-in-wild test images.*
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/total_segs/montage_text_img0294___bboxes_0294.jpg)
+*Fig. 8a.  Text pixel segmentation results in this test image actually
+cover more genuine word content than that contained within the "ground
+truth".  The false positives are in fact not really false.
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/recall_prec/precision_dens.jpg)
-*Fig. 7b.  Text pixel precision for 306 text-in-wild test images.*
+Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/non-English/montage_segmented_image_00044_chinese___segmented_image_000066_chinese.jpg)
-*Fig. 8a.  Semantic segmentation of Chinese text from classifier trained on
+![TextLocalization]({{ site.url
+}}/blog/images/text_segmentation/total_segs/montage_text_img0006___bboxes_0006.jpg)
+*Fig. 8b.  Text pixel segmentation results for in this test image more
+accurately cover genuine word content than the axis-aligned bounding box.
+False negative pixels around "BUTLER GARAGE" are not really false.
+
+
+
+![TextLocalization]({{ site.url
+}}/blog/images/text_segmentation/total_segs/montage_text_img0243___bboxes_0243.jpg)
+*Fig. 9a.  Examples of genuine false positives in this test image include
+building facade ornamentations being incorrectly classified as text.
+
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0290___bboxes_0290.jpg)
+*Fig. 9b.  Examples of genuine false negatives in this test image include
+entire words marked by yellow truth boxes being missed by the classifier.
+
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/recall_prec/montage_recall_dens___precision_dens.jpg)
+*Fig. 10.  Bounding box recall and text pixel precision distributions for 306 test images.*
+
+
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/non-English/montage_segmented_image_00044_chinese___segmented_image_00066_chinese.jpg)
+*Fig. 11a.  Semantic segmentation of Chinese text from classifier trained on
 synthetic English phrases.*
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/non-English/montage_segmented_image_00052_greek___segmented_image_000068_arabic.jpg)
-*Fig. 8b.  Semantic segmentation of Greek and Arabic text from classifier trained on
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/non-English/montage_segmented_image_00052_greek___segmented_image_00068_arabic.jpg)
+*Fig. 11b.  Semantic segmentation of Greek and Arabic text from classifier trained on
 synthetic English phrases.*
 
 
@@ -85,3 +114,9 @@ synthetic English phrases.*
 
 1.  Y. LeCun, L. Bottou, Y. Bengio and P. Haffner, *Gradient-based learning
 applied to document recognition*, Proc of IEEE (1998).
+
+*.  Microsoft truth data reference
+
+*.  MSRA for chinese text 
+
+*.  NewsHour broadcasts for Greek and Arabic text
