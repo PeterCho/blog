@@ -8,10 +8,90 @@ categories: Deep Learning
 
 ## Synthetic text imagery generation
 
-Automatic digit recognition is a classic problem at the intersection of
-machine learning and computer vision.  One of the earliest applications of
-Convolutional Neural Networks (CNNs) was to recognizing hand-written digits
-[1].  
+Conventional Optical Character Recognition (OCR) is generally regarded
+within the computer vision community to be a solved problem.  In contrast,
+teaching machines to read "text-in-the-wild" remains an outstanding
+challenge.  Unlike the essentially cooperative OCR situation,
+text-in-the-wild presents many a priori unknown variables which an AI
+system must handle.  These include a wide range of possible text fonts,
+colorings, illumination conditions, 3D orientations, intrinsic character
+sizes, distance ranges, foreground occlusions, and background surface
+materials.  Moreover, gross spatial layouts for text appear in the physical
+world are highly variable.  Single characters, multiple abutted business
+names and parking sign paragraphs can all be seen as one moves within
+complex urban environments.  So the text-in-the-wild problem has drawn
+significant interest among computer vision and machine learning
+researchers [refs].
+
+In this blog entry, we focus upon just one aspect of reading text in the
+wild.  In particular, we are interested in localizing text in arbitrary
+input images which represents a pre-requisite to text recognition.  Given
+recent successes in supervised image classification, one obvious attempt to
+solve this first stage of the text-in-the-wild problem would be to amass a
+training collection containing thousands of manually labeled examples.
+This type of brute force approach is currently adopted by big companies
+with large budgets and human resources.  But we are more interested in
+exploring alternative sources of training data which do not require massive
+human effort.
+
+Text falls within a special category of objects seen in the physical world
+inasmuch as it is often computer-generated.  Nearly all business
+advertisements, roadway street signs, and TV commercials display text which
+originated from some computer system.  And given the wide range of freely
+available computer fonts, human handwriting and painted words can be
+approximated by machines.  So we are specifically interested in
+synthesizing text imagery and seeing how well classifiers trained on it can
+localize text-in-the-wild.
+
+We start by developing a corpus of English text phrases which will become
+inputs to the synthetic image engine.  Since names frequently appear in the
+wild, we first downloaded lists of male and female first names along with
+common last names.  We then randomly combined these inputs to form
+reasonable-sounding full names.  Some of the output names were randomly
+spelled with all capital letters.  Others had their first and/or middle
+names replaced with initials.  In addition to synthesizing names for
+people, we also searched the internet for company names which we added to
+our text source corpus.
+
+We next generated integers containing 1-6 digits as well as decimal
+numerals containing 1 or 2 digits after a decimal point.  For 20% of the
+decimal numbers, we prepended a "$" in order to simulate numerical prices
+often seen in the physical world.  Telephone numbers containing 10 or 7
+digits were also randomly generated.  Some of the 3-digit area codes were
+separated by parantheses, and some of the 7-digit telephone numbers were
+separated by hyphens.
+
+We also harvested random news reports, computer blogs, science articles and
+creative writing stories posted on the internet over the past two decades.
+White space was removed from these input sources.  Phrases containing from
+1 to 15 words were extracted from these text files.
+
+After combining together and shuffling these different text sources, our
+final corpus contained O(215K) phrases.  We scanned through every candidate
+input character and reject any whose ascii value did not lie wtihin the
+printable interval [32, 126].  No attempt was made to harvest or synthesize
+words in languages other than English.  So we believe the overwhelming
+overwhelming majority of our input words are in English.
+
+We next downloaded and inspected hundreds of different truetype and
+opentype fonts freely available on the internet.  We used our judgement to
+retain "reasonable" looking fonts which mimics those that plausibly could
+be seen in the real world.  Any font which could not render at least 10
+digits and 26 uppercase Latin letters over character widths ranging from 5
+- 10 pixels was rejected.  Fonts corresponding to cursive handwriting were
+also intentionally included.  We ended up with 700+ fonts to use for
+synthesizing text.  
+
+
+
+
+
+
+
+
+
+
+
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/synthetic_phrases.png)
 *Fig. 1.  Representative examples of synthetically generated text phrases.*
@@ -19,7 +99,8 @@ Convolutional Neural Networks (CNNs) was to recognizing hand-written digits
 In 2011, a team of Stanford researchers harvested a set of digits from
 have been reported in the recent literature [2].
 
-![TextLocalization]({{ site.url}}/blog/images/text_segmentation/syntext/padded_char_word_masks.png)
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/padded_char_word_masks.png)
 *Fig. 2.  (a) Synthetically generated text phrases containing 15 words and
 spanning 5 lines.  (b) Horizontal character masks are color-coded according
 to letter spatial relationships.  Starting [stopping] characters in words
@@ -27,11 +108,13 @@ are colored blue [green].  Middle characters inside words are colored red.
 Single character words are colored orange.  Spaces between words are
 colored pink.  (c) Text line masks are color-coded according to vertical
 spatial relationships.  Upper [lower] half of text characters are colored
-blue [red].
+blue [red].*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/montage_composite_image_00068___composite_image_00081.jpg)
 *Fig. 3.  Synthetic text phrases randomly superposed on background internet images.*
 
+
+## Semantic Segmentation of Text in the Wild
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0055___segmented_image_00055.jpg)
 
@@ -42,19 +125,19 @@ blue [red].
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0116___segmented_image_00116.jpg)
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/fullsized_segs/montage_text_img0149___segmented_image_00149.jpg)
-*Fig. 4.  Horizontal text segmentation results for test images.  Starting
+*Fig. 4.  Horizontal text segmentation results for 5 different test images.  Starting
 [stopping] letters within words are tinted yellow [blue].  Middle letters
-inside words are tinted [green].  Spaces between words are colored orange.
+inside words are tinted [green].  Spaces between words are colored orange.*
 
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/vert_full_segs/montage_horiz_segmented_image_00076___vert_segmented_image_00076.jpg)
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/vert_full_segs/montage_horiz_segmented_image_00201___vert_segmented_image_00201.jpg)
 *Fig. 5.  Individual word versus vertical text line segmentation results
-for text images.  Colored tinting for horizontal characters appearing on
+for 2 different images.  Colored tinting for horizontal characters appearing on
 the left hand-side of these image pairs follows the same pattern as in
 figure 4.  The top [bottom] half of text lines are tinted blue [yellow]
-within the right hand-side of the image pairs.
+within the right hand-side of the image pairs.*
 
 
 
@@ -65,52 +148,55 @@ image at its original pixel resolution.*
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_2.jpg)
 *Fig. 6b.  Word segmentation results for the test image at half-sized and double-sized pixel resolutions.*
 
+## Text segmentation results vs ground truth
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0305___bboxes_0305.jpg)
 *Fig. 7.  Text pixel segmentation results for a test image aggregated
-from original, half-sized and double-sized pixel resolutions.*
+from original, half-sized and double-sized pixel resolutions.  Ground truth
+bounding boxes are colored yellow in the image on the right hand-side.*
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/total_segs/montage_text_img0294___bboxes_0294.jpg)
 *Fig. 8a.  Text pixel segmentation results in this test image actually
 cover more genuine word content than that contained within the "ground
-truth".  The false positives are in fact not really false.
-
-Aggregated pixel segmentation results for text-in-wild image at original, half-sized and double-sized pixel resolution.*
+truth".  The false positives are not in fact really false.*
 
 ![TextLocalization]({{ site.url
 }}/blog/images/text_segmentation/total_segs/montage_text_img0006___bboxes_0006.jpg)
 *Fig. 8b.  Text pixel segmentation results for in this test image more
-accurately cover genuine word content than the axis-aligned bounding box.
-False negative pixels around "BUTLER GARAGE" are not really false.
+accurately cover genuine word content than the axis-aligned bounding boxes.
+False negative pixels around "BUTLER GARAGE" are not really false.*
 
 
 
 ![TextLocalization]({{ site.url
 }}/blog/images/text_segmentation/total_segs/montage_text_img0243___bboxes_0243.jpg)
 *Fig. 9a.  Examples of genuine false positives in this test image include
-building facade ornamentations being incorrectly classified as text.
+building facade ornamentations which are incorrectly classified as text.*
 
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0290___bboxes_0290.jpg)
 *Fig. 9b.  Examples of genuine false negatives in this test image include
-entire words marked by yellow truth boxes being missed by the classifier.
+entire words outlined by yellow truth boxes which were missed by the classifier.*
 
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/recall_prec/montage_recall_dens___precision_dens.jpg)
 *Fig. 10.  Bounding box recall and text pixel precision distributions for 306 test images.*
 
+## Segmentation of non-English words
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/non-English/montage_segmented_image_00044_chinese___segmented_image_00066_chinese.jpg)
-*Fig. 11a.  Semantic segmentation of Chinese text from classifier trained on
-synthetic English phrases.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/non-English/montage_segmented_image_00052_greek___segmented_image_00068_arabic.jpg)
-*Fig. 11b.  Semantic segmentation of Greek and Arabic text from classifier trained on
+*Fig. 11.  Semantic segmentation of Chinese, Greek and Arabic text from classifier trained on
 synthetic English phrases.*
 
 
 
 ## References
+
+*.  General text-in-wild references 
+
+*.  Jaderberg articles
 
 1.  Y. LeCun, L. Bottou, Y. Bengio and P. Haffner, *Gradient-based learning
 applied to document recognition*, Proc of IEEE (1998).
