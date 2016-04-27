@@ -84,18 +84,22 @@ synthesizing text.
 
 Our synthetic phrase generator is based upon ImageMagick's text to image
 capabilities [ref].  The generator first randomly selects some particular
-text label from the large set of phrases along with a font.  RGB colors for
-the text foreground and possible stroke are also randomly chosen.  If an
-underbox for the text is randomly selected, its background color is
-required to be reasonably different from the text foreground's color.
-Otherwise, the foreground text is rendered against a transparent
+text label from the large set of phrases along with a font.  A small subset
+of the text labels have extra spaces inserted between each non-white
+character.  Others have carriage returns inserted after each letter in
+order to generate vertically aligned text.
+
+RGB colors for the text foreground and possible stroke are next randomly
+chosen.  If an underbox for the text is randomly selected, its background
+color is required to be reasonably different from the text foreground's
+color.  Otherwise, the foreground text is rendered against a transparent
 background.
 
-The overall width and height for the entire text phrase is next
-quasi-randomly selected so that a significant percentage of strings are
-rendered onto two or more text lines.  To good approximation, character
-height is linearly related to font pointsize.  All ImageMagick rendering
-calls are passed the text image width along with font pointsize.
+The overall width and height for the entire text phrase is quasi-randomly
+selected so that a significant percentage of strings are rendered onto two
+or more text lines.  To good approximation, character height is linearly
+related to font pointsize.  All ImageMagick rendering calls are passed the
+text image width along with font pointsize.
 
 After a text phrase is rendered, we compute reasonable estimates for all
 the rendered characters' widths.  A very wide, temporary image is virtually
@@ -123,7 +127,7 @@ and bottom halves of each character bounding box are assigned distinct
 values.  The resulting mask pattern is useful for separating different
 text lines within the rendered phrase.
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/padded_char_word_masks.png)
+![TextLocalization]({{site.url}}/blog/images/text_segmentation/syntext/padded_char_word_masks.png)
 *Fig. 1.  (a) A synthetically generated text phrase containing 15 words and
 spanning 5 lines.  (b) Horizontal character masks are color-coded according
 to letter spatial relationships.  Starting [stopping] characters in words
@@ -131,34 +135,23 @@ are colored blue [green].  Middle characters inside words are colored red.
 Single character words are colored orange.  Spaces between words are
 colored pink.  (c) Text line masks are color-coded according to vertical
 spatial relationships.  Upper [lower] half of text characters are colored
-blue [red].*
+blue [red].  Note: White outlines surrounding characters in the mask
+figures are for visualization only.*
 
-
-A fraction of the synthetic text images are intentionally corrupted via the
-addition of random solar shadows and foreground occlusions.  
-
-
-The text chips
-are then exported to an output subdirectory.  
-
-
-Finally, GENERATE_STRING_IMAGES rotates the text image chip along with its
-masks by some random az, el and roll angles.  For each image, it
-instantiates a virtual camera whose horizontal FOV and aspect ratio are
-random gaussian variables.  The string image and mask are also rotated in 3
-dimensions according to random az, el and roll gaussian variables.  After
-perspectively projecting the string image and mask into the virtual camera,
-ImageMagick is used to generate and export their 2D imageplane renderings.
-The rotated & projected images and masks are exported to separate folders.
-If any character or word mask value lies outside their valid ranges, then
-the rotated image and both masks are discarded.
-
+A random fraction of the synthetic text images have drop shadow and
+character shine effects added in order to make them look somewhat
+three-dimensional.  Another random fraction are intentionally corrupted via
+the addition of random solar shadows and foreground occlusions.  We then
+rotate the text image chips along with their masks by random azimuth,
+elevation and roll angles.  After perspectively projecting the string image
+and masks into the virtual camera, ImageMagick is used to generate and
+export their 2D imageplane renderings.  A few examples of foreground text
+renderings are illustrated in figure 2.
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/synthetic_phrases.png)
 *Fig. 2.  Representative examples of synthetically generated text phrases.*
 
-In 2011, a team of Stanford researchers harvested a set of digits from
-have been reported in the recent literature [2].
+
 
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/montage_composite_image_00068___composite_image_00081.jpg)
