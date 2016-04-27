@@ -148,7 +148,7 @@ and masks into the virtual camera, ImageMagick is used to generate and
 export their 2D imageplane renderings.  A few examples of foreground text
 renderings are illustrated in figure 2.
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/synthetic_phrases.png)
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/syn_phrases.png)
 *Fig. 2.  Representative examples of synthetically generated text phrases.*
 
 
