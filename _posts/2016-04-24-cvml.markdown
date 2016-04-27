@@ -82,26 +82,49 @@ digits and 26 uppercase Latin letters over character widths ranging from 5
 also intentionally included.  We ended up with 700+ fonts to use for
 synthesizing text.  
 
+Our synthetic phrase generator is based upon ImageMagick's text to image
+capabilities [ref].  The generator first randomly selects some particular
+text label from the large set of phrases along with a font.  RGB colors for
+the text foreground and possible stroke are also randomly chosen.  If an
+underbox for the text is randomly selected, its background color is
+required to be reasonably different from the text foreground's color.
+Otherwise, the foreground text is rendered against a transparent
+background.
 
+The overall width and height for the entire text phrase is next
+quasi-randomly selected so that a significant percentage of strings are
+rendered onto two or more text lines.  To good approximation, character
+height is linearly related to font pointsize.  All ImageMagick rendering
+calls are passed the text image width along with font pointsize.
 
+After a text phrase is rendered, we compute reasonable estimates for all
+the rendered characters' widths.  A very wide, temporary image is virtually
+created to hold the entire input string within a single textline.
+Individual character widths are found by subtracting lengths of virtually
+rendered substrings containing c+1 and c characters within the wide,
+temporary image.  (Index c ranges from 0 to one less than the number of
+characters in the input text phrase.)  Once rendered character widths are
+known and the beginnings of each text line within the actual synthetic
+image are determined via horizontal and vertical profiling, pixel bounding
+boxes around each character are readily derived.
 
-
-
-
-
-
-
-
-
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/synthetic_phrases.png)
-*Fig. 1.  Representative examples of synthetically generated text phrases.*
-
-In 2011, a team of Stanford researchers harvested a set of digits from
-have been reported in the recent literature [2].
-
+Once character bounding boxes are known, masks indicating various text
+properties may be generated.  For instance, the pixel bounding boxes
+corresponding to letters starting individual words in a phrase may be
+filled with one mask value.  Bounding boxes for characters located in the
+middle or at the ends of words may similarly be filled with different mask
+values.  Such character-within-word relationships for the text phrase in
+figure 1a are illustrated in figure 1b.  White spaces as well as
+single-character words are also assigned their own mask values.  The
+resulting mask in figure 1b horizontally parses the multi-line, multi-word
+text phrase rendering.  In contrast, a vertical parsing of the multi-line
+text phrase is depicted in figure 1c.  In this second mask example, the top
+and bottom halves of each character bounding box are assigned distinct
+values.  The resulting mask pattern is useful for separating different
+text lines within the rendered phrase.
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/padded_char_word_masks.png)
-*Fig. 2.  (a) Synthetically generated text phrases containing 15 words and
+*Fig. 1.  (a) A synthetically generated text phrase containing 15 words and
 spanning 5 lines.  (b) Horizontal character masks are color-coded according
 to letter spatial relationships.  Starting [stopping] characters in words
 are colored blue [green].  Middle characters inside words are colored red.
@@ -109,6 +132,34 @@ Single character words are colored orange.  Spaces between words are
 colored pink.  (c) Text line masks are color-coded according to vertical
 spatial relationships.  Upper [lower] half of text characters are colored
 blue [red].*
+
+
+A fraction of the synthetic text images are intentionally corrupted via the
+addition of random solar shadows and foreground occlusions.  
+
+
+The text chips
+are then exported to an output subdirectory.  
+
+
+Finally, GENERATE_STRING_IMAGES rotates the text image chip along with its
+masks by some random az, el and roll angles.  For each image, it
+instantiates a virtual camera whose horizontal FOV and aspect ratio are
+random gaussian variables.  The string image and mask are also rotated in 3
+dimensions according to random az, el and roll gaussian variables.  After
+perspectively projecting the string image and mask into the virtual camera,
+ImageMagick is used to generate and export their 2D imageplane renderings.
+The rotated & projected images and masks are exported to separate folders.
+If any character or word mask value lies outside their valid ranges, then
+the rotated image and both masks are discarded.
+
+
+![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/synthetic_phrases.png)
+*Fig. 2.  Representative examples of synthetically generated text phrases.*
+
+In 2011, a team of Stanford researchers harvested a set of digits from
+have been reported in the recent literature [2].
+
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/montage_composite_image_00068___composite_image_00081.jpg)
 *Fig. 3.  Synthetic text phrases randomly superposed on background internet images.*
@@ -160,16 +211,14 @@ bounding boxes are colored yellow in the image on the right hand-side.*
 cover more genuine word content than that contained within the "ground
 truth".  The false positives are not in fact really false.*
 
-![TextLocalization]({{ site.url
-}}/blog/images/text_segmentation/total_segs/montage_text_img0006___bboxes_0006.jpg)
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/total_segs/montage_text_img0006___bboxes_0006.jpg)
 *Fig. 8b.  Text pixel segmentation results for in this test image more
 accurately cover genuine word content than the axis-aligned bounding boxes.
 False negative pixels around "BUTLER GARAGE" are not really false.*
 
 
 
-![TextLocalization]({{ site.url
-}}/blog/images/text_segmentation/total_segs/montage_text_img0243___bboxes_0243.jpg)
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/total_segs/montage_text_img0243___bboxes_0243.jpg)
 *Fig. 9a.  Examples of genuine false positives in this test image include
 building facade ornamentations which are incorrectly classified as text.*
 
@@ -206,3 +255,6 @@ applied to document recognition*, Proc of IEEE (1998).
 *.  MSRA for chinese text 
 
 *.  NewsHour broadcasts for Greek and Arabic text
+
+*.  See www.imagemagick.org/Usage/text/
+
