@@ -41,7 +41,7 @@ originated from some computer system.  And given the wide range of freely
 available computer fonts, machines can now do a remarkably good job at
 emulating human handwriting and painted words.  So we are interested in
 synthesizing text imagery and seeing how well classifiers trained on it can
-localize text-in-the-wild.
+localize text-in-the-wild [Jaderberg refs].
 
 We start by developing a corpus of English phrases which become inputs to
 our synthetic image engine.  Since names frequently appear in the physical
@@ -102,9 +102,9 @@ selected so that a significant percentage of strings are rendered onto two
 or more text lines.  For example, figure 1 illustrates a single phrase
 which wraps onto 5 text lines:
 
-![TextLocalization]({{site.url}}/blog/images/text_segmentation/syntext/padded_char_word_masks_a.png)
-*Fig. 1. A synthetically generated text image containing 15 words and
-spanning 5 lines.*
+![TextLocalization]({{site.url}}/blog/images/text_segmentation/syntext/padded_syn_phrase.png)
+*Fig. 1. A synthetically generated image containing 15 words and spanning 5
+text lines.  The foreground is rendered against a transparent background.*
 
 After a text phrase is rendered, we compute reasonable estimates for all
 the rendered characters' widths.  A very wide, temporary image is virtually
@@ -158,9 +158,9 @@ phrases plus accompanying image masks.  Some examples of these synthesized
 text images are displayed in figure 2.
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/syn_phrases.png)
-*Fig. 3.  Representative examples of synthetically generated text phrases
-exhibiting a variety of fonts, colors, rotations, shadings, shadowings
-and occlusions.*
+*Fig. 3.  Representative examples of synthetically generated images
+exhibiting a variety of text contents, fonts, colors, rotations, shadings,
+shadowings and occlusions.*
 
 Text in the physical world appears against a wide variety of backgrounds.
 In some cases such as TV broadcasts and many roadsigns, text foreground is
@@ -192,27 +192,37 @@ is rejected.  The bounding box for any foreground chip is also not allowed
 to overlap any existing text bounding boxes.  The number of foreground
 overlays within each composite varies randomly over the interval [9,27].
 
-Once a composite image is formed, each pixel's RGB values are fluctuated by
-a nonzero amount of random gaussian noise.  A sizable fraction of the
-composites are also blurred by a random amount.  To our surprise, we
+Once a composite image is formed, each of its pixel's RGB values is
+fluctuated by a nonzero amount of random gaussian noise.  A sizable
+fraction of the composites are also randomly blurred.  To our surprise, we
 observed that such composite degradation significantly improves subsequent
 semantic segmentation classifier performance on test images containing
-genuine text content.  Two examples of composites containing synthesized
-text foreground superposed on internet image backgrounds are displayed in
-figure 4.
+genuine text content.
 
-![TextLocalization]({{ site.url}}/blog/images/text_segmentation/syntext/montage_composite_image_00068___composite_image_00081.jpg)
-*Fig. 4.  Synthetically generated text phrases superposed on
-background, text-free images.*
+For every composite image, we generate two 8-bit greyscale masks which
+encode the locations of the synthetic text foregrounds.  One of the masks
+encodes horizontal word-character spatial relationships while the other
+contains vertical text-line spacing information.  Examples of these two
+types of masks are displayed in figures 4 and 5 versus their corresponding
+composite images.
 
-Each composite image is accompanied by two 8-bit greyscale masks which were
-also iteratively constructed and encode the locations of all synthetic
-text.  One of the masks encodes horizontal word-character spatial
-relationships while the other contains vertical text-line spacing
-information.  Once generation of a composite image and its associated masks
-are completed, they are all decomposed into tiles of pixel size 321x321.
-The image and mask tiles then become training and validation inputs to
-semantic segmentation deep networks which we discuss in the next section.
+![TextLocalization]({{site.url}}/blog/images/text_segmentation/syntext/montage_composite_image_00028___char_bytearray_00028.jpg)
+*Fig. 4.  (a) Synthetically generated text phrases superposed on a
+background image of an outdoor scene. (b) Corresponding 8-bit mask indicates
+character locations within words via greyscale colorings.*
+
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/syntext/montage_composite_image_00187___word_bytearray_00187.jpg)
+*Fig. 5.  (a) Synthetically generated text phrases superposed on a
+background image of an indoor scene. (b) Corresponding 8-bit mask
+indicates vertical text-line locations via greyscale colorings.*
+
+Following this compositing procedure, we formed O(28K) composites along
+with their two accompanying masks.  We subsequently decomposed each
+composite into 3x3 tiles of pixel size 321x321.  So we produced over a
+quarter-million synthetic image tiles.  As we shall see in the next
+section, these tiles plus masks can be used to train deep semantic
+segmentation networks to localize text-in-the-wild in arbitrary input
+images.
 
 ## Semantic Segmentation of Text in the Wild
 
@@ -294,7 +304,7 @@ synthetic English phrases.*
 
 *.  General text-in-wild references 
 
-*.  Jaderberg articles
+*.  Jaderberg articles about synthetic text generation
 
 1.  Y. LeCun, L. Bottou, Y. Bengio and P. Haffner, *Gradient-based learning
 applied to document recognition*, Proc of IEEE (1998).
