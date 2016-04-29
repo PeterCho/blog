@@ -125,7 +125,7 @@ middle or at the ends of words may similarly be filled with different mask
 values.  Such character-within-word relationships for the text phrase in
 figure 1 are illustrated in figure 2a.  White spaces as well as
 single-character words are also assigned their own mask values.  The
-resulting mask in figure 1b horizontally parses the multi-line, multi-word
+resulting mask in figure 2a horizontally parses the multi-line, multi-word
 text phrase rendering.  In contrast, a vertical parsing of the multi-line
 text phrase is depicted in figure 2b.  In this second mask example, the top
 and bottom halves of each character bounding box are assigned distinct
@@ -155,7 +155,7 @@ imageplane renderings.
 
 Following this synthesis procedure, we generated 131K+ foreground text
 phrases plus accompanying image masks.  Some examples of these synthesized
-text images are displayed in figure 2.
+text images are displayed in figure 3.
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/syntext/syn_phrases.png)
 *Fig. 3.  Representative examples of synthetically generated images
@@ -208,8 +208,10 @@ composite images.
 
 ![TextLocalization]({{site.url}}/blog/images/text_segmentation/syntext/montage_composite_image_00028___char_bytearray_00028.jpg)
 *Fig. 4.  (a) Synthetically generated text phrases superposed on a
-background, text-free image of an outdoor scene. (b) Corresponding 8-bit
-mask indicates character locations within words via greyscale colorings.*
+background image of an outdoor scene.  Note that text inside the roadsign
+located near the lower right corner has been manually blackened. (b)
+Corresponding 8-bit mask indicates character locations within words via
+greyscale colorings.*
 
 ![TextLocalization]({{site.url}}/blog/images/text_segmentation/syntext/montage_composite_image_00187___word_bytearray_00187.jpg)
 *Fig. 5.  (a) Synthetically generated text phrases superposed on a
@@ -253,7 +255,7 @@ inside words are tinted green.  Spaces between words are colored orange.*
 *Fig. 8.  Individual word versus vertical text line segmentation results
 for 2 different images.  Colored tinting for horizontal characters appearing on
 the left hand-side of these image pairs follows the same pattern as in
-figure 4.  The top [bottom] half of text lines are tinted blue [yellow]
+figure 7.  The top [bottom] half of text lines are tinted blue [yellow]
 within the right hand-side of the image pairs.*
 
 
