@@ -229,10 +229,8 @@ images.
 ## Semantic segmentation of text-in-the-wild
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/training/montage_horiz_lossfunc___vert_lossfunc.jpg)
-*Fig. 6.  Horizontal and vertical text segmentation loss plotted as
+*Fig. 6.  Horizontal and vertical text segmentation losses plotted as
 functions of DNN model training.*
-
-
 
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0055___segmented_image_00055.jpg)
