@@ -228,10 +228,46 @@ images.
 
 ## Semantic segmentation of text-in-the-wild
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/training/montage_horiz_lossfunc___vert_lossfunc.jpg)
-*Fig. 6.  Horizontal and vertical text segmentation losses plotted as
-functions of DNN model training.*
+To perform pixel-level image segmentation, we utilize the DeepLab framework
+which is built on top of Caffe [refs].  Deeplab combines deep neural
+network (DNN) responses with densely connected conditional random fields
+(CRF).  But we choose to not employ DeeplLab's CRF functionality as it is
+computationally expensive.
 
+Our synthetically generated 321x321 pixel image tiles become inputs to
+Deeplab's network, while their corresponding masks become inputs to
+Deeplab's loss function.  We also supply DeepLab with a set of
+randomly-shuffled associations betwee image tiles and masks.  8K of the
+250K+ tile and masks pairs are reserved for network validation, while the
+rest are used for network training.
+
+Using Stochastic Gradient Descent, DeepLab fine-tunes the weight and bias
+parameters of a pre-trained DNN which is a variant of the VGG-16 model
+[ref].  We adopt a batch size of 30, retain DeepLab's default 0.9 momentum
+and 0.0005 weight decay parameter values, and utilize a step learning rate
+policy.  We found that training and validation results were relatively
+insensitive to modifications of the learning rate parameter.  So we adopted
+a learning rate of 0.0045 [0.005] when fine-tuning the DNN for horizontal
+word-character [vertical text-line] segmentation.  The loss functions for
+these two DNN models are displayed in figure 6 over 3 training epochs.
+
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/training/montage_horiz_lossfunc___vert_lossfunc.jpg)
+*Fig. 6.  Horizontal word-character and vertical text-line segmentation
+losses plotted as functions of DNN model training.*
+
+After network fine-tuning has asymptotically finished, we can apply the
+trained DNNs to localize genuine text in arbitrary input images.  In order
+to quantitatively assess the performance of our classifiers on genuine
+text-in-the-wild, we work with a challenging set of ground-truthed images
+[ref].  It consists of 307 color images of outdoor urban scenes with
+significant text content appearing on store fronts, billboard
+advertisements, street signs, trucks and vans, etc.  Text observed in these
+pictures occurs exhibit a wide variety of fonts, colors, sizes, distance
+ranges, angular orientations, physical locations and illumination
+conditions.  Horizontal text segmentation results for 5
+representative images from this data set are presented in figure 7.
+Individual words are identified by their starting and stopping letters as
+well as spaces between words.  
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0055___segmented_image_00055.jpg)
 
@@ -242,9 +278,9 @@ functions of DNN model training.*
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0116___segmented_image_00116.jpg)
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/fullsized_segs/montage_text_img0149___segmented_image_00149.jpg)
-*Fig. 7.  Horizontal text segmentation results for 5 different test images.  Starting
-[stopping] letters within words are tinted yellow [blue].  Middle letters
-inside words are tinted green.  Spaces between words are colored orange.*
+*Fig. 7.  Horizontal text segmentation results for 5 different test images.
+Starting [stopping] letters within words are tinted yellow [blue].  Middle
+letters inside words are tinted green.  Spaces between words are colored orange.*
 
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/vert_full_segs/montage_horiz_segmented_image_00076___vert_segmented_image_00076.jpg)
@@ -324,3 +360,4 @@ applied to document recognition*, Proc of IEEE (1998).
 
 *.  See www.imagemagick.org/Usage/text/
 
+*.  See http://research.microsoft.com/enus/um/people/eyalofek/text_detection_database.zip
