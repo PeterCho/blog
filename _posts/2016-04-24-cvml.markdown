@@ -240,19 +240,19 @@ DeepLab's CRF functionality as it is computationally expensive.
 Our synthetically generated 321x321 pixel image tiles become inputs to
 Deeplab's network, while their corresponding masks become inputs to
 Deeplab's loss function.  We also supply DeepLab with a set of
-randomly-shuffled associations betwee image tiles and masks.  8K of the
+randomly-shuffled associations between image tiles and masks.  8K of the
 250K+ tile and mask triples are reserved for network validation.  The rest
 are used for network training.
 
 DeepLab fine-tunes the weight and bias parameters of a pre-trained DNN
-which is a variant of the VGG-16 model [6].  We employ a Stochastic
-Gradient Descent optimizer, adopt a batch size of 30, retain DeepLab's
-default 0.9 momentum and 0.0005 weight decay parameters, and utilize a step
-learning rate policy.  We found that training and validation results were
-relatively insensitive to modifications of the learning rate.  So we
-initialize the learning rate to 0.0045 [0.005] when fine-tuning the DNN for
-horizontal word-character [vertical text-line] segmentation.  Figure 6
-plots the loss functions for these two DNN models over 3 training epochs.
+which is a variant of the VGG-16 model [6].  We adopt a batch size of 30,
+retain DeepLab's default 0.9 momentum and 0.0005 weight decay parameters,
+employ a Stochastic Gradient Descent optimizer, and utilize a step learning
+rate policy.  We found that training and validation results were relatively
+insensitive to modifications of the learning rate.  So we initialize the
+learning rate to 0.0045 [0.005] when fine-tuning the DNN for horizontal
+word-character [vertical text-line] segmentation.  Figure 6 plots the loss
+functions for these two DNN models over 3 training epochs.
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/training/montage_horiz_lossfunc___vert_lossfunc.jpg)
 *Fig. 6.  Horizontal word-character and vertical text-line segmentation
@@ -261,12 +261,12 @@ losses plotted as functions of DNN model training.*
 After network fine-tuning has asymptotically converged, we can apply the
 trained DNNs to localize genuine text in arbitrary input images.  In order
 to quantitatively assess the performance of our classifiers on
-text-in-the-wild, we work with a challenging set of ground-truthed images
-[7].  It consists of 307 color images of outdoor urban scenes with
+text-in-the-wild, we test them against a challenging set of ground-truthed
+images [7].  It consists of 307 color photos of outdoor urban scenes with
 significant text content appearing on store fronts, billboard
-advertisements, street signs, trucks and vans, etc.  Text observed in these
-pictures exhibit a wide variety of fonts, colors, sizes, distance ranges,
-angular orientations, physical locations and illumination conditions.
+advertisements, street signs, trucks and vans, etc.  Text in these pictures
+exhibits a wide variety of fonts, colors, sizes, distance ranges, angular
+orientations, physical locations and illumination conditions.
 
 Horizontal text segmentation results for 5 representative images from this
 data set are presented in figure 7.  Individual words may be isolated via
@@ -274,8 +274,8 @@ their starting and stopping letters as well as spaces between words.  But
 in cases such as those illustrated in figure 8 where multiple text lines
 are closely packed together, horizontal character-in-word pixel
 classifications may bleed from one line into another.  Vertical
-segmentation then becomes valuable for separating different lines of text
-and the words contained within them.
+segmentation then offers a means for separating different lines of text and
+the words contained within them.
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0055___segmented_image_00055.jpg)
 
@@ -299,22 +299,22 @@ the left hand-side of these image pairs follows the same pattern as in
 figure 7.  The top [bottom] half of text lines are tinted blue [yellow]
 within the right hand-side of the image pairs.*
 
-It is important to note that DeepLab's semantic segmentation kernel has a
-maximum radius of O(100) pixels.  Moreover, we restricted the maximum width
-of our synthesized characters to 100 pixels.  So our fine-tuned DNNs
-struggle when segmenting letters or digits whose scales exceed 100 pixels.
-Similarly, their performance deteriorates on strings with very small pixel
-sizes.  Both of these maladies can be seen in figure 9a.
+It is important to note that DeepLab's modified version of the VGG-16
+network has a receptive field size of 128 pixels.  Moreover, our
+synthesized characters have O(100) pixel maximum widths.  So our fine-tuned
+DNNs struggle when segmenting letters or digits whose scales exceed 100
+pixels.  Similarly, their performance deteriorates on strings with very
+small pixel sizes.  The mask results on the right side of figure 9a exhibit
+both of these maladies.  As a simple remedy, we feed half-sized and
+double-sized versions of each picture along with the original-sized image
+into the trained DNNs.  As figure 9b demonstrates, the classifiers then
+correctly localize a larger range of character sizes when they operate on
+an image pyramid formed from a single picture.
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_1.jpg)
 *Fig. 9a.  Individual word segmentation results for one particular test
-image with 1024x1360 pixel size.*
-
-We consequently feed half-sized and double-sized versions of each picture
-along with the original-sized image into the trained DNNs when performing
-inference.  As figure 9b demonstrates, the classifiers are then able to
-localize a larger range of character sizes when they operate on resized
-versions of the original picture.
+image with 1024x1360 pixel size.  The "S" in "Subway" is approximately 100
+pixels wide.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_2.jpg)
 *Fig. 9b.  Word segmentation results for the test image in fig. 9a 
