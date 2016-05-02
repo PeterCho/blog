@@ -462,7 +462,7 @@ with Stroke Width Transform", CVPR (2010), 2963.
 Orientations in Natural Images*, CVPR (2012), 1083.
 
 11.  Video frames extracted from October 2013 PBS NewsHour broadcasts.  See
-www.pbs.org/newshour/ .
+www.pbs.org/newshour/.
 
 
 
