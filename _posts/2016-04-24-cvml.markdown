@@ -432,12 +432,13 @@ classifier trained on synthetic English phrases.*
 1.  Y. LeCun, L. Bottou, Y. Bengio and P. Haffner, *Gradient-based learning
 applied to document recognition*, Proc of IEEE (1998).
 
-*.  Microsoft truth data reference
+*.  See http://research.microsoft.com/enus/um/people/eyalofek/text_detection_database.zip
 
-*.  MSRA for chinese text 
+
+*.  C. Yao, X. Bai, W. Liu, Y. Ma and Z. Tu, *Detecting Texts of Arbitrary
+Orientations in Natural Images*, CVPR (1083).
 
 *.  NewsHour broadcasts for Greek and Arabic text
 
 *.  See www.imagemagick.org/Usage/text/
 
-*.  See http://research.microsoft.com/enus/um/people/eyalofek/text_detection_database.zip
