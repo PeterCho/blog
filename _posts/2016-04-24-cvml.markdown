@@ -175,31 +175,31 @@ complex background surfaces like glass windows or non-rigid cloth flags.
 Ideally, a machine should learn to recognize text phrases independent of
 their surrounding backgrounds.
 
-We consequently download 1000+ pictures from the internet to serve as
-backgrounds for our synthesized text image foregrounds.  The pixel size for
-each background photo is required to be larger than 1Kx1K.  Many of the
-backgrounds views are of real-world outdoor or indoor scenes.  Others are
+We consequently download 1000+ internet pictures to serve as backgrounds
+for our synthesized text image foregrounds.  The pixel size for each
+background photo is required to be larger than 1Kx1K.  Many of the
+background views are of real-world outdoor or indoor scenes.  Others are
 more abstract computer graphics, line-drawing or oil painting art.  In all
 cases, we inspect each background picture and manually blacken out any text
 content it originally contains.
 
-Given a text-free internet image as a backdrop, foreground text chips are
-quasi-randomly superposed onto the background texture.  At each candidate
-foreground text location, entropy density is calculated within the
-background image.  The candidate text location is rejected if the
-background entropy density is too high.  Moreover, average foreground and
-background RGB values are calculated at nominated text sites.  If their
-color contents do not sufficiently differ, the candidate text location is
-rejected.  The bounding box for any new foreground chip is also not allowed
-to overlap any previous text bounding boxes.  The number of foreground
-overlays within each composite varies randomly over the interval [9,27].
+Given a text-free internet image, foreground text chips are quasi-randomly
+superposed onto the backdrop texture.  At each candidate text location,
+entropy density is calculated within the background image.  The candidate
+text position is rejected if the local background entropy density is too
+high.  Similarly, average foreground and background RGB values are
+calculated at nominated text sites.  If their color contents do not
+sufficiently differ, the candidate text location is rejected.  The bounding
+box for any new foreground chip is also not allowed to overlap any previous
+text bounding boxes.  The number of foreground overlays within each
+composite varies over the interval [9,27].
 
 Once a composite image is formed, each of its pixel's RGB values is
-fluctuated by a nonzero amount of random gaussian noise.  A sizable
-fraction of the composites are also randomly blurred.  To our surprise, we
-observed that such composite degradation significantly improves later
-semantic segmentation classifier performance on test images containing
-genuine text content.
+fluctuated by a nonzero amount of gaussian noise.  A sizable fraction of
+the composites are also randomly blurred.  To our surprise, we observed
+that such composite degradation significantly improves later semantic
+segmentation classifier performance on test images containing genuine text
+content.
 
 For every composite image, we generate two 8-bit greyscale masks which
 encode the locations of synthetic text foregrounds.  One of the masks
@@ -223,8 +223,8 @@ mask indicates vertical text-line locations via greyscale colorings.*
 Following this synthetic text overlaying and mask generation procedure, we
 form 28K (composite image, horizontal mask, vertical mask) triples.  We
 subsequently decompose each composite into 3x3 tiles of pixel size 321x321.
-So we produce over a quarter-million tile triples.  As we shall see in the
-next section, these image plus mask tiles can be used to train deep
+We thus produce over a quarter-million tile triples.  As we shall see in
+the next section, these image plus mask tiles can be used to train deep
 semantic segmentation networks to localize text-in-the-wild in arbitrary
 input images.
 
