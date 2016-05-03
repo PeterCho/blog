@@ -212,8 +212,8 @@ composite images.
 *Fig. 4.  (a) Synthetically generated text phrases superposed on a
 background image of an outdoor scene.  Note that text inside the roadsign
 located near the lower right corner has been manually blackened. (b)
-Corresponding 8-bit mask indicates character locations within words via
-greyscale colorings.*
+Corresponding 8-bit mask indicates relative horizontal character locations
+within words via greyscale colorings.*
 
 ![TextLocalization]({{site.url}}/blog/images/text_segmentation/syntext/montage_composite_image_00187___word_bytearray_00187.jpg)
 *Fig. 5.  (a) Synthetically generated text phrases superposed on a
@@ -263,18 +263,18 @@ to quantitatively assess the performance of our classifiers on
 text-in-the-wild, we test them against a challenging set of ground-truthed
 images [7].  It consists of 307 color photos of outdoor urban scenes with
 significant text content appearing on store fronts, billboard
-advertisements, street signs, trucks and vans, etc.  Text in these pictures
+advertisements, street signs, truck sides, etc.  Text in these pictures
 exhibits a wide variety of fonts, colors, sizes, distance ranges, angular
 orientations, physical locations and illumination conditions.
 
 Horizontal text segmentation results for 5 representative images from this
 data set are presented in figure 7.  Individual words may be isolated via
 their starting and stopping letters as well as spaces between words.  But
-in cases such as those illustrated in figure 8 where multiple text lines
-are closely packed together, horizontal character-in-word pixel
-classifications may bleed from one line into another.  Vertical
-segmentation then offers a means for separating different lines of text and
-the words contained within them.
+in cases like those in figure 8 where multiple text lines are closely
+packed together, horizontal character-in-word pixel classifications may
+bleed from one line into another.  Vertical segmentation then offers a
+means for separating different lines of text and the words contained within
+them.
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/fullsized_segs/montage_text_img0055___segmented_image_00055.jpg)
 
@@ -293,10 +293,10 @@ letters inside words are tinted green.  Spaces between words are colored orange.
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/vert_full_segs/montage_horiz_segmented_image_00201___vert_segmented_image_00201.jpg)
 *Fig. 8.  Individual word versus vertical text line segmentation results
-for 2 different images.  Colored tinting for horizontal characters appearing on
+for 2 test images.  Colored tinting for horizontal characters appearing on
 the left hand-side of these image pairs follows the same pattern as in
 figure 7.  The top [bottom] half of text lines are tinted blue [yellow]
-within the right hand-side of the image pairs.*
+within the right hand-sides of the image pairs.*
 
 It is important to note that DeepLab's modified version of the VGG-16
 network has a receptive field size of 128 pixels.  Moreover, our
@@ -306,14 +306,15 @@ pixels.  Similarly, their performance deteriorates on strings with very
 small pixel sizes.  The mask results on the right side of figure 9a exhibit
 both of these maladies.  As a simple remedy, we feed half-sized and
 double-sized versions of each picture along with the original-sized image
-into the trained DNNs.  As figure 9b demonstrates, the classifiers then
-correctly localize a larger range of character sizes when they operate on
-an image pyramid formed from a single picture.
+into the trained DNNs.  The classifiers then correctly localize a larger
+range of character sizes when they operate on an image pyramid formed from
+a single picture (see figure 9b).
 
-![TextLocalization]({{ site.url }}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_1.jpg)
+![TextLocalization]({{ site.url}}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_1.jpg)
 *Fig. 9a.  Individual word segmentation results for one particular test
 image with 1024x1360 pixel size.  The "S" in "Subway" is approximately 100
-pixels wide.*
+pixels wide.  In contrast, small billboard characters near the top of the
+image are roughly 6 pixels wide.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/img_pyramid/cropped_montage_imgpyr_2.jpg)
 *Fig. 9b.  Word segmentation results for the test image in fig. 9a 
@@ -322,14 +323,14 @@ resolutions.*
 
 Multi-class segmentation labels corresponding to different levels of the
 input pyramid can straightforwardly be interpolated back to the original
-image's pixel size.  They could then be aggregated into a single mask via
-max pooling, average pooling or more sophisticated weighted pooling [8].
-But for purposes of comparing our text localization results with ground
-truth, we simply convert all character classes into binary text versus
-non-text pixel labels.  After taking the union of text labels across the 3
-pyramid levels, we form a single binary mask that represents the
-consolidated output from our detection system.  We quantitatively compare
-these masks with ground truth bounding boxes in the next section.
+image's pixel size.  They could be aggregated into a single mask via max
+pooling, average pooling or more sophisticated weighted pooling [8].  But
+for purposes of comparing our text localization results with ground truth,
+we simply convert all character classes into binary text versus non-text
+pixel labels.  After taking the union of text labels across the 3 pyramid
+levels, we form a single binary mask that represents the consolidated
+output from our detection system.  We quantitatively compare these masks
+with ground truth in the next section.
   
 ## Text segmentation results vs ground truth
 
@@ -338,18 +339,18 @@ accompanied by axis-aligned bounding boxes which were manually generated by
 human annotators (see figure 10).  These bounding box metadata can be used
 to evaluate the precision and recall of our text localization system. We
 compute a precision value for each test image from the ratio of pixels
-classified as text lying inside the truthed bounding boxes to the total
-number of pixels classified as text.  If we were to adopt an analogous
-measure for recall based solely upon pixel counts, performance assessment
-would be biased towards text strings with large pixel sizes.  So we instead
-compute the fractional coverage of bounding boxes by pixels classified as
-text within every test image.  We thus form precision and recall
-distributions over the set of 307 test images.
+classified as text lying inside the bounding boxes to the total number of
+pixels classified as text.  If we were to adopt an analogous measure for
+recall based solely upon pixel counts, performance assessment would be
+biased towards text strings with large pixel sizes.  So we instead compute
+the fractional coverage of bounding boxes by pixels classified as text
+within every test image.  We thus form precision and recall distributions
+over the set of 307 test images.
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0305___bboxes_0305.jpg)
-*Fig. 10.  Text pixel segmentation results for a test image aggregated
+*Fig. 10.  Text segmentation results for a test image aggregated
 from original, half-sized and double-sized pixel resolutions.  Ground truth
-bounding boxes are colored yellow in the image on the right hand-side.*
+bounding boxes are colored yellow on the right hand-side of the image pair.*
 
 We note that the ground-truth metadata is not in fact perfectly true.  For
 example, genuine text-in-the-wild was sometimes missed by human annotators
@@ -364,18 +365,18 @@ classifiers such as those listed in figure 12.
 
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/total_segs/montage_text_img0294___bboxes_0294.jpg)
-*Fig. 11a.  Text pixel segmentation results in this test image actually
+*Fig. 11a.  Text segmentation results in this test image actually
 cover more genuine word content than that contained within the "ground
 truth".  The false positives are not in fact really false.*
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/total_segs/montage_text_img0006___bboxes_0006.jpg)
-*Fig. 11b.  Text pixel segmentation results for in this test image more
+*Fig. 11b.  Text segmentation results for in this test image more
 accurately cover genuine word content than the axis-aligned bounding boxes.
 False negative pixels around "BUTLER GARAGE" are not really false.*
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/total_segs/montage_text_img0243___bboxes_0243.jpg)
 *Fig. 12a.  Examples of genuine false positives in this test image include
-building facade ornamentations which are incorrectly classified as text.*
+building facade ornamentations incorrectly classified as text.*
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/total_segs/montage_text_img0290___bboxes_0290.jpg)
 *Fig. 12b.  Examples of genuine false negatives in this test image include
@@ -384,24 +385,25 @@ entire words outlined by yellow truth boxes which were missed by the classifier.
 The precision and recall distributions presented in figure 13 represent
 approximate but useful quantifications of our synthetically-trained
 system's performance on a challenging text-in-the-wild data set.  Both
-distributions exhibit long tails.  So we quote their median rather than
-average values in order to condense them to single numbers: Precision =
-72.9%, Recall = 86.5%.
+distributions exhibit long tails.  We consequently quote their median
+rather than average values in order to condense them to single numbers:
+Precision = 72.9%, Recall = 86.5%.
 
 ![TextLocalization]({{ site.url }}/blog/images/text_segmentation/recall_prec/montage_precision_dens___recall_dens.jpg)
 *Fig. 13.  Text pixel precision and bounding box recall distributions for
 the 307 test images from [7].*
 
-Since localization usally represents the first step in most end-to-end text
+Since localization usually represents the first step in end-to-end text
 recognition systems, it is practically more important for recall to be as
-close to unity as possible even if precision suffers.  False positive text
+close to unity as possible even if precision suffers.  False positive
 detections could be elimiminated by more specialized classifiers of
-letters, digits, words and/or phrases at subsequent stages in an end-to-end
-pipeline.  In contrast, it would be much more difficult to later find words
-if they are completely missed at the initial nomination stage.  While 72.9%
-precision and 86.5% recall are still far from perfection, we note that
-these values are significantly larger than the 54% precision and 42% recall
-[9] achieved by the researchers who developed the data set in [7].
+letters, digits, words and/or phrases at subsequent stages in a complete
+processing pipeline.  On the other hand, it would be much more difficult to
+later find words if they are completely missed at the initial nomination
+stage.  While 72.9% precision and 86.5% recall are far from perfect, we
+note that these values are significantly larger than the 54% precision and
+42% recall [9] achieved by the researchers who developed the data set in
+[7].
 
 ## Segmentation of non-English text
 
@@ -421,7 +423,7 @@ reasonable to my eye.
 
 ![TextLocalization]({{ site.url}}/blog/images/text_segmentation/non-English/montage_segmented_image_00052_greek___segmented_image_00068_arabic.jpg)
 *Fig. 14.  Semantic segmentation of Chinese, Greek and Arabic text from
-classifier trained on synthetic English phrases.  The Chinese text images
+a classifier trained on synthetic English phrases.  The Chinese text images
 are part of a truth set assembled by the authors of [10].  The Greek and
 Arabic images come from [11].*
 
