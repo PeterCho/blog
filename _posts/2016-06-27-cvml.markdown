@@ -55,38 +55,38 @@ bounding boxes*.
 
 
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_00014___segmented_image_00014.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_00014___segmented_image_00014.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_02124___segmented_image_02124.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_02124___segmented_image_02124.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_09626___segmented_image_09626.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_09626___segmented_image_09626.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_05893___segmented_image_05893.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_05893___segmented_image_05893.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_02192___segmented_image_02192.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_02192___segmented_image_02192.jpg)
 
 
 *Fig. X.   Faces and hands localized in images containing small groups of people.*
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_08754___segmented_image_08754.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_08754___segmented_image_08754.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_09561___segmented_image_09561.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_09561___segmented_image_09561.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_03836___segmented_image_03836.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_03836___segmented_image_03836.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_02269___segmented_image_02269.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_02269___segmented_image_02269.jpg)
 
 *Fig. X.   Faces and hands localized in images containing crowds of people.*
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_10208___segmented_image_10208.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_10208___segmented_image_10208.jpg)
 
 *Fig. X.   Face localized in an image of a black-and-white photograph.*
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_05206___segmented_image_05206.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_05206___segmented_image_05206.jpg)
 
 *Fig. X.   Face localized in an image of an oil painting.*
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/montage_image_05236___segmented_image_05236.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_05236___segmented_image_05236.jpg)
 
 *Fig. X.   Face localized in an image of a line drawing.*
 
