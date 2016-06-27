@@ -44,6 +44,10 @@ connected components within these masks.*
 *Fig. X.  Pixel-level scores for semantic segmentation results of figure X.
 Warmer colors indicate higher confidences than cooler colors.*
 
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/flattened_segs_04084.png)
+*Fig. X.  Semantic segmentation results consolidated across image scales.*
+
+
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/segmented_image_04084.png)
 *Fig. X.  Localized faces and hands are indicated by orange and green
 bounding boxes*.
@@ -63,4 +67,6 @@ and Artifical Neural Networks for Natural Scene Text Recognition*, arXiv:
 3.  L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy and A.L. Yuille,
 *Semantic Image Segmentation with Deep Convolutional Nets and Fully
 Connected CRFs*, arXiv:1412.7062 (2015).
+
+4.  
 
