@@ -31,6 +31,22 @@ chips.*
 
 ## Face instance segmentation
 
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/image_04084.jpg)
+*Fig. X. One example image within our testing set.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_ccs.png)
+*Fig. X.  Pixel-level semantic segmentation of faces and hands within
+the test image (upper right) and its double-sized (left) and
+half-sized (lower right) versions.  Colored bounding boxes indicate
+connected components within these masks.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_scores.png)
+*Fig. X.  Pixel-level scores for semantic segmentation results of figure X.
+Warmer colors indicate higher confidences than cooler colors.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/segmented_image_04084.png)
+*Fig. X.  Localized faces and hands are indicated by orange and green
+bounding boxes*.
 
 
 ## Face localization performance results
