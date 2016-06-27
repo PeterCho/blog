@@ -91,6 +91,20 @@ bounding boxes*.
 *Fig. X.   Face localized in an image of a line drawing.*
 
 
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/false_negatives.png)
+
+*Fig. X.   Examples of partially or completely missed faces.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/false_positives.png)
+
+*Fig. X.   Examples of face false alarms.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/wrong_bboxes.png)
+
+*Fig. X.   Examples of one bounding box enclosing two faces (LHS) and one
+face overlapping three bounding boxes(RHS).*
+
+
 
 
 
