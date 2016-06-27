@@ -1,0 +1,50 @@
+---
+layout: post
+title:  "Localizing Faces via Data Augmentation and Instance Segmentation"
+date:   2016-06-27 12:00:0
+categories: Deep Learning
+---
+
+## Faces and hands training data
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/training_montage.png)
+*Fig. X. Representative examples of training images.  Human faces and hands
+are annotated via red and cyan bounding boxes.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/hands_on_face.png)
+*Fig. X. Examples of hands overlapping faces.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/animal_faces.png)
+*Fig. X. Negative examples of human faces and hands intentionally include 
+animal pictures.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/data_augmentation/image_00692.jpg)
+*Fig. X. A representative training image which becomes the source for
+multiple training chips.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/data_augmentation/output_6x3_tile_montage.jpg)
+*Fig. X. Examples of training tiles extracted from figure X.  Note
+variations in the translations, colorings and horizontal parities of image
+chips.*
+
+
+
+## Face instance segmentation
+
+
+
+## Face localization performance results
+
+
+## References
+
+1.  M. Jaderberg, K. Simonyan, A. Vedaldi and A. Zisserman, *Synthetic Data
+and Artifical Neural Networks for Natural Scene Text Recognition*, arXiv:
+1406.2227v4 (2014).
+
+2.  See www.imagemagick.org/Usage/text/ .
+
+3.  L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy and A.L. Yuille,
+*Semantic Image Segmentation with Deep Convolutional Nets and Fully
+Connected CRFs*, arXiv:1412.7062 (2015).
+
