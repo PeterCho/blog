@@ -61,6 +61,17 @@ components appear in purple.*
 *Fig. X.  Localized faces and hands are indicated by orange and green
 bounding boxes*.
 
+## Face localization performance results
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01712__segmented_image_01712.jpg)
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00936__segmented_image_00936.jpg)
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01750__segmented_image_01750.jpg)
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00336___doublesized_segmented_image_00336.jpg)
+
+*Fig. X.  Face quadrant segmentation results for 4 representative images*.
 
 
 
@@ -118,11 +129,6 @@ face overlapping three bounding boxes(RHS).*
 
 
 
-
-
-## Face localization performance results
-
-
 ## References
 
 1.  M. Jaderberg, K. Simonyan, A. Vedaldi and A. Zisserman, *Synthetic Data
@@ -135,5 +141,4 @@ and Artifical Neural Networks for Natural Scene Text Recognition*, arXiv:
 *Semantic Image Segmentation with Deep Convolutional Nets and Fully
 Connected CRFs*, arXiv:1412.7062 (2015).
 
-4.  
 
