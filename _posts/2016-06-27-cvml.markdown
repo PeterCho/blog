@@ -80,13 +80,13 @@ bounding boxes.*
 
 Among our training, validation and testing images, O(2K) have neither human
 faces nor hands.  Figure XX illustrates a few of these negative examples.
-Some contain zero human content.  Others display body parts such as bare
-backs, torsos or legs whose skin coloring could be confused with faces or
-hands.  We also intentionally included several pictures of animal faces
-into our imagery corpus which a classifier should learn to distinguish from
-human faces.  Moreover, we made sure to incorporate photos, paintings and
-line drawings of non-human faces so that a classifier would not always fire
-on such 2D representations.
+Some contain zero human content.  Others display body parts such as backs
+of heads, torsos and legs whose shapes or colorings could be confused with
+faces or hands.  We also intentionally included several pictures of animal
+faces into our imagery corpus which a classifier should learn to
+distinguish from human faces.  Moreover, we made sure to incorporate
+photos, paintings and line drawings of non-human faces so that a classifier
+would not always fire on such 2D representations.
 
 
 
@@ -131,7 +131,7 @@ Warmer colors indicate higher confidences than cooler colors.*
 right), double-sized (left) and half-sized (lower right) image scales.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/quad_centers_04084_orange.png)
-*Fig. X.  Midpoints of white rectangles midpoints mark centers for individual faces.
+*Fig. X.  Midpoints of white rectangles mark centers for individual faces.
 Orange bounding boxes enclose the original facial connected components as in figure XX.*
 
 
@@ -141,11 +141,11 @@ and green bounding boxes*.
 
 ## Face localization performance results
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01712__segmented_image_01712.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01712___segmented_image_01712.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00936__segmented_image_00936.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00936___segmented_image_00936.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01750__segmented_image_01750.jpg)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01750___segmented_image_01750.jpg)
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00336___doublesized_segmented_image_00336.jpg)
 
