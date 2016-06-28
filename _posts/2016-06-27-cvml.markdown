@@ -70,7 +70,7 @@ sometimes placed more than one bounding box around different parts of a
 hand in order to trace it with higher fidelity.  7259 of our 11491 images
 contain some hand content.
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/hands_on_face.png)
+![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/hands_on_faces.png)
 *Fig. X. Examples of hands overlapping faces.*
 
 
