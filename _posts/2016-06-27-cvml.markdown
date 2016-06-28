@@ -32,7 +32,7 @@ chips.*
 ## Face instance segmentation
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/image_04084.jpg)
-*Fig. X. One example image within our testing set.*
+*Fig. X. One example "Friends" image of within our testing set.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_ccs.png)
 *Fig. X.  Pixel-level semantic segmentation of faces and hands within
@@ -46,6 +46,15 @@ Warmer colors indicate higher confidences than cooler colors.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/flattened_segs_04084.png)
 *Fig. X.  Semantic segmentation results consolidated across image scales.*
+
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_quads.png)
+*Fig. X.  Face quadrant segmentation results at 3 different image scales.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/quad_centers_04084_0.png)
+*Fig. X.  Extracted face quadrant centers are marked by small white
+bounding boxes.  Bounding boxes around original face segmentation connected
+components appear in purple.*
 
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/segmented_image_04084.png)
