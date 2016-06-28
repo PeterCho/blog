@@ -61,34 +61,40 @@ As we generated facial bounding boxes using Davis King's image labeling
 tool [ref], we observed that humans frequently put their hands on their
 faces (see figure XX).  Indeed, XX percent of our 36K+ face bounding boxes
 are overlapped by bare hand content.  Semantic segmentation networks
-trained with such "contaminated" face data then often mistakenly classify
-hands as faces.  So we decided to label bare hands as well as faces in our
-imagery corpus.  7259 of our 11491 images contain hand content.
+trained with such "contaminated" face data often mistakenly classify hands
+as faces.  So we decided to label hands as well as faces in our imagery
+corpus.  But we only annotated bare hands which share similar skin tones to
+faces and ignored hands covered by opaque gloves.  7259 of our 11491 images
+contain bare hand content.
 
-Hands are inherently more deformable than faces, and their appearance
+Since hands are inherently more deformable than faces, their appearance
 within images is significantly more varied.  As the image labeling tool
-only permits object localization via rectangles rather than arbitrary
+only enables objects to be annotated by rectangles rather than arbitrary
 polygons, we sometimes used more than one bounding box to trace different
-parts of a hand with higher fidelity.  
-
-
-
-
+parts of a hand with higher fidelity than a single rectangle could achieve.
+In contrast, we always labeled a single face with a single bounding box.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/hands_on_faces.png)
 *Fig. X. Examples of annotated images with overlapping face and hand
-bounding boxes.  A single rectangle is always used to label a single face.
-But more than one bounding box is sometimes used to annotate a single
-hand.*
+bounding boxes.*
+
+Among our training, validation and testing images, O(2K) have neither human
+faces nor hands.  Figure XX illustrates a few of these negative examples.
+Some contain zero human content.  Others display body parts such as bare
+backs, torsos or legs whose skin coloring could be confused with faces or
+hands.  We also intentionally included several pictures of animal faces
+into our imagery corpus which a classifier should learn to distinguish from
+human faces.  Moreover, we made sure to incorporate photos, paintings and
+line drawings of non-human faces so that a classifier would not always fire
+on such 2D representations.
 
 
 
 
 
-
-![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/animal_faces.png)
-*Fig. X. Negative examples of human faces and hands intentionally include 
-animal pictures.*
+![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/negative_examples.png)
+*Fig. X. Negative examples which contain no human face or
+hand content.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/data_augmentation/image_00692.jpg)
 *Fig. X. A representative training image containing multiple face and hand
