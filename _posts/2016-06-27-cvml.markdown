@@ -59,21 +59,27 @@ cumulative bounding box percentages.*
 
 As we generated facial bounding boxes using Davis King's image labeling
 tool [ref], we observed that humans frequently put their hands on their
-faces (see figure XX).  Indeed, XX percent of our 36K face bounding boxes
-are overlapped by hand pixels.  We observed that semantic segmentation
-networks trained with such "contaminated" face data then often mistakenly
-classify hands as faces.  So we labeled hands as well as faces in our
-imagery corpus.  Hands are inherently more deformable than faces, and their
-appearance within images is significantly more varied.  As the image
-labeling tool only generates rectangles rather than arbitrary polygons, we
-sometimes placed more than one bounding box around different parts of a
-hand in order to trace it with higher fidelity.  7259 of our 11491 images
-contain some hand content.
+faces (see figure XX).  Indeed, XX percent of our 36K+ face bounding boxes
+are overlapped by bare hand content.  Semantic segmentation networks
+trained with such "contaminated" face data then often mistakenly classify
+hands as faces.  So we decided to label bare hands as well as faces in our
+imagery corpus.  7259 of our 11491 images contain hand content.
+
+Hands are inherently more deformable than faces, and their appearance
+within images is significantly more varied.  As the image labeling tool
+only permits object localization via rectangles rather than arbitrary
+polygons, we sometimes used more than one bounding box to trace different
+parts of a hand with higher fidelity.  
+
+
+
+
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/hands_on_faces.png)
-*Fig. X. Examples of hands overlapping faces.*
-
-
+*Fig. X. Examples of annotated images with overlapping face and hand
+bounding boxes.  A single rectangle is always used to label a single face.
+But more than one bounding box is sometimes used to annotate a single
+hand.*
 
 
 
@@ -118,10 +124,9 @@ Warmer colors indicate higher confidences than cooler colors.*
 *Fig. X.  Face quadrant segmentation results at original-sized (upper
 right), double-sized (left) and half-sized (lower right) image scales.*
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/quad_centers_04084_0.png)
-*Fig. X.  White bounding box midpoints mark centers for individual faces.
-Purple bounding boxes enclose the original facial connected components as
-in figure XX.*
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/quad_centers_04084_orange.png)
+*Fig. X.  Midpoints of white rectangles midpoints mark centers for individual faces.
+Orange bounding boxes enclose the original facial connected components as in figure XX.*
 
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/segmented_image_04084.png)
