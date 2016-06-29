@@ -151,21 +151,25 @@ network was trained via a conventional SGD solver for 5+ epochs.
 
 ## Face instance segmentation
 
-Once we have a trained DNN, we can apply it to the 700 images in our
-validation set.  But taking facial scale variation into account is just as
-important for inference as for training.  So we pass each validation image
-along with its half-sized and double-sized versions through the trained
-network.  For example, figure XX displays one representative validation
-image from the 1990's "Friends" sitcom.  Segmented hand and faces pixels
-are tinted red and yellow in figure XX at the 3 different image scales.
-Connected components representing candidate face and hand regions are
-subsequently formed.  Bounding boxes enclosing the connected components
-appear as colored rectangles in the figure.
+Once the DNN is trained, we can apply it to the 700+700 images in our
+validation and testing sets.  Each new image is decomposed into 1500x1500
+tiles, and adjacent tiles overlap their neighbors by 100 pixels.  After the
+DNN classifies every pixel within each tile, the tiles are recombined to
+form a single mask whose width and height dimensions precisely match those
+of the original image.  Since segmentation labels located 100 pixels from a
+tile border can be ignored, deleterious tile edge effects upon segmentation
+are minimized.
 
-
-
-
-
+Just as taking scale variation of human faces into account is important for
+training, so too is it important for inference.  We consequently pass each
+new image along with its half-sized and double-sized versions through the
+trained network.  For example, figure XX displays one representative image
+from the 1990's "Friends" sitcom.  Segmented face and hand pixels are
+tinted red and yellow in figure XX at the 3 different image scales.
+Connected components representing candidate face and hand regions in the
+original, half and double sized images are subsequently formed.  Colored
+rectangles in the figure depict bounding boxes enclosing the connected
+components at each image pyramid scale.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/image_04084.jpg)
 *Fig. X. A "Friends" image in the validation set.*
