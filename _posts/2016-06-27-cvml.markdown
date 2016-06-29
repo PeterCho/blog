@@ -1,7 +1,6 @@
 ---
 layout: post
-title:  "Localizing Faces via Data Augmentation and Instance Segmentation
-of Images"
+title:  "Localizing Faces via Image Scaling, Data Augmentation and Instance Segmentation"
 date:   2016-06-27 12:00:0
 categories: Deep Learning
 ---
@@ -100,14 +99,27 @@ whose value = 0, 1 or 2 for background, face and hand pixels.  Exported
 image tiles become inputs to Deeplab's DNN, while the masks become inputs
 to Deeplab's loss function.
 
-Unlike our earlier face detection attempt, this time we oversample every
+In our first attempt at face detection via semantic segmentation, we
+generated DNN training data using images and bounding box annotations at
+their original pixel sizes.  But human faces occur within internet imagery
+at a wide variety of scales.  So this time, we consider an input image
+along with its half-sized and double-sized versions.  The choice of scale
+for a training image depends upon the median pixel width of all its
+bounding boxes.  If the median width is less than 27 pixels, we replace the
+original image by its double-sized version and multiply all its bounding
+box coordinates by 2.  On the other hand, we work with the half-sized image
+and divide all bounding box coordinates by 2 if the median pixel width is
+greater than 54.  Face content used to train the DNN is thereby rendered
+closer in scale to the classifier's O(100 pixel) receptive field size.
+
+In this second investigation of face segmentation, we also oversample every
 training image in order to augment the total volume of input data.  Each
-annotated bounding box becomes a seed for a square tile.  A face [hand]
-bounding box is allowed to seed up to 8 [3] tiles, and a maximum of 20
-tiles are randomly generated per image.  If the bounding box has dimensions
-less than 321x321, the tile is randomly positioned so as to include the
-entire rectangle.  Otherwise, the tile contains some random part of the
-bounding box contents.
+annotated bounding box becomes a seed for a square tile.  If theA face
+[hand] bounding box is allowed to seed up to 8 [3] tiles, and a maximum of
+20 tiles are randomly generated per image.  If the bounding box has
+dimensions less than 321x321, the tile is randomly positioned so as to
+include the entire rectangle.  Otherwise, the tile contains some random
+part of the bounding box contents.
 
 We perform further data augmentation by modulating the image tiles' color
 contents.  Each pixel within some percentage of tiles has its hue,
@@ -128,12 +140,35 @@ bounding boxes.*
 figure X.  Note variations in the image chips' translations, colorings and
 horizontal parities.*
 
-
+A total of 147984 image tile plus mask pairs were generated for DNN
+training.  Approximately 84% of the 321x321 tiles contained face and/or
+hand content, while the remaining 16% corresponded to negative training
+data.  All of the tile-mask pairs were used to finetune a DeepLab variant
+of the VGG-16 network [refs].  We set the batch size = 30, base learning
+rate = 0.000125, momentum = 0.9 and weight decay = 0.0005.  DeepLab's loss
+function and pixel-level validation curves appeared to asymptote after the
+network was trained via a conventional SGD solver for 5+ epochs.
 
 ## Face instance segmentation
 
+Once we have a trained DNN, we can apply it to the 700 images in our
+validation set.  But taking facial scale variation into account is just as
+important for inference as for training.  So we pass each validation image
+along with its half-sized and double-sized versions through the trained
+network.  For example, figure XX displays one representative validation
+image from the 1990's "Friends" sitcom.  Segmented hand and faces pixels
+are tinted red and yellow in figure XX at the 3 different image scales.
+Connected components representing candidate face and hand regions are
+subsequently formed.  Bounding boxes enclosing the connected components
+appear as colored rectangles in the figure.
+
+
+
+
+
+
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/image_04084.jpg)
-*Fig. X. A "Friends" image in the testing set.*
+*Fig. X. A "Friends" image in the validation set.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_ccs.png)
 *Fig. X.  Pixel-level semantic segmentation of faces and hands in
