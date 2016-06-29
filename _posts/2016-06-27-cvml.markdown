@@ -80,21 +80,44 @@ bounding boxes.*
 
 Among our training, validation and testing images, O(2K) have neither human
 faces nor hands.  Figure XX illustrates a few of these negative examples.
-Some contain zero human content.  Others display body parts such as backs
-of heads, torsos and legs whose shapes or colorings could be confused with
-faces or hands.  We also intentionally included several pictures of animal
-faces into our imagery corpus which a classifier should learn to
-distinguish from human faces.  Moreover, we made sure to incorporate
-photos, paintings and line drawings of non-human faces so that a classifier
-would not always fire on such 2D representations.
-
-
-
-
+Some contain no human content.  Others display body parts such as backs of
+heads, torsos and legs whose shapes or colorings might be confused with
+faces or hands by a machine.  We also intentionally included several
+pictures of animal faces into our imagery corpus which a classifier should
+learn to distinguish from human faces.  Moreover, we made sure to
+incorporate photos, paintings and line drawings of non-human faces so that
+a classifier would not always fire on such 2D representations.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/negative_examples.png)
-*Fig. X. Negative examples which contain no human face or
-hand content.*
+*Fig. X. Negative examples containing neither human face nor hand content.*
+
+As in our earlier face detection post, we work with the DeepLab framework
+built on top of Caffe [7 - 9] in order to perform semantic image
+segmentation.  For Deep Neural Network (DNN) training, we decompose the
+annotated training images into square tiles with 321x321 pixel dimensions.
+For each tile, a mask written to an 8-bit greyscale PNG file is created
+whose value = 0, 1 or 2 for background, face and hand pixels.  Exported
+image tiles become inputs to Deeplab's DNN, while the masks become inputs
+to Deeplab's loss function.
+
+Unlike our earlier face detection attempt, this time we oversample every
+training image in order to augment the total volume of input data.  Each
+annotated bounding box becomes a seed for a square tile.  A face [hand]
+bounding box is allowed to seed up to 8 [3] tiles, and a maximum of 20
+tiles are randomly generated per image.  If the bounding box has dimensions
+less than 321x321, the tile is randomly positioned so as to include the
+entire rectangle.  Otherwise, the tile contains some random part of the
+bounding box contents.
+
+We perform further data augmentation by modulating the image tiles' color
+contents.  Each pixel within some percentage of tiles has its hue,
+saturation and value color coordinates perturbed by small, constant
+offsets.  Furthermore, gaussian noise is added to a random subset of tiles.
+50% of all tiles are also horizontally flipped.  Figures XX and XX present
+one representative training image and 18 of its modulated tiles.  By seeing
+many such variations, the DNN hopefully grows insensitive to precise image
+positioning, coloring and noise levels when learning to classify faces and
+hands.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/data_augmentation/image_00692.jpg)
 *Fig. X. A representative training image containing multiple face and hand
@@ -110,12 +133,12 @@ horizontal parities.*
 ## Face instance segmentation
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/image_04084.jpg)
-*Fig. X. A "Friends" image within our testing set.*
+*Fig. X. A "Friends" image in the testing set.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_ccs.png)
-*Fig. X.  Pixel-level semantic segmentation of faces and hands within
+*Fig. X.  Pixel-level semantic segmentation of faces and hands in
 the test image (upper right) and its double-sized (left) and
-half-sized (lower right) versions.  Colored bounding boxes indicate
+half-sized (lower right) versions.  Colored bounding boxes surround
 connected components within these segmentation masks.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_scores.png)
@@ -123,7 +146,7 @@ connected components within these segmentation masks.*
 Warmer colors indicate higher confidences than cooler colors.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/flattened_segs_04084.png)
-*Fig. X.  Semantic segmentation results consolidated across image scales.*
+*Fig. X.  Semantic segmentation results consolidated across 3 image scales.*
 
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_quads.png)
@@ -170,9 +193,9 @@ and green bounding boxes*.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_09561___segmented_image_09561.jpg)
 
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_03836___segmented_image_03836.jpg)
-
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_02269___segmented_image_02269.jpg)
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_03836___segmented_image_03836.jpg)
 
 *Fig. X.   Faces and hands localized in images containing crowds of people.*
 
@@ -182,11 +205,11 @@ and green bounding boxes*.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_05206___segmented_image_05206.jpg)
 
-*Fig. X.   Face localized in an image of an oil painting.*
+*Fig. X.   Face localized in an oil painting image.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_05236___segmented_image_05236.jpg)
 
-*Fig. X.   Face localized in an image of a line drawing.*
+*Fig. X.   Face localized in a line drawing image.*
 
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/false_negatives.png)
@@ -199,8 +222,8 @@ and green bounding boxes*.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/wrong_bboxes.png)
 
-*Fig. X.  One bounding box incorrectly enclosing two faces (LHS) and three bounding
-boxes incorrectly overlapping one face (RHS).*
+*Fig. X.  LHS: One bounding box incorrectly encloses two faces. (RHS) Three
+bounding boxes incorrectly overlap one face.*
 
 
 
