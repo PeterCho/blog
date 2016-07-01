@@ -39,22 +39,94 @@ as photographs, paintings and drawings.
 and hands are marked by red and cyan bounding boxes.*
 
 
-|  Bbox   	| Lower bbox   	| Upper bbox   	|
-|  percentage  	| pixel width   | pixel width  	| 
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: center">Bounding box</th>
+      <th style="text-align: center">Lower bounding box</th>
+      <th style="text-align: center">Upper bounding box</th>
+    </tr>
+    <tr>
+      <th style="text-align: center">percentage</th>
+      <th style="text-align: center">pixel width</th>
+      <th style="text-align: center">pixel width</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">0-10</td>
+      <td style="text-align: center">0</td>
+      <td style="text-align: center">7.7</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">10-20</td>
+      <td style="text-align: center">7.7</td>
+      <td style="text-align: center">12.9</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">20-30</td>
+      <td style="text-align: center">12.9</td>
+      <td style="text-align: center">18.7</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">30-40</td>
+      <td style="text-align: center">18.7</td>
+      <td style="text-align: center">24.9</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">40-50</td>
+      <td style="text-align: center">24.9</td>
+      <td style="text-align: center">31.2</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">50-60</td>
+      <td style="text-align: center">31.2</td>
+      <td style="text-align: center">39.2</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">60-70</td>
+      <td style="text-align: center">39.2</td>
+      <td style="text-align: center">50.8</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">70-80</td>
+      <td style="text-align: center">50.8</td>
+      <td style="text-align: center">67.9</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">80-90</td>
+      <td style="text-align: center">67.9</td>
+      <td style="text-align: center">100.3</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">90-100</td>
+      <td style="text-align: center">100.3</td>
+      <td style="text-align: center">Infinity</td>
+    </tr>
+  </tbody>
+</table>
+
+<!---
+
+|  Bbox   	| Lower bbox    | Upper bbox    |
+|  percentage  	| pixel width   | pixel width   | 
 |:-------------:|:-------------:|:-------------:|
-|   0-10	|  0 		| 7.7  		|
-|   10-20	|  7.7	 	| 12.9  	|
-|   20-30 	|  12.9		| 18.7  	| 
+|   0-10	|  0 	        |  7.7  	|
+|   10-20	|  7.7	        | 12.9  	|
+|   20-30 	|  12.9	        | 18.7  	| 
 |   30-40 	|  18.7 	| 24.9  	|
 |   40-50	|  24.9 	| 31.2  	| 
 |   50-60	|  31.2 	| 39.2  	| 
-|   60-70	|  39.2 	| 50.8	  	| 
+|   60-70	|  39.2 	| 50.8	        | 
 |   70-80	|  50.8 	| 67.9  	| 
-|   80-90	|  67.9		| 100.3  	| 
-|   90-100	|  100.3	| Infinity  	| 
+|   80-90	|  67.9	        | 100.3  	| 
+|   90-100	|  100.3	| Infinity      | 
 
-*Fig. X.  Pixel width ranges for 36K+ face bounding boxes listed as functions of
-cumulative bounding box percentages.*
+-->
+
+
+*Fig. X.  Pixel width ranges for 36K+ face bounding boxes listed as
+functions of cumulative bounding box percentages.*
 
 As we generated facial bounding boxes using Davis King's image labeling
 tool [ref], we observed that humans frequently put their hands on their
@@ -75,7 +147,7 @@ In contrast, we always labeled a single face with a single bounding box.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/hands_on_faces.png)
 *Fig. X. Examples of annotated images with overlapping face and hand
-bounding boxes.*
+bounding boxes.  A single hand may be enclosed by more than one box.*
 
 Among our training, validation and testing images, O(2K) have neither human
 faces nor hands.  Figure XX illustrates a few of these negative examples.
@@ -161,15 +233,14 @@ tile border can be ignored, deleterious tile edge effects upon segmentation
 are minimized.
 
 Just as taking scale variation of human faces into account is important for
-training, so too is it important for inference.  We consequently pass each
+training, so too is it necessary for inference.  We consequently pass each
 new image along with its half-sized and double-sized versions through the
 trained network.  For example, figure XX displays one representative image
-from the 1990's "Friends" sitcom.  Segmented face and hand pixels are
-tinted red and yellow in figure XX at the 3 different image scales.
-Connected components representing candidate face and hand regions in the
-original, half and double sized images are subsequently formed.  Colored
-rectangles in the figure depict bounding boxes enclosing the connected
-components at each image pyramid scale.
+from the 1990's "Friends" sitcom.  Face and hand pixels segmented by the
+trained DNN are tinted red and yellow in figure XX at the 3 different image
+scales.  For each pixel labeled as face or hand, the classifier returns a
+confidence score between 0 to 1 which are illustrated in figure XX as a
+heat map.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/image_04084.jpg)
 *Fig. X. A "Friends" image in the validation set.*
@@ -184,8 +255,84 @@ connected components within these segmentation masks.*
 *Fig. X.  Pixel-level scores for semantic segmentation results of figure X.
 Warmer colors indicate higher confidences than cooler colors.*
 
+We next form connected components from segmented face and hand pixels at
+each image scale.  Bounding boxes enclosing the connected components appear
+as colored rectangles in figure XX.  If a connected component is relatively
+small compared to the DNN's receptive field in the original-sized or
+half-sized images and if it corresponds to genuine signal, we expect to
+find a larger counterpart within the double-sized or original-sized images.
+Similarly if a connected component is relatively large in the
+original-sized or double-sized images, a smaller counterpart should exist
+in the half-sized or original-sized images.  We consequently ignore
+connected components at particular image scale which are too small or too
+large.
+
+Surviving connected components are assigned confidence values corresponding
+to the "hottest" 20th-percentile among its individual pixel scores.  Since
+we are primarily interested in face detection, we set a higher threshold
+score for hand components than for face components.  Moreover, we expect
+object detection to be easiest to perform within half-sized images and
+hardest for double-sized images.  So our thresholds are more stringent
+[lenient] for the former [latter].  Connected components whose confidence
+values do not meet these score thresholds are rejected.  Bounding boxes
+for components rejected either by size or score considerations are colored
+black in figure XX.
+
+We next consolidate all the connected components across the 3 image pyramid
+scales.  Components found in double-sized [half-sized] images are
+downsampled [upsampled] to original-sized image dimensions.  After such
+resampling, we search for connected components originating from different
+scales which overlap in area by more than 25%.  The component with the
+higher confidence value relative to its score threshold is retained, while
+the other component is rejected.  
+
+The surviving connected components after image scale consolidation for our
+"Friends" example are presented in figure XX.  Recalculated component
+bounding boxes for faces and hands appear as orange and light green
+rectangles in the figure.  Since the pixel-level segmentations for Monica's
+and Chandler's faces merged together, we observe a one bounding box
+enclosing their two faces rather than two boxes around two faces.
+
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/flattened_segs_04084.png)
 *Fig. X.  Semantic segmentation results consolidated across 3 image scales.*
+
+Up to this point, we have worked with segmentation results generated by a
+DNN trained to perform object category rather than object instance
+classification.  But images containing two or more human faces often
+exhibit little or no separation between them.  So some way is needed to
+distinguish individual faces.  We consequently adopt a variation of the
+approach we developed for localizing individual words within
+text-in-the-wild described in our previous post [ref].  In particular, we
+train a new DNN to semantically segment facial quadrants.  We start with
+our O(36K) facial bounding boxes and decompose them into top-left,
+top-right, bottom-left and bottom-right quarters.  Ignoring hand content,
+we generate a new set of augmented 321 x 321 image tiles which again take
+face bounding box scale into account.  Each pixel in the tiles'
+accompanying masks is labeled by one of four classification categories or
+background.  After DeepLab ingests these new training data and finetunes a
+new model, facial quadrants may be segmented out from validation and
+testing images.  Figure XX displays representative results from the
+secondary DNN.
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01712___segmented_image_01712.jpg)
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00936___segmented_image_00936.jpg)
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01750___segmented_image_01750.jpg)
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00336___doublesized_segmented_image_00336.jpg)
+
+*Fig. X.  Facial quadrant segmentation for four representative images.  The
+first three images are original-sized, while the fourth is double-sized.*
+
+Facial quadrant segmentation is intrinsically more difficult than simple
+facial segmentation.  So it is not surprising to see some classification
+mistakes in figure XX.  Nevertheless, quadrant segmentation generally works
+well enough to isolate individual faces.  This is true even for partially
+occluded faces and/or viewed in profile.  
+
+Returning to our "Friends" example, we present facial quadrant segmentation
+at original-sized , double-sized and half-sized image scales in figure XX.
 
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_quads.png)
@@ -202,17 +349,6 @@ Orange bounding boxes enclose the original facial connected components as in fig
 and green bounding boxes*.
 
 ## Face localization performance results
-
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01712___segmented_image_01712.jpg)
-
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00936___segmented_image_00936.jpg)
-
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_01750___segmented_image_01750.jpg)
-
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00336___doublesized_segmented_image_00336.jpg)
-
-*Fig. X.  Face quadrant segmentations for 4 representative images*.
-
 
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_00014___segmented_image_00014.jpg)
