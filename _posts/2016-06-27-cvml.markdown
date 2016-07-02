@@ -5,7 +5,7 @@ date:   2016-06-27 12:00:0
 categories: Deep Learning
 ---
 
-## Faces and hands training data
+## Training data for faces and hands
 
 In an earlier blog post, we presented a first attempt at face detection via
 deep semantic segmentation [1].  The initial results based upon 3K+
@@ -35,7 +35,7 @@ Moreover, some of our face data intentionally come from "2D" sources such
 as photographs, paintings and drawings.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/training_montage.png)
-*Fig. X. Representative examples of annotated training images.  Human faces
+*Fig. 1. Representative examples of annotated training images.  Human faces
 and hands are marked by red and cyan bounding boxes.*
 
 
@@ -124,8 +124,7 @@ and hands are marked by red and cyan bounding boxes.*
 
 -->
 
-
-*Fig. X.  Pixel width ranges for 36K+ face bounding boxes listed as
+*Table 1.  Pixel width ranges for 36K+ face bounding boxes listed as
 functions of cumulative bounding box percentages.*
 
 As we generated facial bounding boxes using Davis King's image labeling
@@ -146,7 +145,7 @@ parts of a hand with higher fidelity than a single rectangle could achieve.
 In contrast, we always labeled a single face with a single bounding box.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/hands_on_faces.png)
-*Fig. X. Examples of annotated images with overlapping face and hand
+*Fig. 2. Examples of annotated images with overlapping face and hand
 bounding boxes.  A single hand may be enclosed by more than one box.*
 
 Among our training, validation and testing images, O(2K) have neither human
@@ -160,7 +159,7 @@ incorporate photos, paintings and line drawings of non-human faces so that
 a classifier would not always fire on such 2D representations.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/negative_examples.png)
-*Fig. X. Negative examples containing neither human face nor hand content.*
+*Fig. 3. Negative examples containing neither human face nor hand content.*
 
 As in our earlier face detection post, we work with the DeepLab framework
 built on top of Caffe [7 - 9] in order to perform semantic image
@@ -204,11 +203,11 @@ positioning, coloring and noise levels when learning to classify faces and
 hands.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/data_augmentation/image_00692.jpg)
-*Fig. X. A representative training image containing multiple face and hand
+*Fig. 4a. A representative training image containing multiple face and hand
 bounding boxes.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/data_augmentation/output_6x3_tile_montage.jpg)
-*Fig. X. Examples of training tiles extracted around face and hand boxes in
+*Fig. 4b. Examples of training tiles extracted around face and hand boxes in
 figure X.  Note variations in the image chips' translations, colorings and
 horizontal parities.*
 
@@ -221,7 +220,7 @@ rate = 0.000125, momentum = 0.9 and weight decay = 0.0005.  DeepLab's loss
 function and pixel-level validation curves appeared to asymptote after the
 network was trained via a conventional SGD solver for 5+ epochs.
 
-## Facial instance segmentation
+## Instance segmentation of faces
 
 Once the DNN is trained, we can apply it to the 700+700 images in our
 validation and testing sets.  Each new image is decomposed into 1500x1500
@@ -243,16 +242,16 @@ confidence score between 0 to 1 which are illustrated in figure XX as a
 heat map.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/image_04084.jpg)
-*Fig. X. A "Friends" image in the validation set.*
+*Fig. 5. A "Friends" image in the validation set.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_ccs.png)
-*Fig. X.  Pixel-level semantic segmentation of faces and hands in
+*Fig. 6a.  Pixel-level semantic segmentation of faces and hands in
 the test image (upper right) and its double-sized (left) and
 half-sized (lower right) versions.  Colored bounding boxes surround
 connected components within these segmentation masks.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_scores.png)
-*Fig. X.  Pixel-level scores for semantic segmentation results of figure X.
+*Fig. 6b.  Pixel-level scores for semantic segmentation results of figure X.
 Warmer colors indicate higher confidences than cooler colors.*
 
 We next form connected components from segmented face and hand pixels at
@@ -294,7 +293,7 @@ and Chandler's faces merged together, we observe a one bounding box
 enclosing their two faces rather than two boxes around two faces.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/flattened_segs_04084.png)
-*Fig. X.  Semantic segmentation results consolidated across 3 image scales.*
+*Fig. 7.  Semantic segmentation results consolidated across 3 image scales.*
 
 Up to this point, we have worked with segmentation results generated by a
 DNN trained to classify object categories rather than object instances.
@@ -321,7 +320,7 @@ from the secondary DNN.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/quadrant_masks/montage_image_00336___doublesized_segmented_image_00336.jpg)
 
-*Fig. X.  Facial quadrant segmentation for four representative images.  The
+*Fig. 8.  Facial quadrant segmentation for four representative images.  The
 first three images are original-sized, while the fourth is double-sized.*
 
 Face quadrant segmentation is intrinsically more difficult than full face
@@ -335,7 +334,7 @@ Rachel and Ross at the original-sized, double-sized and half-sized image
 scales.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/double_full_half_quads.png)
-*Fig. X.  Face quadrant segmentation results at original-sized (upper
+*Fig. 9.  Face quadrant segmentation results at original-sized (upper
 right), double-sized (left) and half-sized (lower right) image scales.*
 
 Looping over pixels inside the three candidate facial connected components
@@ -352,7 +351,7 @@ mark individual face centers.  Four such face centers are found for the
 "Friends" image (see figure XX).
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/quad_centers_04084_orange.png)
-*Fig. X.  Midpoints of white rectangles mark centers for individual faces.
+*Fig. 10.  Midpoints of white rectangles mark centers for individual faces.
 Orange bounding boxes enclose the original facial connected components as in figure XX.*
 
 Finally, every facial pixel inside the original connected component's
@@ -368,11 +367,19 @@ output results.  And the four, full "Friends" faces appearing in figure XX
 are successfully localized by this procedure.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/segmented_image_04084.png)
-*Fig. X.  Final set of localized faces and hands are indicated by orange
+*Fig. 11.  Final set of localized faces and hands are indicated by orange
 and green bounding boxes*.
 
-## Face localization performance results
+## Performance results for face localization
 
+700 validation images were used to optimize multiple hyperparameters in our
+total pipeline including data augmentation threshold fractions, DNN
+learning rates, face connected component bounding box size and score
+thresholds.  After freezing the hyperparameter values, we then ran our
+entire system on an independent set of 700 test images.  Qualitatively
+successful examples of facial localization for groups of people are
+displayed in figure XX.  Note that faces viewed in profile, partly occluded
+by hands and significantly covered by surgical masks are extracted.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_00014___segmented_image_00014.jpg)
 
@@ -384,8 +391,13 @@ and green bounding boxes*.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_02192___segmented_image_02192.jpg)
 
+*Fig. 12.   Faces and hands localized in images containing groups of people.*
 
-*Fig. X.   Faces and hands localized in images containing groups of people.*
+Localizing faces within crowd images such as those in figure XX is more
+challenging.  In these examples, many are obscured by shadows, oriented at
+various angles relative to the camera or densely packed in the depth
+dimension.  Nevertheless, our system successfully extracts most
+individuals' faces in these crowd scenes.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_08754___segmented_image_08754.jpg)
 
@@ -395,37 +407,167 @@ and green bounding boxes*.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_03836___segmented_image_03836.jpg)
 
-*Fig. X.   Faces and hands localized in images containing crowds of people.*
+*Fig. 13.   Faces and hands localized in images containing crowds of people.*
+
+Recall that we intentionally incorporated several "2D" sources of faces in
+our training set such as images of photos, paintings and line drawings.  We
+would like our system to work on such abstract representations of human
+faces in addition to conventional images of real people in the real world.
+So it is interesting to see face localization results for three "2D" test
+images presented in figures XX, XX and XX.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_10208___segmented_image_10208.jpg)
 
-*Fig. X.   Face localized in an image of a black-and-white photograph.*
+*Fig. 14.   Face localized in an image of a black-and-white photograph.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_05206___segmented_image_05206.jpg)
 
-*Fig. X.   Face localized in an oil painting image.*
+*Fig. 15.   Face localized in an oil painting image.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_05236___segmented_image_05236.jpg)
 
-*Fig. X.   Face localized in a line drawing image.*
+*Fig. 16.   Face localized in a line drawing image.*
 
-
-![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/false_negatives.png)
-
-*Fig. X.   Examples of partially or completely missed faces.*
+Of course, our system also makes mistakes.  A number of false positive
+detections slip through.  They include human hands, non-human face drawings
+and animal visages being incorrectly classified as human faces (see figure
+XX).  The system also suffers from false negatives wherein faces are partly
+or entirely missed (see figure XX).
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/false_positives.png)
 
-*Fig. X.   Human face false alarms.*
+*Fig. 17.   Human face false alarms.*
+
+![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/false_negatives.png)
+
+*Fig. 18.   Examples of partially or completely missed faces.*
+
+Our system's ability to find faces is a strong function of their pixel
+sizes within an input image.  In turn, the distribution of pixel sizes
+among our entire set of 36K+ face bounding boxes is highly non-uniform and
+skews heavily towards small rectangles.  Working with the bounding box
+percentiles in Table 1, we report recall fractions for the 700 images in
+our test set in Table 2.  Recall is given by the fractional coverage of
+ground truth bounding boxes by pixels classified as face within every test
+image.  As Table 2 clearly illustrates, semantic segmentation of faces
+fails if their sizes are significantly smaller than the DNN's O(100 pixel)
+receptive field.  Performing inference on double-sized versions of each
+test image certainly improves system recall.  But even after image
+doubling, our system cannot find a human face if its width is less than 18
+pixels.
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: center">Lower bounding box</th>
+      <th style="text-align: center">Upper bounding box</th>
+      <th style="text-align: center">Number of</th>
+      <th style="text-align: center">Recall</th>
+    </tr>
+    <tr>
+      <th style="text-align: center">pixel width</th>
+      <th style="text-align: center">pixel width</th>
+      <th style="text-align: center">bounding boxes</th>
+      <th style="text-align: center">fraction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">0</td>
+      <td style="text-align: center">7.7</td>
+      <td style="text-align: center">140</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">7.7</td>
+      <td style="text-align: center">12.9</td>
+      <td style="text-align: center">213</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">12.9</td>
+      <td style="text-align: center">18.7</td>
+      <td style="text-align: center">204</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">18.7</td>
+      <td style="text-align: center">24.9</td>
+      <td style="text-align: center">227</td>
+      <td style="text-align: center">0.602</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">24.9</td>
+      <td style="text-align: center">31.2</td>
+      <td style="text-align: center">204</td>
+      <td style="text-align: center">0.688</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">31.2</td>
+      <td style="text-align: center">39.2</td>
+      <td style="text-align: center">207</td>
+      <td style="text-align: center">0.786</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">39.2</td>
+      <td style="text-align: center">50.8</td>
+      <td style="text-align: center">214</td>
+      <td style="text-align: center">0.804</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">50.8</td>
+      <td style="text-align: center">67.9</td>
+      <td style="text-align: center">215</td>
+      <td style="text-align: center">0.832</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">67.9</td>
+      <td style="text-align: center">100.3</td>
+      <td style="text-align: center">191</td>
+      <td style="text-align: center">0.809</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">100.3</td>
+      <td style="text-align: center">Infinity</td>
+      <td style="text-align: center">336</td>
+      <td style="text-align: center">0.807</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!---
+
+| Lower bbox    | Upper bbox    | Number of     | Recall    |
+| pixel width   | pixel width   | bboxes	| fraction  |
+|:-------------:|:-------------:|:-------------:|:---------:|
+|  0 	        |  7.7  	|  140		| 0         |
+|  7.7	        | 12.9  	|  213		| 0	    |
+|  12.9	        | 18.7  	|  204		| 0         |
+|  18.7 	| 24.9  	|  227		| 0.602     |
+|  24.9 	| 31.2  	|  204		| 0.688     |
+|  31.2 	| 39.2  	|  207		| 0.786     |
+|  39.2 	| 50.8	        |  214		| 0.804     |
+|  50.8 	| 67.9  	|  215		| 0.832     |
+|  67.9	        | 100.3  	|  191		| 0.809     |
+|  100.3	| Infinity      |  336		| 0.807     |
+
+-->
+
+*Table 2.  Human face recall for 700 test images as a function of bounding
+box pixel width.*
+
+We also compute a precision value for each test image from the ratio of
+pixels classified as face which lie inside ground truth bounding boxes to
+the total number of pixels classified as face.  When averaged over 700 test
+images, we obtain pixel precision = 0.835.  Finally, we combine the
+pixel-level recall and precision measures by taking their harmonic mean to
+obtain an overall balanced F-score = 0.753.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/wrong_bboxes.png)
 
-*Fig. X.  LHS: One bounding box incorrectly encloses two faces. (RHS) Three
+*Fig. XX.  LHS: One bounding box incorrectly encloses two faces. (RHS) Three
 bounding boxes incorrectly overlap one face.*
-
-
-
-
 
 
 ## References
