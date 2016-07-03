@@ -577,20 +577,32 @@ motivation for annotating hands within the training imagery was to minimize
 the DNN's tendency to erroneously classify them as faces.  When hand
 content is ignored, we find recall = 0.723, precision = 0.774 and F-score =
 0.747.  So face localization precision is indeed improved by including hand
-labels within the training set, though pixel-level recall is diminished.  
+labels within the training set, though recall is diminished.
 
-
-
+Pixel-level precision and recall are useful metrics for quantifying a
+classification system's performance.  But they can hide deficiencies in
+object localization such as those depicted in figure 19.  For example, one
+bounding box may overlap more than one face.  Alternatively, one face may
+be overlapped by more than one bounding box.  So it is useful to compare
+manually labeled ground-truth bounding boxes with automatically detected
+bounding boxes in our testing set in order to assess our pipeline face
+localization capabilities at an object level.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/wrong_bboxes.png)
 
 *Fig. 19.  LHS: One bounding box incorrectly encloses two faces. (RHS) Three
 bounding boxes incorrectly overlap one face.*
 
-Median ground truth face bbox IoU = 0.710
-
-Median detected bbox bbox IoU = 0.711
-
+For every ground-truth bounding box within each test image, we search for a
+detection box counterpart whose intersection-over-union ratio is maximal.
+Similarly, we identify a ground-truth counterpart for every detection
+bounding box with maximal intersection-over-union value.  Frequency
+histograms for these two distributions are plotted in figure 20.  The large
+spikes in these plots' zero-value bins indicates that our system generates
+a sizable number of false negatives and false positives.  But the
+distributions' median 0.710 and 0.711 values for ground-truth and detected
+face bounding box IoU quantifies our system's face localization performance
+on a challenging set of internet imagery.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/IoUs.png)
 
@@ -598,7 +610,6 @@ Median detected bbox bbox IoU = 0.711
 face bounding boxes manually labeled in 700 testing images. (RHS)
 Intersection-over-union distribution for 1632 face bounding boxes
 automatically detected in 700 testing images.*
-
 
 ## References
 
