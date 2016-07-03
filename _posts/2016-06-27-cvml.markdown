@@ -242,8 +242,9 @@ trained network.  For example, figure 5 displays one representative image
 from the 1990's "Friends" sitcom.  Face and hand pixels segmented by the
 trained DNN are tinted red and yellow in figure 6a at the three different
 image scales.  For each pixel labeled as face or hand, the classifier
-returns a confidence value between 0 to 1.  The confidence scores are
-illustrated as a heat map in figure 6b.
+returns a confidence value between 0 to 1.  Confidence scores for the three
+scaled versions of the "Friends" image are illustrated as heat maps in
+figure 6b.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/image_04084.jpg)
 *Fig. 5. A "Friends" validation image.*
@@ -260,15 +261,15 @@ connected components within these segmentation masks.*
 
 We next form connected components from segmented face and hand pixels at
 each image scale.  Bounding boxes enclosing the connected components appear
-as colored rectangles in figure 6a.  If a connected component is relatively
-small compared to the DNN's receptive field in the original-sized or
-half-sized images and if it corresponds to genuine signal, we expect to
-find a larger counterpart within the double-sized or original-sized images.
-Similarly if a connected component is relatively large in the
+as colored rectangles in figure 6a.  If a connected component corresponds
+to genuine signal and if it is relatively small compared to the DNN's O(100
+pixel) receptive field in the original-sized or half-sized images, we
+expect to find a larger counterpart in the double-sized or original-sized
+images.  Similarly if a connected component is relatively large in the
 original-sized or double-sized images, a smaller counterpart should exist
 in the half-sized or original-sized images.  We consequently ignore
-connected components at particular image scale which are too small or too
-large.
+connected components which are too small or too large at particular image
+scales.
 
 Surviving connected components are assigned confidence values corresponding
 to the "hottest" 20th-percentile among its individual pixel scores.  Since
@@ -281,20 +282,20 @@ values do not meet these score thresholds are rejected.  Bounding boxes
 for components rejected either by size or score considerations are colored
 black in figure 6a.
 
-We next consolidate all the connected components across the three image pyramid
-scales.  Components found in double-sized [half-sized] images are
-downsampled [upsampled] to original-sized image dimensions.  After such
-resampling, we search for connected components originating from different
-scales which overlap in area by more than 25%.  The component with the
-higher confidence value relative to its score threshold is retained, while
-the other component is rejected.  
+We next consolidate all the connected components across the three image
+scales.  Components occuring in double-sized [half-sized] images are first
+downsampled [upsampled] to original-sized image dimensions.  We then search
+for connected components originating from different scales which overlap in
+area by more than 25%.  The component with the higher confidence value
+relative to its score threshold is retained, while the other component is
+rejected.
 
-The surviving connected components after image scale consolidation for our
+The connected components surviving after image scale consolidation for our
 "Friends" example are presented in figure 7.  Recalculated component
-bounding boxes for faces and hands appear as orange and light green
-rectangles in the figure.  Since the pixel-level segmentations for Monica's
-and Chandler's faces merged together, we observe a one bounding box
-enclosing their two faces rather than two boxes around two faces.
+bounding boxes for faces and hands are respectively colored orange and
+light green in the figure.  Since the pixel-level segmentations for
+Monica's and Chandler's faces merged together, we observe a one bounding
+box rather than two enclosing their faces.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/flattened_segs_04084.png)
 *Fig. 7.  Semantic segmentation results consolidated across three image scales.*
