@@ -583,24 +583,24 @@ pixel-level recall and precision measures by taking their harmonic mean to
 obtain an overall balanced F-score = 0.753.
 
 It is instructive to compare these recall and precision values derived from
-an initial DNN which segmented both face and hand pixels with corresponding
-metrics derived from a DNN that was trained only using face bounding boxes
-and which classifies only face pixels.  Although localizing hands within
-arbitrary internet imagery is interesting in its own right, our primary
-motivation for annotating hands within the training imagery was to minimize
-the DNN's tendency to erroneously classify them as faces.  When hand
-content is ignored, we find recall = 0.723, precision = 0.774 and F-score =
-0.747.  So face localization precision is indeed improved by including hand
-labels within the training set, though recall is diminished.
+an initial DNN which segments both face and hand pixels with corresponding
+metrics derived from a DNN that was trained using only face bounding boxes
+and which labels only face pixels.  Although localizing hands in internet
+imagery is interesting in its own right, our primary motivation for
+annotating hands was to minimize the DNN's tendency to erroneously classify
+them as faces.  When hand content is ignored, we find recall = 0.723,
+precision = 0.774 and F-score = 0.747.  So facial precision is indeed
+improved by including hand labels within the training set, but facial
+recall is diminished.
 
 Pixel-level precision and recall are useful metrics for quantifying a
 classification system's performance.  But they can hide deficiencies in
-object localization such as those depicted in figure 19.  For example, one
-bounding box may overlap more than one face.  Alternatively, one face may
-be overlapped by more than one bounding box.  So it is useful to compare
-manually labeled ground-truth bounding boxes with automatically detected
-bounding boxes in our testing set in order to assess our pipeline face
-localization capabilities at an object level.
+object-level localization such as those depicted in figure 19.  For
+example, one bounding box may overlap more than one face.  Alternatively,
+one face may be overlapped by more than one bounding box.  So it is useful
+to compare manually labeled ground-truth bounding boxes with automatically
+detected bounding boxes in order to assess our pipeline's face localization
+capabilities at an object level.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/wrong_bboxes.png)
 
@@ -608,12 +608,12 @@ localization capabilities at an object level.
 bounding boxes incorrectly overlap one face.*
 
 For every ground-truth bounding box within each test image, we search for a
-detection box counterpart whose intersection-over-union ratio is maximal.
-Similarly, we identify a ground-truth counterpart for every detection
-bounding box with maximal intersection-over-union value.  Frequency
-histograms for these two distributions are plotted in figure 20.  The large
-spikes in these plots' zero-value bins indicates that our system generates
-a sizable number of false negatives and false positives.  But the
+detection box counterpart whose intersection-over-union (IoU) ratio is
+maximal.  Similarly, we identify a ground-truth counterpart for every
+detection bounding box with maximal intersection-over-union value.
+Frequency histograms for these two distributions are plotted in figure 20.
+The large spikes in these plots' zero-value bins indicates that our system
+generates a sizable number of false negatives and false positives.  The
 distributions' median 0.710 and 0.711 values for ground-truth and detected
 face bounding box IoU quantifies our system's face localization performance
 on a challenging set of internet imagery.
