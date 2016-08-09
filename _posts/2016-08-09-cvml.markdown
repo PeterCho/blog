@@ -161,9 +161,5 @@ http://arxiv.org/1502.02734, (2015).
 
 7.  See http://caffe.berkeleyvision.orig.
 
-8.  M. Jaderberg, K. Simonyan, A. Vedaldi and A. Zisserman, *Synthetic Data
-and Artifical Neural Networks for Natural Scene Text Recognition*, arXiv:
-1406.2227v4 (2014).
-
-9.  See "Localizing Text-in-the-Wild via Synthetic Phrase Generation and
-Semantic Segmentation" post dated Apr 25, 2016.
+*.  G. Levi and T. Hassncer, "Age and gender classification using
+convolutional neural networks," CVPR 2015.
