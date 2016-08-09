@@ -22,82 +22,81 @@ these earlier shortcomings.
 bounding boxes enclose female [male] faces.  Yellow bounding boxes mark
 persons for which we were significantly uncertain about their genders.*
 
+
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/training_chips_106x106.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X. Three female and three male training chips extracted from figure
+X.  The chips' pixel sizes are doubled compared to their tightly-cropped
+facial bounding box progenitors.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/augmented_female_face.png)
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/augmented_male_face.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+
+*Fig. X. Representative examples of image augmentation.  Input female and
+male training chips appear in the leftmost column of this figure.  Their
+output variants are randomly translated, rotated, color-modulated and
+flipped relative to the original images.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/non_face_training_samples.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X.  Training chip examples containing no human face content.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/padded_cropped_net.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X. Training architecture for CNN used to classify facial genders.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/padded_accuracy_curves.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X. CNN model accuracy plotted as a function of training epoch.  The
+cyan curve is a temporally smoothed version of the raw accuracy values for
+the training set which are colored in dark blue.  The CNN's accuracy on a
+separate validation set is depicted by the red curve.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_correct_female_classifications.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
-
+*Fig. X. Representative examples of test image chips correctly classified
+by the CNN as female.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_correct_male_classifications.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X. Representative examples of test image chips correctly classified
+by the CNN as male.*
+
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_unsure_classifications.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X. Examples of test image chips for which the CNN was significantly
+unsure about gender classification.  The top [bottom] row contains female
+[male] image chips.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_incorrect_classifications.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X. Examples of test image chips for which the CNN assigned incorrect
+gender classifications.  The top [bottom] row contains female [male] image chips.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_all_faces.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X. Example test images for which all faces were automatically localized 
+and assigned correct gender labels.  Red [blue] bounding boxes enclose
+female [male] faces.*
+
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_most_faces.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X. Example test images for which all faces that were localized were
+assigned correct gender labels.  Red [blue] bounding boxes enclose female
+[male] faces, while the CNN assigned no gender labels to green bounding
+boxes.  A few faces in these images were not localized.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/OK_faces.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
+*Fig. X. Example test images for which all faces that were localized were
+assigned correct gender labels.  Several faces in these images were not
+localized.*
+
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/bad_faces.png)
-*Fig. X. Representative examples of annotated training images.  Red and
-cyan bounding boxes marking human faces and hands are best seen after
-zooming into these images.*
-
-
+*Fig. X. Example test images which which some faces that were localized
+were assigned incorrect gender labels.  Red [blue] bounding boxes enclose
+faces classified as female [red].  Some faces in these images were also not
+localized.*
 
 
 ## References
