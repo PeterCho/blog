@@ -19,7 +19,21 @@ constant throughout their lifetimes.  Moreover, physical differences exist
 between male and female faces.  So we seek to build a classifer which can
 identify gender based primarily upon face imagery input.
 
-- Extend face dataset to 20K male and 20K female instances.
+We begin by extending our dataset of internet images containing faces.  We
+have collected XX images which intentionally exhibit as much variety as
+possible.  XXX of the images originated from the WIDER collection [ref],
+while the remaining XXX were manually downloaded primarily from Google
+Images.  Human faces within this corpus were annotated with bounding boxes
+via dlib's image labeling tool [ref].  The labeled faces belong to people
+with different attributes (e.g. gender, age, ethnicity) engaged in various
+activities (e.g. socializing, swimming, singing) within disparate settings
+(e.g. hospital interiors, memorial services, sport stadiums).  Moreover,
+people's faces are oriented in various poses (e.g. profile, looking
+upwards), and many are partially occluded by different objects
+(e.g. eyeglasses, drinking cups, other people's heads).  We also
+intentionally increased the number of internet images containing faces from
+paintings and drawings.  
+
 
 *.  Developed our own bounding box attribution tool beyond Davis' IMGLAB
 program.  Uses OSG.  User can click on individual bboxes and assign fixed
@@ -35,6 +49,16 @@ clues such as clothing.
 bounding boxes enclose female [male] faces.  Yellow bounding boxes mark
 persons for which we were significantly uncertain about their genders.*
 
+Extracted XXX tightly-cropped facial bboxes from all images.  For
+classification, we want to include more of the entire head as well as the
+neck and shoulder regions.  So we doubled the face bbox widths and heights.
+2.  Extended bboxes exhibit a wide variety of pixel sizes.  For CNN
+classification purposes, all input chips need to be of uniform pixel width
+and height which we took as 96x96.  So chips larger than 96x96 were
+subsampled to this size, while smaller chips were superposed on black
+backgrounds.  A few example facial image chips are displayed in figure XXX.
+
+
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/training_chips_106x106.png)
 *Fig. X. Three female and three male training chips extracted from figure
@@ -42,7 +66,6 @@ X.  The chips' pixel sizes are doubled compared to their tightly-cropped
 facial bounding box progenitors.*
 
 
-- Incorporate WIDER imagery
 - Incorporate Adience gender info (flickr selfies not as varied as our
 images)
 - Incorporate Iranian women
