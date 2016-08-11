@@ -153,10 +153,10 @@ The input to the network is an RGB image chip of pixel size 96x96.
 Following the highly successful VGG-16 CNN [ref], we set the pixel
 dimensions of all the convolutional filters in figure 5 to 3x3.  The
 network's first, second, third and fourth convolutional layers contain 96,
-160, 256 and 256 such filters.  Max pooling is performed after the first
+192, 224 and 256 such filters.  Max pooling is performed after the first
 three convolutions which reduces the image chip's pixel width and height
-each by half.  The fully-connected fifth and sixth layers contain 256 and
-256 nodes.  Filtering within layers 1-6 of the network is followed by a
+each by half.  The fully-connected fifth and sixth layers both contain 256
+nodes.  Filtering within layers 1-6 of the network is followed by a
 nonlinear ReLU operation.  We also intentionally perform dropout [ref]
 after each ReLU step to combat network overfitting.  The dropout
 probabilities grow in magnitude with increasing layer depth as follows:
@@ -171,10 +171,11 @@ Q: What is the total number of weight and bias parameters in this network?
 We implement this network using the caffe framework [ref].  The weights and
 biases in the CNN are all initialized with random values drawn from a
 Gaussian distribution with mean = 0 and standard deviation = 0.01.  We
-train the network using stochastic gradient descent with minibatch size =
-??.  We set the initial learning rate = ?? and stepped it down by ??  after
-every ?? iterations.  We also experimented with increasing the weight decay
-parameter to reduce overfitting and settled upon lambda = ??.
+train the network using stochastic gradient descent with momentum = 0.9 and
+minibatch size = 100.  We set the initial learning rate = 0.01 and decrease
+it by 0.33 after every 30K iterations.  We also experimented with adjusting
+the weight decay parameter to minimize overfitting and settled upon lambda
+= 0.001.
 
 Learning curves are plotted as functions of training epoch in figure 6.  We
 instruct caffe to hold out 10% of the input training data in order to
@@ -182,8 +183,8 @@ monitor the network's accuracy.  The cyan curve in the figure represents a
 temporally-smoothed accuracy metric for the 90% of image chips actually
 used to train the network.  The red curve illustrating the same accuracy
 metric for the held-out data asymptotes to a value only slightly less than
-the cyan curve.  So dropout plus weight decay clearly prevent our CNN from
-overfitting.
+the cyan curve.  So dropout plus L2-regularization clearly prevent our CNN
+from overfitting.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/padded_accuracy_curves.png)
 *Fig. 6. CNN model accuracy plotted as a function of training epoch.  The
@@ -194,23 +195,27 @@ on a held-out subset of the training data.*
 ## Facial Gender Inference
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_correct_female_classifications.png)
-*Fig. X. Representative examples of test image chips correctly classified
-by the CNN as female.*
+*Fig. X. Examples of test image chips correctly classified by the CNN as
+female.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_correct_male_classifications.png)
-*Fig. X. Representative examples of test image chips correctly classified
-by the CNN as male.*
+*Fig. X.  Examples of test image chips correctly classified by the CNN as
+male.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_unsure_classifications.png)
 *Fig. X. Examples of test image chips for which the CNN was significantly
-unsure about gender classification.  The top [bottom] row contains female
-[male] image chips.*
+uncertain about gender.  The top [bottom] row contains female [male] image
+chips.*
 
 
-![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_incorrect_classifications.png)
-*Fig. X. Examples of test image chips for which the CNN assigned incorrect
-gender classifications.  The top [bottom] row contains female [male] image chips.*
+![FaceGender]({{site.url}}/blog/images/face_gender/results/incorrect_female_2_male_classifications.png)
+*Fig. X. Examples of female test image chips which the CNN incorrectly
+classified as male.*
+
+![FaceGender]({{site.url}}/blog/images/face_gender/results/incorrect_male_2_female_classifications.png)
+*Fig. X. Examples of male test image chips which the CNN incorrectly
+classified as female.*
 
 
 <table style="width:100%">
@@ -229,60 +234,60 @@ gender classifications.  The top [bottom] row contains female [male] image chips
   <tbody>
     <tr>
       <td style="text-align: center"><strong>non-face</strong></td>
-      <td style="text-align: center">1006</td>
-      <td style="text-align: center">10</td>
-      <td style="text-align: center">13</td>
+      <td style="text-align: center">1026</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">8</td>
       <td style="text-align: center">0</td>
-      <td style="text-align: center">97.76</td>
+      <td style="text-align: center">98.94</td>
       <td style="text-align: center">0</td>
-      <td style="text-align: center">2.24</td>
+      <td style="text-align: center">1.06</td>
     </tr>
     <tr>
       <td style="text-align: center"><strong>male face</strong></td>
-      <td style="text-align: center">51</td>
-      <td style="text-align: center">1570</td>
-      <td style="text-align: center">172</td>
-      <td style="text-align: center">26</td>
-      <td style="text-align: center">86.31</td>
-      <td style="text-align: center">1.43</td>
-      <td style="text-align: center">12.26</td>
+      <td style="text-align: center">49</td>
+      <td style="text-align: center">1559</td>
+      <td style="text-align: center">148</td>
+      <td style="text-align: center">56</td>
+      <td style="text-align: center">86.04</td>
+      <td style="text-align: center">3.09</td>
+      <td style="text-align: center">10.87</td>
     </tr>
     <tr>
       <td style="text-align: center"><strong>female gender</strong></td>
-      <td style="text-align: center">29</td>
-      <td style="text-align: center">294</td>
-      <td style="text-align: center">1334</td>
-      <td style="text-align: center">31</td>
-      <td style="text-align: center">79.03</td>
-      <td style="text-align: center">1.84</td>
-      <td style="text-align: center">19.14</td>
+      <td style="text-align: center">23</td>
+      <td style="text-align: center">210</td>
+      <td style="text-align: center">1246</td>
+      <td style="text-align: center">208</td>
+      <td style="text-align: center">73.85</td>
+      <td style="text-align: center">12.32</td>
+      <td style="text-align: center">13.81</td>
     </tr>
   </tbody>
 </table>
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_all_faces.png)
-*Fig. X. Example test images for which all faces were automatically localized 
-and assigned correct gender labels.  Red [blue] bounding boxes enclose
-female [male] faces.*
+*Fig. X. Example test images in which all faces were automatically
+localized and assigned correct gender labels.  Red [blue] bounding boxes
+enclose female [male] faces.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_most_faces.png)
-*Fig. X. Example test images for which all faces that were localized were
-assigned correct gender labels.  Red [blue] bounding boxes enclose female
-[male] faces, while the CNN assigned no gender labels to green bounding
-boxes.  A few faces in these images were not localized.*
+*Fig. X. Example test images for which no localized face was assigned an
+incorrect gender label.  Red [blue] bounding boxes enclose female [male]
+faces, while the CNN was uncertain about gender for faces marked by green
+bounding boxes.  A few faces in these images were not localized.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/OK_faces.png)
-*Fig. X. Example test images for which all faces that were localized were
-assigned correct gender labels.  Several faces in these images were not
-localized.*
+*Fig. X. Example test images for which no localized face was assigned an
+incorrect gender label.  Several faces in these images were not localized.*
 
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/bad_faces.png)
-*Fig. X. Example test images which which some faces that were localized
-were assigned incorrect gender labels.  Red [blue] bounding boxes enclose
-faces classified as female [red].  Some faces in these images were also not
+*Fig. X. Example test images in which some localized faces were assigned
+incorrect gender labels.  Red [blue] bounding boxes enclose faces
+classified as female [red].  The CNN was uncertain about gender for faces
+marked by green bounding boxes.  A few faces in these images were also not
 localized.*
 
 ## References
