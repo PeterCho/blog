@@ -5,40 +5,41 @@ date:   2016-08-09 12:00:00
 categories: Deep Learning
 ---
 
-## Gender-labeled facial data
+## Gender-labeled facial imagery
 
 In our previous blog post [1], we localized faces within internet photos
 using instance segmentation.  In this entry, we continue to accumulate and
-investigate a sizable corpus of "faces in the wild".  But now our primary
-focus is upon classifying rather than detecting faces.
+investigate a sizable corpus of "faces in the wild".  But our primary focus
+is now upon classifying rather than detecting faces.
 
 Humans around the world may be described in terms of various
 characteristics which can change on time scales ranging from seconds
 (e.g. mood) to decades (e.g. age).  But for most people, gender labels are
 constant throughout their lifetimes.  Moreover, physical differences exist
 between male and female faces.  So we seek to build a classifer which can
-identify gender based primarily upon face imagery input.
+identify gender based primarily upon facial imagery input.
 
-We begin by extending our dataset of internet images from our prior face
-localization study.  We have collected 13740 images which intentionally
-exhibit as much variety as possible.  2815 of the images originated from
-the WIDER collection [2], while the remaining pictures were manually
-downloaded primarily from Google Images.  10492 photos in this corpus
-contain 43752 human faces which were annotated with bounding boxes via
-dlib's image labeling tool IMGLAB [3].  The labeled faces belong to people
-with differing attributes (e.g. gender, age, ethnicity) performing varying
-activities (e.g. socializing, swimming, singing) in disparate settings
-(e.g. hospital interiors, memorial services, sport stadiums).  Moreover,
-people's visages are oriented in variable poses (e.g. facing camera,
-looking upwards, profile view), and many are partially occluded by objects
-(e.g. eyeglasses, drinking cups, other people's heads).  We also
-intentionally increased the number of internet images containing faces from
-paintings and drawings from our previous face investigation.
+We begin by extending our dataset of internet images from our earlier face
+localization studies.  To date, we have collected and annotated 13740
+images which intentionally exhibit as much variety as possible.  2815 of
+the images originated from the WIDER collection [2], while the remaining
+pictures were downloaded primarily from Google Images.  Within this corpus,
+10492 photos contain 43752 human faces, and 8671 pictures contain 34936
+hands.  Both faces and hands were annotated with bounding boxes via dlib's
+IMGLAB tool [3].  The labeled faces belong to people with differing
+attributes (e.g. gender, age, ethnicity) performing varying activities
+(e.g. socializing, swimming, singing) in disparate settings (e.g. hospital
+rooms, memorial services, sport stadiums).  Moreover, people's visages are
+oriented in variable poses (e.g. facing camera, looking upwards, profile
+view), and many are partially occluded by objects (e.g. eyeglasses,
+drinking cups, other people's heads).  We also intentionally increased the
+number of internet images containing faces from paintings and drawings from
+our previous face investigation.
 
 While dlib's IMGLAB is convenient for drawing bounding boxes around
 objects, it does not currently support hierarchical assignment of multiple
 labels per box.  So we developed our own gender attribution tool based upon
-the 3D graphics toolkit OpenSceneGraph [ref].  It imports and displays face
+the 3D graphics toolkit OpenSceneGraph [5].  It imports and displays face
 bounding boxes generated via IMGLAB. A user may press the "1", "2" or "0"
 keys on the number pad to set gender attributes for all bounding boxes in
 an image to male, female or unknown.  After a particular box is selected
@@ -82,19 +83,15 @@ facial bounding box progenitors.*
 
 In order to expand the volume of our training and testing data, we searched
 online for other sets of gender-labeled face image chips.  While many
-facial databases can be found on the internet [see
-www.face-rec.org/databases/], relatively few come with gender metadata.
-One relatively recent dataset may be obtained from the OUI-Adience Face
-Image Project from which we extracted 17457 photos [see
-http://www.openu.ac.il/home/hassner/Adience/data.html; papers].  The
-sources for these data are flickr albums, and Adience images are
+facial databases can be found on the internet [5], relatively few come with
+gender metadata.  One relatively recent dataset may be obtained from the
+OUI-Adience Face Image Project from which we extracted 17457 photos [6,7].
+The sources for these data are flickr albums, and Adience images are
 consequently "in the wild".  We note, however, that flickr users are not
 likely to be representative of the global human population.  We also
 included 369 head shots of Iranian women available from the Iranian Face
-Database [see http://www.iranprc.org/en/ifdb.ph; A. Bastanfard, M.A. Nik
-and M. M. Dehshibi, "Iranian Face Database with Age, Pose and Expression",
-ICMV 2007.]  After combining all these head shots, we have a total of 54760
-image chips with male or female labels.
+Database [8,9] After combining all these head shots, we have a total of
+54760 image chips with male or female labels.
 
 We randomly reserve 2.5% of the 50K+ chips for validation and another 7.5%
 for testing.  Image augmentation is performed upon the remaining 90% of
@@ -147,10 +144,10 @@ figure 5.
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/padded_cropped_net.png)
 *Fig. 5. Training architecture for a CNN used to classify facial genders.
 This neural net graph was generated by the web-based Netscope visualization
-tool [ref].*
+tool [11].*
 
 The input to the network is an RGB image chip of pixel size 96x96.
-Following the highly successful VGG-16 CNN [ref], we set the pixel
+Following the highly successful VGG-16 CNN [12], we set the pixel
 dimensions of all the convolutional filters in figure 5 to 3x3.  The
 network's first, second, third and fourth convolutional layers contain 96,
 192, 224 and 256 such filters.  Max pooling is performed after the first
@@ -168,7 +165,7 @@ to the image chip input.
 
 Q: What is the total number of weight and bias parameters in this network?
 
-We implement this network using the caffe framework [ref].  The weights and
+We implement this network using the caffe framework [10].  The weights and
 biases in the CNN are all initialized with random values drawn from a
 Gaussian distribution with mean = 0 and standard deviation = 0.01.  We
 train the network using stochastic gradient descent with momentum = 0.9 and
@@ -370,15 +367,28 @@ Benchmark", arXiv: 1511.06523v1 (2015).
 
 4.  See http://www.openscenegraph.org.
 
-*.  See http://caffe.berkeleyvision.org.
+5.  See http://www.face-rec.org/databases.
 
-*.  G. Levi and T. Hassner, "Age and Gender Classification Using
+6.  G. Levi and T. Hassner, "Age and Gender Classification Using
 Convolutional Neural Networks," IEEE Workshop on Analysis and Modeling of
 Faces and Gestures (AMFG), at the IEEE Conf. on Computer Vision and Pattern
 Recognition (CVPR), Boston, June 2015.
 
-*.  See ethereon.github.io/netscope/quickstart.html
+7.  See http://www.openu.ac.il/home/hassner/Adience/data.html.
 
-*.  G.E. Hinton, N. Srivastava, A. Krizhevsky, I. Sutskever adn
-R. R. Salakhutdinov, "Improving neural networks by preventing co-adapation
-of feature detectors," ArXiv 1207.0580, (2012).
+8.  A. Bastanfard, M.A. Nik and M. M. Dehshibi, "Iranian Face Database with
+Age, Pose and Expression", ICMV 2007.
+
+9.  See http://www.iranprc.org/en/ifdb.ph.
+
+10.  See http://caffe.berkeleyvision.org.
+
+11.  See ethereon.github.io/netscope/quickstart.html.
+
+12.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
+Large-Scale Image Recognition*, arXiv 1409.1556, (2015).
+
+13.  N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
+R. Salakhudinov, "Dropout: A Simple Way to Prevent Neural Networks from
+Overfitting,", J. Machine Learning Research (2014), 1929.
+
