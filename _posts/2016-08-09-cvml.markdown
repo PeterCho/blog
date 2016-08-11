@@ -229,11 +229,11 @@ segmentation could successfully localize such "flat" faces in internet
 images [1].  Figures 8a and 8b demonstrate that a CNN can also successfully
 classify genders for a number of such 2D faces.
 
-![FaceGender]({{site.url}}/blog/images/face_gender/results/female_2D_correct.png.png)
+![FaceGender]({{site.url}}/blog/images/face_gender/results/female_2D_correct.png)
 *Fig. 8a.  Examples of "2D" test image chips originating from paintings,
 line drawings and photos were the CNN correctly classified as female.*
 
-![FaceGender]({{site.url}}/blog/images/face_gender/results/male_2D_correct.png.png)
+![FaceGender]({{site.url}}/blog/images/face_gender/results/male_2D_correct.png)
 *Fig. 8b.  Examples of "2D" test image chips originating from paintings,
 line drawings and photos were the CNN correctly classified as male.*
 
