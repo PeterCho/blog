@@ -7,8 +7,8 @@ categories: Deep Learning
 
 ## Gender-labeled facial data
 
-In our previous blog post, we localized faces within internet photos using
-instance segmentation.  In this entry, we continue to accumulate and
+In our previous blog post [1], we localized faces within internet photos
+using instance segmentation.  In this entry, we continue to accumulate and
 investigate a sizable corpus of "faces in the wild".  But now our primary
 focus is upon classifying rather than detecting faces.
 
@@ -22,16 +22,16 @@ identify gender based primarily upon face imagery input.
 We begin by extending our dataset of internet images from our prior face
 localization study.  We have collected 13740 images which intentionally
 exhibit as much variety as possible.  2815 of the images originated from
-the WIDER collection [ref], while the remaining pictures were manually
+the WIDER collection [2], while the remaining pictures were manually
 downloaded primarily from Google Images.  10492 photos in this corpus
 contain 43752 human faces which were annotated with bounding boxes via
-dlib's image labeling tool IMGLAB [ref].  The labeled faces belong to
-people with differing attributes (e.g. gender, age, ethnicity) performing
-varying activities (e.g. socializing, swimming, singing) in disparate
-settings (e.g. hospital interiors, memorial services, sport stadiums).
-Moreover, people's visages are oriented in variable poses (e.g. facing
-camera, looking upwards, profile view), and many are partially occluded by
-objects (e.g. eyeglasses, drinking cups, other people's heads).  We also
+dlib's image labeling tool IMGLAB [3].  The labeled faces belong to people
+with differing attributes (e.g. gender, age, ethnicity) performing varying
+activities (e.g. socializing, swimming, singing) in disparate settings
+(e.g. hospital interiors, memorial services, sport stadiums).  Moreover,
+people's visages are oriented in variable poses (e.g. facing camera,
+looking upwards, profile view), and many are partially occluded by objects
+(e.g. eyeglasses, drinking cups, other people's heads).  We also
 intentionally increased the number of internet images containing faces from
 paintings and drawings from our previous face investigation.
 
@@ -360,15 +360,17 @@ localized.*
 
 ## References
 
-*.  See "Detecting Faces via Deep Semantic Segmentation of Images" post
-dated Jan 20, 2016.
+1.  See "Localizing Faces and Hands via Data Augmentation, Image Scaling
+and Instance Segmentation" post dated Jun 27, 2016.
 
-*.  S. Yang, P. Luo, C.C. Loy and X. Tang, "WIDER FACE: A Face Detection
+2.  S. Yang, P. Luo, C.C. Loy and X. Tang, "WIDER FACE: A Face Detection
 Benchmark", arXiv: 1511.06523v1 (2015).
 
-*.  D. King, dlib C++ library, http://dlib.net/ml.html.
+3.  D. King, dlib C++ library, http://dlib.net/ml.html.
 
-*.  See http://caffe.berkeleyvision.orig.
+4.  See http://www.openscenegraph.org.
+
+*.  See http://caffe.berkeleyvision.org.
 
 *.  G. Levi and T. Hassner, "Age and Gender Classification Using
 Convolutional Neural Networks," IEEE Workshop on Analysis and Modeling of

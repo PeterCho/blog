@@ -624,7 +624,7 @@ and artificial neural networks for natiural scene text recognition*, arXiv
 6.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
 Large-Scale Image Recognition*, arXiv 1409.1556, (2015).
 
-7.  See http://caffe.berkeleyvision.orig.
+7.  See http://caffe.berkeleyvision.org.
 
 8.  T. G. Dietterich, *Ensemble methods in machine learning,* In Multiple
 classifier systems, pages 1–15. Springer, (2000).

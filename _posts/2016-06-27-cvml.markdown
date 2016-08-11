@@ -643,7 +643,7 @@ http://arxiv.org/1502.02734, (2015).
 
 6.  See https://bitbucket.org/deeplab/deeplab-public/
 
-7.  See http://caffe.berkeleyvision.orig.
+7.  See http://caffe.berkeleyvision.org.
 
 8.  M. Jaderberg, K. Simonyan, A. Vedaldi and A. Zisserman, *Synthetic Data
 and Artifical Neural Networks for Natural Scene Text Recognition*, arXiv:
