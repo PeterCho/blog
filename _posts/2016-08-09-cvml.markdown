@@ -132,7 +132,7 @@ Representative examples of such non-face chips are presented in figure 4.
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/non_face_training_samples.png)
 *Fig. 4.  Image chips containing no human face content.*
 
-## CNN Architecture, Parameters and Training
+## CNN Architecture, Hyperparameters and Training
 
 We seek to classify input image chips into one of 3 categories: non-face,
 male face or female face.  Since our number of classes is small, we adopt
@@ -194,29 +194,76 @@ on a held-out subset of the training data.*
 
 ## Facial Gender Inference
 
+We settled upon the CNN architecture and hyperparameters presented in the
+previous section after performing multiple runs on our validation set of
+1617 image chips.  To our surprise, we found that the CNN had greater
+problems with incorrectly classifying females than males.  We also
+discovered that the softmax probabilities for correctly labeled validation
+chips were generally higher than those for their incorrect counterparts.
+
+It is unreasonable to expect any automated system to perform perfectly all
+the time.  But machines should return confidence values along with their
+predictions.  We may then ignore any automated result whose confidence lies
+below some threshold.  Using our validation data, we empirically determined
+threshold values of 0.52 and 0.58 upon softmax probabilities for male and
+female classification labels.  If our CNN outputs a gender label and
+confidence score that lie below these thresholds, the result is declared
+too uncertain to be trusted.
+
+We next pass a reserved set of 4536 image chips through the CNN to assess
+its performance.  Representative examples of test chips whose facial
+genders were correctly classified are presented in figures 7a and 7b.  They
+include several challenging instances where faces are significantly
+cropped, blurred or occluded:
+
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_correct_female_classifications.png)
-*Fig. X. Examples of test image chips correctly classified by the CNN as
+*Fig. 7a. Examples of test image chips correctly classified by the CNN as
 female.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_correct_male_classifications.png)
-*Fig. X.  Examples of test image chips correctly classified by the CNN as
+*Fig. 7b.  Examples of test image chips correctly classified by the CNN as
 male.*
 
+In other cases like those appearing in figure 8, input image quality was
+sufficiently poor that our system could not confidently return any
+classification result.  The machine marks these chips' facial genders as
+uncertain:
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_unsure_classifications.png)
-*Fig. X. Examples of test image chips for which the CNN was significantly
+*Fig. 8. Examples of test image chips for which the CNN was significantly
 uncertain about gender.  The top [bottom] row contains female [male] image
 chips.*
 
+Of course, our CNN also makes mistakes.  Representative examples of
+incorrectly classified female and male image chips are presented in figures
+9a and 9b.  For several of the image chips in these figures, it is
+difficult for even a human to determine gender without seeing the context
+of the full images from which they were excised.  It is often hard to tell
+gender for very young and old human subjects as well as for people whose
+faces are obscured by masks or markings.  Small pixel sizes and croppings
+of head shots also render sex determination difficult.  But in other
+failure cases, most humans would have no trouble determining correct gender
+assignments.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/incorrect_female_2_male_classifications.png)
-*Fig. X. Examples of female test image chips which the CNN incorrectly
+*Fig. 9a. Examples of female test image chips which the CNN incorrectly
 classified as male.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/incorrect_male_2_female_classifications.png)
-*Fig. X. Examples of male test image chips which the CNN incorrectly
+*Fig. 9b. Examples of male test image chips which the CNN incorrectly
 classified as female.*
 
+The confusion matrix in Table 1 quantifies our system's overall
+classification performance.  The CNN has little difficulty separating
+non-face from human-face inputs.  It consequently could be used to improve
+the precision for detectors which localize faces within images in the wild.
+The 86% correct classification rate for male faces is also respectable.  It
+compares favorably with recent CNN gender results reported for smaller and
+less challenging data sets than ours [adience].  On the other hand, our CNN
+struggles to correctly identify female faces, and it gives up on over 12%
+of female test inputs.  By lowering the female softmax threshold below
+0.58, we can increase the correctly-classified female fraction but at the
+cost of also increasing the incorrectly-classified fraction.
 
 <table style="width:100%">
   <thead>
@@ -253,7 +300,7 @@ classified as female.*
       <td style="text-align: center">10.87</td>
     </tr>
     <tr>
-      <td style="text-align: center"><strong>female gender</strong></td>
+      <td style="text-align: center"><strong>female face</strong></td>
       <td style="text-align: center">23</td>
       <td style="text-align: center">210</td>
       <td style="text-align: center">1246</td>
@@ -265,26 +312,47 @@ classified as female.*
   </tbody>
 </table>
 
+*Table 1. Classification results for a held-out truth set of 4536 image
+chips.*
+
+It is instructive to combine together the facial localization detector
+presented in our blog posting with the facial gender classifier developed
+in this entry.  We collect a brand new set of test images not seen before
+by either subsystems' neural networks.  Instance segmentation attempts to
+wrap bounding boxes around the faces of genuine humans, and the classifier
+attempts to determine the faces' genders.  Several faces which were both
+successfully localized and classified are presented in figure 10.  They
+include relatively simple examples where all human subjects face straight
+towards the camera.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_all_faces.png)
-*Fig. X. Example test images in which all faces were automatically
+*Fig. 10. Example test images in which all faces were automatically
 localized and assigned correct gender labels.  Red [blue] bounding boxes
 enclose female [male] faces.*
 
+Figures 11a and 11b present more challenging examples which include crowd
+scenes, head coverings obscuring face visibility and faces significantly
+oriented away from the camera's direction.  In these cases, our detector
+has more trouble finding faces than does our classifier in determining
+their genders.  
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_most_faces.png)
-*Fig. X. Example test images for which no localized face was assigned an
+*Fig. 11a. Example test images for which no localized face was assigned an
 incorrect gender label.  Red [blue] bounding boxes enclose female [male]
 faces, while the CNN was uncertain about gender for faces marked by green
 bounding boxes.  A few faces in these images were not localized.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/OK_faces.png)
-*Fig. X. Example test images for which no localized face was assigned an
+*Fig. 11b. Example test images for which no localized face was assigned an
 incorrect gender label.  Several faces in these images were not localized.*
 
+Finally, the examples in figure 12 illustrate failures of both the detector
+and classifier.  They include cases where faces were not localized as well
+as incorrect gender labels for detected faces.  We leave improving both
+facial localization and classification for future work.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/bad_faces.png)
-*Fig. X. Example test images in which some localized faces were assigned
+*Fig. 12. Example test images in which some localized faces were assigned
 incorrect gender labels.  Red [blue] bounding boxes enclose faces
 classified as female [red].  The CNN was uncertain about gender for faces
 marked by green bounding boxes.  A few faces in these images were also not
