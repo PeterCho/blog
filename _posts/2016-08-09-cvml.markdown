@@ -7,39 +7,40 @@ categories: Deep Learning
 
 ## Gender-labeled facial imagery
 
-In our previous blog post [1], we localized faces within internet photos
-using instance segmentation.  In this entry, we continue to accumulate and
+In our previous blog post, we localized faces within internet photos using
+instance segmentation [1].  In this entry, we continue to accumulate and
 investigate a sizable corpus of "faces in the wild".  But our primary focus
 is now upon classifying rather than detecting faces.
 
 Humans around the world may be described in terms of various
-characteristics which can change on time scales ranging from seconds
+characteristics which change on time scales ranging from seconds
 (e.g. mood) to decades (e.g. age).  But for most people, gender labels are
 constant throughout their lifetimes.  Moreover, physical differences exist
-between male and female faces.  So we seek to build a classifer which can
-identify gender based primarily upon facial imagery input.
+between male and female faces.  So gender arguably represents one of the
+most basic human attributes.  We seek to build a classifer which can
+identify gender based upon facial imagery input.
 
 We begin by extending our dataset of internet images from our earlier face
 localization studies.  To date, we have collected and annotated 13740
-images which intentionally exhibit as much variety as possible.  2815 of
-the images originated from the WIDER collection [2], while the remaining
+images which intentionally exhibit a high degree of variety.  2815 of the
+images originated from the WIDER collection [2], while the remaining
 pictures were downloaded primarily from Google Images.  Within this corpus,
 10492 photos contain 43752 human faces, and 8671 pictures contain 34936
 hands.  Both faces and hands were annotated with bounding boxes via dlib's
 IMGLAB tool [3].  The labeled faces belong to people with differing
-attributes (e.g. gender, age, ethnicity) performing varying activities
-(e.g. socializing, swimming, singing) in disparate settings (e.g. hospital
-rooms, memorial services, sport stadiums).  Moreover, people's visages are
-oriented in variable poses (e.g. facing camera, looking upwards, profile
-view), and many are partially occluded by objects (e.g. eyeglasses,
-drinking cups, other people's heads).  We also intentionally increased the
-number of internet images containing faces from paintings and drawings from
-our previous face investigation.
+attributes (e.g. gender, age, ethnicity) performing activities
+(e.g. socializing, swimming, singing) within disparate settings
+(e.g. hospital rooms, memorial services, sport stadiums).  Moreover,
+people's visages are oriented in variable poses (e.g. facing camera,
+looking upwards, profile view), and many are partially occluded by objects
+(e.g. eyeglasses, drinking cups, other people's heads).  We also
+intentionally increased the number of internet images containing faces from
+paintings and drawings relative to our previous face investigation.
 
 While dlib's IMGLAB is convenient for drawing bounding boxes around
 objects, it does not currently support hierarchical assignment of multiple
 labels per box.  So we developed our own gender attribution tool based upon
-the 3D graphics toolkit OpenSceneGraph [5].  It imports and displays face
+the 3D OpenSceneGraph toolkit [5].  Our program imports and displays face
 bounding boxes generated via IMGLAB. A user may press the "1", "2" or "0"
 keys on the number pad to set gender attributes for all bounding boxes in
 an image to male, female or unknown.  After a particular box is selected
@@ -59,49 +60,49 @@ from baby girls to be nearly impossible if their clothing provided no clear
 cultural hints.  In other cases, one can deduce that blurry patches in
 images must correspond to human faces.  But such patches may contain too
 little information for a gender label to be confidently assigned.  All such
-faces marked with "unknown" genders are ignored in our classification
+faces marked with "unknown" genders are ignored by our classification
 pipeline.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/image_03815_crowd_genders_01.png)
-*Fig. 1. An image attributed with gender labels.*
+*Fig. 1. An internet image attributed with female, male and unknown gender labels.*
 
 The bounding boxes in figure 1 are snuggly wrapped around individual faces.
-But valuable information is contained in hair styles, neckware and
-upper-body clothing for gender determination.  So we double all bounding
-box widths and heights.  The resulting human head regions come in a wide
-variety of pixel sizes.  But a convolutional neural network requires
-uniformly-sized imagery input.  In particular, the CNN we developed takes
-image chips with 96x96 pixel size.  So chips larger than 96x96 were
-subsampled, while chips smaller than 96x96 were superposed onto black
-backgrounds.  Examples of head chips extracted from figure 1 and spatially
-resized are presented in figure 2.
+But information useful for gender determination is contained in hair style,
+neckware and upper-body clothing appearance.  We consequently double all
+facial bounding box widths and heights.  The resulting human head regions
+come in a wide variety of pixel sizes.  But a convolutional neural network
+requires uniformly-sized imagery input.  In particular, the CNN that we
+develop below takes in 96x96 pixel-sized image chips.  So inputs larger
+than 96x96 were subsampled, while inputs smaller than 96x96 were superposed
+onto black backgrounds.  Examples of head chips extracted from figure 1 and
+spatially resized to 96x96 are presented in figure 2.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/training_chips_106x106.png)
-*Fig. 2. Three female and three male head chips extracted from figure
-1.  The chips' pixel sizes are doubled compared to their tightly-cropped
-facial bounding box progenitors.*
+*Fig. 2. Three female and three male head chips extracted from figure 1.
+The pixel sizes of the chips' non-black regions are doubled compared to
+their tightly-cropped facial bounding box progenitors.*
 
 In order to expand the volume of our training and testing data, we searched
-online for other sets of gender-labeled face image chips.  While many
-facial databases can be found on the internet [5], relatively few come with
-gender metadata.  One relatively recent dataset may be obtained from the
+online for other sets of gender-labeled face chips.  While many facial
+databases can be found on the internet [5], relatively few come with gender
+metadata.  One relatively recent dataset may be obtained from the
 OUI-Adience Face Image Project from which we extracted 17457 photos [6,7].
-The sources for these data are flickr albums, and Adience images are
+The sources for these data are flickr albums.  Adience images are
 consequently "in the wild".  We note, however, that flickr users are not
 likely to be representative of the global human population.  We also
 included 369 head shots of Iranian women available from the Iranian Face
-Database [8,9] After combining all these head shots, we have a total of
-54760 image chips with male or female labels.
+Database [8,9].  After combining all these head shots, we have a total of
+54760 image chips labeled as male or female.
 
-We randomly reserve 2.5% of the 50K+ chips for validation and another 7.5%
+We randomly reserve 2.5% of the 54K+ chips for validation and another 7.5%
 for testing.  Image augmentation is performed upon the remaining 90% of
 chips in order to increase the variety of training samples.  The enlarged
 bounding boxes surrounding people's heads are translated and rotated by
-small amounts.  Half of all the augmented chips are also flipped
-horizontally.  Constant random offsets are added to each pixel's hue,
-saturation and value color coordinates.  Gaussian noise is also
-intentionally injected into augmented images.  Figure 3 displays
-representative examples of original and augmented image chips.
+small amounts.  Half of all the augmented chips are also horizontally
+flipped.  Random constant offsets are added to each pixel's hue, saturation
+and value color coordinates.  Gaussian noise is also intentionally injected
+into augmented images.  Figure 3 displays facial chips before and after
+image augmentation.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/augmented_female_face.png)
 
@@ -114,75 +115,78 @@ the original images.*
 
 For each of the training chips which originated from our highly-variable
 set of faces, we add five perturbed counterparts.  But since training chips
-from the Adience and Iran Faces databases exhibit less variety, we only add
-one augmented variant per chip.  After augmentation, we end up with a total
-of 260788 training chips which carry either male or female labels.
+from the Adience and Iran Faces databases exhibit less intrinsic variety,
+we only add one augmented variant per chip from these data sources.  After
+augmentation, we end up with a total of 260788 training chips which carry
+male or female labels.
 
-The final set of input data comes from images containing no facial content.
-Working with our original set of 13.7K+ photos, we randomly choose numbers,
-sizes and locations of bounding boxes in each picture.  Any random box
-which overlaps a human head is ignored.  Nonface chips are also heavily
-biased towards those with sizable image entropies.  We thus generate 99204
-non-face image chips, and we reserve 0.5% [1.5%] for validation [testing].
-Representative examples of such non-face chips are presented in figure 4.
+Our final set of input data comes from images containing no facial content.
+Working with our original set of 13.7K+ full-sized internet photos, we
+randomly choose the number, sizes and locations of bounding boxes in each
+picture.  A random box which overlaps any part of a human head is rejected.
+A random box is also heavily biased towards enclosing an image region with
+sizable entropy.  We thus generate 99204 non-face image chips, and we
+reserve 0.5% [1.5%] for validation [testing].  Figure 4 displays
+representative examples of non-face chips.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/non_face_training_samples.png)
-*Fig. 4.  Image chips containing no human face content.*
+*Fig. 4.  Image chips extracted from internet photos which contain no human
+face content.*
 
 ## CNN Architecture, Hyperparameters and Training
 
 We seek to classify input image chips into one of 3 categories: non-face,
-male face or female face.  Since our number of classes is small, we adopt
-the hypothesis that a simple convolutional neural network should be
-sufficient for our task.  We want to keep the network's overall size as
-small as possible in order to minimize its overfitting potential and
-required training time.  Yet the network must also have sufficient capacity
-to handle our data set's variability.  After experimenting with a number of
-different network configurations, we settled upon the one sketched in
-figure 5.
+male face or female face.  Since the number of output categories is small,
+we adopt the hypothesis that a simple convolutional neural network should
+be sufficient for this task.  We want to keep the network's overall size
+small in order to minimize its overfitting potential and required training
+time.  Yet the network must also have sufficient capacity to handle our
+data set's heterogeneity.  After experimenting with a number of different
+network configurations, we settled upon the one sketched in figure 5.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/padded_cropped_net.png)
 *Fig. 5. Training architecture for a CNN used to classify facial genders.
 This neural net graph was generated by the web-based Netscope visualization
-tool [11].*
+tool [10].*
 
 The input to the network is an RGB image chip of pixel size 96x96.
-Following the highly successful VGG-16 model [12], we set the pixel
+Following the highly successful VGG-16 model [11], we set the pixel
 dimensions of all convolutional filters in figure 5 to 3x3.  The network's
 first, second, third and fourth convolutional layers contain 96, 192, 224
-and 256 such filters.  The fully-connected fifth and sixth layers both
-contain 256 nodes.  The seventh layer contains just 3 nodes corresponding
-to our non, male and female face categories.  Filtering in layers 1-6 of
-the network is followed by a nonlinear ReLU operation.  Max pooling is
-performed after the first three convolutions which reduces image chip pixel
-width and height each by half.  In the final ouput layer, softmax
-probabilities are computed for our 3 classes.  The one with the highest
-score yields the classification label output corresponding to the image
-chip input.
+and 256 filters.  The fully-connected fifth and sixth layers both contain
+256 nodes.  The seventh layer holds 3 nodes corresponding to the non-face,
+male and female output categories.  Filtering in layers 1-6 of the network
+is followed by a nonlinear Rectified Linear Unit (ReLU) operation.  Max
+pooling with stride 2 ??? is performed after the first three convolutions
+which reduces image chip pixel width and height each by half.  In the final
+layer, softmax probabilities are computed for the 3 classes.  The one with
+the highest score yields the classification label output corresponding to
+the image chip input.
 
 The network pictured in figure 5 contains a total of 38,886,688 weights
 whose values we train from scratch.  In order to combat overfitting this
 large number of variables, we intentionally perform dropout after each ReLU
-step [13].  Dropout probabilities grow in magnitude with increasing layer
+step [12].  Dropout probabilities grow in magnitude with increasing layer
 depth as follows: 0.1, 0.25, 0.25, 0.5, 0.5, 0.5, 0.5.  We also employ
 L2-regularization to minimize overfitting.
 
-We implement this CNN using the caffe framework [10].  Its weights and
+We implement this CNN using the caffe framework [13].  Its weights and
 biases are all initialized with random values drawn from a Gaussian
 distribution with mean = 0 and standard deviation = 0.01.  We train the
 network using stochastic gradient descent with momentum = 0.9 and minibatch
-size = 100.  We set the initial learning rate = 0.01 and decrease it by
-0.33 after every 30K iterations.  We also experimented with adjusting the
-weight decay parameter and settled upon lambda = 0.001.
+size = 100.  We experimented with adjusting the initial learning rate and
+settled upon 0.01.  It decreases by 0.33 after every 30K iterations.  We
+also varied the weight decay hyperparameter and eventually chose lambda =
+0.001.
 
-Learning curves are plotted as functions of training epoch in figure 6.  We
-instruct caffe to hold out 10% of the input training data in order to
-monitor the network's accuracy.  The cyan curve in the figure represents a
-temporally-smoothed accuracy metric for the 90% of image chips actually
-used to train the network.  The red curve illustrating the same accuracy
-metric for the held-out data asymptotes to a value only slightly less than
-the cyan curve.  So dropout plus L2-regularization clearly prevent our CNN
-from overfitting.
+Learning curves for our network are plotted as functions of training epoch
+in figure 6.  We instruct caffe to hold out 10% of the input training data
+in order to monitor the CNN's accuracy.  The cyan curve in the figure
+represents a temporally-smoothed accuracy metric for the 90% of image chips
+actually used to train the network.  The red curve illustrating the same
+accuracy metric for the held-out data asymptotes to a value only slightly
+less than the cyan curve.  So dropout plus L2-regularization clearly
+prevent the neural network from overfitting.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/training/padded_accuracy_curves.png)
 *Fig. 6. CNN model accuracy plotted as a function of training epoch.  The
@@ -230,19 +234,19 @@ images [1].  Figures 8a and 8b demonstrate that a CNN can also successfully
 classify genders for a number of such 2D faces.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/female_2D_correct.png)
-*Fig. 8a.  Examples of "2D" test image chips originating from paintings,
-line drawings and photos were the CNN correctly classified as female.*
+*Fig. 8a.  Examples of test faces coming from paintings, line drawings and
+physical photos correctly classified as female.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/male_2D_correct.png)
-*Fig. 8b.  Examples of "2D" test image chips originating from paintings,
-line drawings and photos were the CNN correctly classified as male.*
+*Fig. 8b.  Examples of test faces coming from paintings, line drawings and
+physical photos correctly classified as male.*
 
 Of course, if input image quality is poor, our system cannot confidently
 return any classification result.  For instance, the machine marks facial
 genders for all of the chips in figure 9 as unknown:
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_unsure_classifications.png)
-*Fig. 9. Examples of test image chips for which the CNN was significantly
+*Fig. 9. Examples of test faces for which the CNN was significantly
 uncertain about gender.  The top [bottom] row contains female [male] image
 chips.*
 
@@ -281,13 +285,13 @@ cost of also increasing the incorrectly-classified fraction.
   <thead>
     <tr>
       <th style="text-align: center"> </th>
-      <th style="text-align: center">non- face</th>
-      <th style="text-align: center">male face</th>
-      <th style="text-align: center">female face</th>
-      <th style="text-align: center">uncertain gender</th>
-      <th style="text-align: center">% correct</th>
-      <th style="text-align: center">% uncertain</th>
-      <th style="text-align: center">% incorrect</th>
+      <th style="text-align: center"> non-face </th>
+      <th style="text-align: center"> male face </th>
+      <th style="text-align: center"> female face </th>
+      <th style="text-align: center"> uncertain gender </th>
+      <th style="text-align: center"> % correct </th>
+      <th style="text-align: center"> % uncertain </th>
+      <th style="text-align: center"> % incorrect </th>
     </tr>
   </thead>
   <tbody>
@@ -396,14 +400,13 @@ Age, Pose and Expression", ICMV 2007.
 
 9.  See http://www.iranprc.org/en/ifdb.ph.
 
-10.  See http://caffe.berkeleyvision.org.
+10.  See ethereon.github.io/netscope/quickstart.html.
 
-11.  See ethereon.github.io/netscope/quickstart.html.
-
-12.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
+11.  K. Simonyan and A. Zisserman, *Very Deep Convolutional Networks for
 Large-Scale Image Recognition*, arXiv 1409.1556, (2015).
 
-13.  N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
+12.  N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
 R. Salakhudinov, "Dropout: A Simple Way to Prevent Neural Networks from
 Overfitting,", J. Machine Learning Research (2014), 1929.
 
+13.  See http://caffe.berkeleyvision.org.
