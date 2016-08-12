@@ -133,7 +133,7 @@ representative examples of non-face chips.
 *Fig. 4.  Image chips extracted from internet photos which contain no human
 face content.*
 
-## CNN Architecture, Hyperparameters and Training
+## CNN architecture, hyperparameters and training
 
 We seek to classify input image chips into one of 3 categories: non-face,
 male face or female face.  Since the number of output categories is small,
@@ -194,29 +194,32 @@ cyan curve is a temporally-smoothed version of the dark blue accuracy
 values for the training data.  The red curve illustrates the CNN's accuracy
 on a held-out subset of the training data.*
 
-## Facial Gender Inference
+## Facial gender inference
 
-We settled upon the CNN architecture and hyperparameters presented in the
-previous section after performing multiple runs on our validation set of
-1617 image chips.  To our surprise, we found that the CNN had greater
-problems with incorrectly classifying females than males.  We also
-discovered that the softmax probabilities for correctly labeled validation
-chips were generally higher than those for their incorrect counterparts.
+We settled upon our CNN's architecture and hyperparameters after performing
+multiple runs and analyzing its output on a validation set of 1617 image
+chips.  Somewhat surprisingly, we found that the CNN had greater difficulty
+classifying females than males.  Perhaps the frequent presence of facial
+hair makes male faces intrinsicially easier to identify than female faces.
+We also discovered that softmax probabilities for correctly labeled
+validation chips were generally higher than those for their incorrectly
+classified counterparts.
 
 It is unreasonable to expect any automated system to perform perfectly all
 the time.  But machines should return confidence values along with their
 predictions.  We may then ignore any automated result whose confidence lies
 below some threshold.  Using our validation data, we empirically determined
-threshold values of 0.52 and 0.58 upon softmax probabilities for male and
-female classification labels.  If our CNN outputs a gender label and
-confidence score that lie below these thresholds, the result is declared
-too uncertain to be trusted.
+softmax probability thresholds of 0.52 and 0.58 for male and female
+classification labels.  If the CNN outputs a confidence score for a gender
+label that lies below these thresholds, the result is declared too
+uncertain to be trusted.
 
-We next pass a reserved set of 4536 image chips through the CNN to assess
-its performance.  Representative examples of test chips whose facial
-genders were correctly classified are presented in figures 7a and 7b.  They
+After fixing the CNN's architecture and hyperparameters, we perform
+inference upon a reserved test set of 4536 image chips to assess the
+network's performance.  Representative examples of test chips whose facial
+genders are correctly classified are presented in figures 7a and 7b.  They
 include several challenging instances where faces are significantly
-cropped, blurred or occluded:
+cropped, blurred or occluded.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_correct_female_classifications.png)
 *Fig. 7a. Examples of test image chips correctly classified by the CNN as
@@ -226,40 +229,41 @@ female.*
 *Fig. 7b.  Examples of test image chips correctly classified by the CNN as
 male.*
 
-It is interesting to note that a number of our test images contain faces
+It is interesting to note that a number of test chips contain faces
 originating from "2D" sources such as oil paintings, pencil drawings and
 poster billboards.  In our previous blog entry, we found that instance
 segmentation could successfully localize such "flat" faces in internet
-images [1].  Figures 8a and 8b demonstrate that a CNN can also successfully
-classify genders for a number of such 2D faces.
+images [1].  Figures 8a and 8b demonstrate that a machine can also
+successfully classify genders for 2D faces.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/female_2D_correct.png)
 *Fig. 8a.  Examples of test faces coming from paintings, line drawings and
-physical photos correctly classified as female.*
+billboard placards correctly classified as female.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/male_2D_correct.png)
 *Fig. 8b.  Examples of test faces coming from paintings, line drawings and
 physical photos correctly classified as male.*
 
-Of course, if input image quality is poor, our system cannot confidently
-return any classification result.  For instance, the machine marks facial
-genders for all of the chips in figure 9 as unknown:
+If the incoming image quality is sufficiently poor, our system cannot
+confidently return any classification result.  For instance, the machine
+marks as unknown the facial genders for all chips in figure 9.  Our CNN
+also definitely makes classification mistakes.  Representative examples of
+incorrectly classified female and male image chips are shown in figures 10a
+and 10b.  For several of the chips in these figures, it is difficult for
+even a human to determine gender without seeing the context of the full
+images from which they were excised.  Moreover, it is often hard to tell
+gender for very young and old human subjects as well as for people whose
+faces are obscured by masks or markings.  Small pixel sizes and croppings
+of head shots further render sex determination difficult.  But in other
+failure cases, most humans would have no trouble determining correct gender
+assignments.
+
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/padded_unsure_classifications.png)
 *Fig. 9. Examples of test faces for which the CNN was significantly
 uncertain about gender.  The top [bottom] row contains female [male] image
 chips.*
 
-And our CNN also definitely makes classification mistakes.  Representative
-examples of incorrectly classified female and male image chips are
-presented in figures 10a and 10b.  For several of the image chips in these
-figures, it is difficult for even a human to determine gender without
-seeing the context of the full images from which they were excised.  It is
-often hard to tell gender for very young and old human subjects as well as
-for people whose faces are obscured by masks or markings.  Small pixel
-sizes and croppings of head shots also render sex determination difficult.
-But in other failure cases, most humans would have no trouble determining
-correct gender assignments.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/incorrect_female_2_male_classifications.png)
 *Fig. 10a. Examples of female test image chips which the CNN incorrectly
@@ -272,27 +276,39 @@ classified as female.*
 The confusion matrix in Table 1 quantifies our system's overall
 classification performance.  The CNN has little difficulty separating
 non-face from human-face inputs.  It consequently could be used to improve
-the precision for detectors which localize faces within images in the wild.
-The 86% correct classification rate for male faces is also respectable.  It
+precision for detectors which localize faces within internet imagery.  The
+86% correct classification rate for male faces is also respectable.  It
 compares favorably with recent CNN gender results reported for smaller and
 less challenging data sets than ours [6].  On the other hand, our CNN
 struggles to correctly identify female faces, and it gives up on over 12%
 of female test inputs.  By lowering the female softmax threshold below
-0.58, we can increase the correctly-classified female fraction but at the
-cost of also increasing the incorrectly-classified fraction.
+0.58, we could increase the correctly-classified female fraction to around
+80%.  But such a threshold relaxation would come at the unacceptable cost
+of also increasing the incorrectly-classified female fraction.
 
 <table style="width:100%">
   <thead>
     <tr>
       <th style="text-align: center"> </th>
-      <th style="text-align: center"> non-face </th>
-      <th style="text-align: center"> male face </th>
-      <th style="text-align: center"> female face </th>
-      <th style="text-align: center"> uncertain gender </th>
-      <th style="text-align: center"> % correct </th>
-      <th style="text-align: center"> % uncertain </th>
-      <th style="text-align: center"> % incorrect </th>
+      <th style="text-align: center"> non- </th>
+      <th style="text-align: center"> male </th>
+      <th style="text-align: center"> female </th>
+      <th style="text-align: center"> uncertain </th>
+      <th style="text-align: center"> %  </th>
+      <th style="text-align: center"> %  </th>
+      <th style="text-align: center"> %  </th>
     </tr>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> face </th>
+      <th style="text-align: center"> face </th>
+      <th style="text-align: center"> face </th>
+      <th style="text-align: center"> gender </th>
+      <th style="text-align: center"> correct </th>
+      <th style="text-align: center"> uncertain </th>
+      <th style="text-align: center"> incorrect </th>
+    </tr>
+
   </thead>
   <tbody>
     <tr>
@@ -331,26 +347,31 @@ cost of also increasing the incorrectly-classified fraction.
 *Table 1. Classification results for a held-out truth set of 4536 image
 chips.*
 
-It is instructive to combine together the facial localization detector
-presented in our blog posting with the facial gender classifier developed
-in this entry.  We collect a brand new set of test images not seen before
-by either subsystems' neural networks.  Instance segmentation attempts to
-wrap bounding boxes around the faces of genuine humans, and the classifier
-attempts to determine the faces' genders.  Several faces which were both
-successfully localized and classified are presented in figure 11.  They
-include relatively simple examples where all human subjects face straight
-towards the camera.
+## Detecting and classifying faces in internet imagery
+
+It is interesting to combine the face localization detector developed in
+our previous blog posting with the face gender classifier described here.
+We then pass a brand new set of "images in the wild" not previously seen by
+either the detector or classifier through the end-to-end system.  Instance
+segmentation attempts to wrap bounding boxes around faces of genuine
+humans, and the classifier attempts to deduce the detected faces' genders.
+Several faces which were both successfully localized and classified are
+presented in figure 11.  They include relatively simple examples where
+human subjects look straight into the camera.  Moreover, no face is
+occluded by another person's head in the figure.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_all_faces.png)
 *Fig. 11. Example test images in which all faces were automatically
 localized and assigned correct gender labels.  Red [blue] bounding boxes
 enclose female [male] faces.*
 
-Figures 12a and 12b present more challenging examples which include crowd
-scenes, head coverings obscuring face visibility and faces significantly
-oriented away from the camera's direction.  In these cases, our detector
-has more trouble finding faces than does our classifier in determining
-their genders.  
+Figures 12a and 12b illustrate results for more challenging photos
+involving crowd scenes, head coverings that reduce facial visibility,
+people located far down-range, and faces significantly oriented away from
+the camera direction.  We observe a few localized faces for which the
+classifier was uncertain about a person's sex.  But generally for the
+pictures in figure 12, the detector has more trouble finding faces than
+does the classifier determining their genders.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_most_faces.png)
 *Fig. 12a. Example test images for which no localized face was assigned an
