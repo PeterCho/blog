@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Localizing Faces and Hands via Data Augmentation, Image Scaling and Instance Segmentation"
+title:  "Detecting Faces and Hands via Data Augmentation, Image Scaling and Instance Segmentation"
 date:   2016-06-27 12:00:0
 categories: Deep Learning
 ---
@@ -306,7 +306,7 @@ separation between them.  So some way is needed to distinguish individual
 faces.
 
 To perform instance segmentation, we adopt a variation of the approach that
-we developed for localizing individual words within text-in-the-wild
+we developed for detecting individual words within text-in-the-wild
 described in our previous post [9].  In particular, we train a new DNN to
 segment facial quadrants.  We start with our O(36K) facial bounding boxes
 and decompose them into top-left, top-right, bottom-left and bottom-right
@@ -372,21 +372,21 @@ and vertical pixel coordinates.  The components' borders are set equal to
 these probability distriubtions 5% and 95% cumulative values.  The final
 bounding boxes wrapped around the new face components represent our
 processing pipeline's output results.  As figure 11 demonstrates, the
-entire procedure successfully localizes the four, full faces appearing in
+entire procedure successfully detects the four, full faces appearing in
 our "Friends" example.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/friends/segmented_image_04084.png)
 *Fig. 11.  Final set of localized faces and hands are indicated by orange
 and light-green bounding boxes*.
 
-## Face localization results
+## Face detection results
 
 700 validation images were used to optimize multiple hyperparameter values
 in our processing pipeline such as data augmentation threshold fractions,
 DNN learning rates, face connected component bounding box size and score
 thresholds.  After tuning these hyperparameters, we ran our system on an
 independent set of 700 test images.  In this section, we present
-qualitative and quantitive face localization results from the test set.
+qualitative and quantitive face detection results from the test set.
 
 Figure 12 displays several examples of facial detection for various groups
 of people.  Note that faces viewed in profile, partly occluded by hands and
@@ -402,11 +402,11 @@ significantly covered by surgical masks are successfully extracted.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_02192___segmented_image_02192.jpg)
 
-*Fig. 12.  Faces and hands localized in images containing groups of people.
+*Fig. 12.  Faces and hands detected in images containing groups of people.
 Red and yellow tinted pixels are enclosed by orange and light-green
 bounding boxes.*
 
-Localizing faces within large crowds is more challenging than small groups.
+Detecting faces within large crowds is more challenging than small groups.
 In the examples shown in figure 13, many faces are obscured by shadows,
 oriented away from the camera or densely packed in the depth dimension.
 Nevertheless, our system successfully extracts most individuals' faces in
@@ -420,7 +420,7 @@ these crowd scenes.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_03836___segmented_image_03836.jpg)
 
-*Fig. 13.  Faces and hands localized in images containing crowds of people.
+*Fig. 13.  Faces and hands detected in images containing crowds of people.
 Red and yellow tinted pixels are enclosed by orange and light-green
 bounding boxes.*
 
@@ -428,7 +428,7 @@ Recall that we intentionally incorporated several "2D" sources of faces
 into our training set such as images of photos, paintings and line
 drawings.  We would like our system to work on such abstract
 representations of human faces in addition to conventional images of real
-people in the real world.  So it is interesting to see face localization
+people in the real world.  So it is interesting to see face detection
 results for three "2D" test images in figures 14, 15 and 16.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_10208___segmented_image_10208.jpg)
@@ -437,11 +437,11 @@ results for three "2D" test images in figures 14, 15 and 16.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_05206___segmented_image_05206.jpg)
 
-*Fig. 15.   Face localized in an oil painting image.*
+*Fig. 15.   Face detected in an oil painting image.*
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/good_results/montage_image_05236___segmented_image_05236.jpg)
 
-*Fig. 16.   Face localized in a line drawing image.*
+*Fig. 16.   Face detected in a line drawing image.*
 
 Of course, our system also makes mistakes.  A number of false positive
 detections slip through.  They include human hands, non-human face drawings
@@ -583,7 +583,7 @@ obtain an overall balanced F-score = 0.753.
 It is instructive to compare these recall and precision values derived from
 an initial DNN which segments both face and hand pixels with corresponding
 metrics derived from another DNN that was trained using only face bounding
-boxes and which labels only face pixels.  Although localizing hands in
+boxes and which labels only face pixels.  Although detecting hands in
 internet imagery is interesting in its own right, our primary motivation
 for annotating hands was to minimize the DNN's tendency to erroneously
 classify them as faces.  When hand content is ignored, we find recall =
@@ -593,11 +593,11 @@ facial recall is diminished.
 
 Pixel-level precision and recall are useful metrics for quantifying a
 classification system's performance.  But they can hide deficiencies in
-object-level localization such as those depicted in figure 19.  For
+object-level detection such as those depicted in figure 19.  For
 example, one bounding box may overlap more than one face.  Alternatively,
 one face may be overlapped by more than one bounding box.  So it is useful
 to compare manually labeled ground-truth bounding boxes with automatically
-detected bounding boxes in order to assess our pipeline's face localization
+detected bounding boxes in order to assess our pipeline's face detection
 capabilities at an object level.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/bad_results/wrong_bboxes.png)
@@ -613,7 +613,7 @@ Frequency histograms for these two distributions are plotted in figure 20.
 The large spikes in these plots' zero-value bins indicates that our system
 generates a sizable number of false negatives and false positives.  The
 distributions' median 0.710 and 0.711 values for ground-truth and detected
-face bounding box IoU quantifies our system's face localization performance
+face bounding box IoU quantifies our system's face detection performance
 on a challenging set of internet imagery.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/testing_images/IoUs.png)
@@ -649,5 +649,5 @@ http://arxiv.org/1502.02734, (2015).
 and Artifical Neural Networks for Natural Scene Text Recognition*, arXiv:
 1406.2227v4 (2014).
 
-9.  See "Localizing Text-in-the-Wild via Synthetic Phrase Generation and
+9.  See "Detecting Text-in-the-Wild via Synthetic Phrase Generation and
 Semantic Segmentation" post dated Apr 25, 2016.

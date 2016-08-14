@@ -7,7 +7,7 @@ categories: Deep Learning
 
 ## Gender-labeled facial imagery
 
-In our previous blog post, we localized faces within internet photos using
+In our previous blog post, we detected faces within internet photos using
 instance segmentation [1].  In this entry, we continue to accumulate and
 investigate a sizable corpus of "faces in the wild".  But here our primary
 focus is upon classifying rather than detecting faces.
@@ -21,7 +21,7 @@ attributes.  We seek to build a classifer which can identify gender from
 facial imagery input.
 
 We begin by extending the dataset of internet images from our earlier face
-localization studies.  To date, we have collected and annotated 13740
+detection studies.  To date, we have collected and annotated 13740
 photos which intentionally exhibit a high degree of variety.  2815 of the
 images originated from the WIDER collection [2], while the remaining
 pictures were downloaded primarily from Google Images.  Within this corpus,
@@ -239,7 +239,7 @@ male.*
 It is interesting to note that a number of test chips contain faces
 originating from "2D" sources such as oil paintings, pencil drawings and
 poster billboards.  In our previous blog entry, we found that instance
-segmentation could successfully localize such "flat" faces in internet
+segmentation could successfully detect such "flat" faces in internet
 images [1].  Figures 8a and 8b demonstrate that a machine can also
 successfully classify genders for 2D faces.
 
@@ -283,7 +283,7 @@ classified as female.*
 The confusion matrix in Table 1 quantifies our classification system's
 overall performance.  The CNN has little difficulty separating non-face
 from human-face inputs.  It consequently could be used to improve precision
-for detectors which localize faces within internet imagery.  The 86%
+for detectors which find faces within internet imagery.  The 86%
 correct classification rate for male faces is also respectable.  It
 compares favorably with recent CNN gender results reported for smaller and
 less challenging data sets than ours [6].  On the other hand, our CNN
@@ -356,55 +356,55 @@ of also increasing the incorrectly-classified female fraction.
 
 ## Detecting and classifying faces in internet imagery
 
-The face localization detector developed in our previous blog posting can
+The face detector developed in our previous blog posting can
 be combined with the face gender classifier described here.  We may then
 pass a brand new set of "images in the wild" not previously seen by either
 the detector or classifier through the end-to-end system.  Instance
 segmentation attempts to wrap bounding boxes around faces of genuine
 humans, and the classifier attempts to deduce the detected faces' genders.
-Several faces which were both successfully localized and classified are
+Several faces which were both successfully detected and classified are
 presented in figure 11.  They include relatively simple examples where
 human subjects look straight into the camera.  Moreover, no face is
 occluded by another person's head in the figure.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_all_faces.png)
 *Fig. 11. Example test images in which all faces were automatically
-localized and assigned correct gender labels.  Red [blue] bounding boxes
+detected and assigned correct gender labels.  Red [blue] bounding boxes
 enclose female [male] faces.*
 
 Figures 12a and 12b illustrate results for more challenging photos
 involving crowd scenes, head coverings that reduce facial visibility,
 people located far down-range, and faces significantly oriented away from
-the camera direction.  We observe a few localized faces for which the
-classifier was uncertain about a person's sex.  But generally for the
-pictures in figure 12, the detector has more trouble finding faces than
-does the classifier determining their genders.
+the camera direction.  We observe a few faces for which the classifier was
+uncertain about a person's sex.  But generally for the pictures in figure
+12, the detector has more trouble finding faces than does the classifier
+determining their genders.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/good_most_faces.png)
-*Fig. 12a. Example test images for which no localized face was assigned an
+*Fig. 12a. Example test images for which no detected face was assigned an
 incorrect gender label.  Red [blue] bounding boxes enclose female [male]
 faces.  The CNN was uncertain about gender for faces marked by green
-bounding boxes.  A few faces in these images were not localized.*
+bounding boxes.  A few faces in these images were not detected.*
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/OK_faces.png)
-*Fig. 12b. Example test images for which no localized face was assigned an
-incorrect gender label.  Several faces in these images were not localized.*
+*Fig. 12b. Example test images for which no detected face was assigned an
+incorrect gender label.  Several faces in these images were not detected.*
 
 Finally, the examples in figure 13 illustrate failures of both the detector
-and classifier.  They include cases where faces were not localized as well
+and classifier.  They include cases where faces were not detected as well
 as incorrect gender labels for detected faces.  We leave improving both
-facial localization and classification for future work.
+facial detection and classification for future work.
 
 ![FaceGender]({{site.url}}/blog/images/face_gender/results/bad_faces.png)
-*Fig. 13. Example test images in which some localized faces were assigned
+*Fig. 13. Example test images in which some detected faces were assigned
 incorrect gender labels.  Red [blue] bounding boxes enclose faces
 classified as female [red].  The CNN was uncertain about gender for faces
 marked by green bounding boxes.  A few faces in these images were also not
-localized.*
+detected.*
 
 ## References
 
-1.  See "Localizing Faces and Hands via Data Augmentation, Image Scaling
+1.  See "Detecting Faces and Hands via Data Augmentation, Image Scaling
 and Instance Segmentation" post dated Jun 27, 2016.
 
 2.  S. Yang, P. Luo, C.C. Loy and X. Tang, "WIDER FACE: A Face Detection

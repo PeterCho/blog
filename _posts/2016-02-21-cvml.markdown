@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Recognizing Digits via Synthetic Character Generation and Deep
+title:  "Classifying Digits via Synthetic Character Generation and Deep
 Network Finetuning"
 date:   2016-02-21 12:00:0
 categories: Deep Learning
