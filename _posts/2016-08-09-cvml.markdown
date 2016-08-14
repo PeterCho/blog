@@ -281,17 +281,17 @@ classified as male.*
 classified as female.*
 
 The confusion matrix in Table 1 quantifies our classification system's
-overall performance.  The CNN has little difficulty separating non-face
-from human-face inputs.  It consequently could be used to improve precision
-for detectors which find faces within internet imagery.  The 86%
-correct classification rate for male faces is also respectable.  It
-compares favorably with recent CNN gender results reported for smaller and
-less challenging data sets than ours [6].  On the other hand, our CNN
-struggles to correctly identify female faces, and it gives up on over 12%
-of female test inputs.  By lowering the female softmax threshold below
-0.58, we could increase the correctly-classified female fraction to around
-80%.  But such a threshold relaxation would come at the unacceptable cost
-of also increasing the incorrectly-classified female fraction.
+performance.  The CNN has little difficulty separating non-face from
+human-face inputs.  It consequently could be used to improve precision for
+detectors which find faces within internet imagery.  The 86% correct
+classification rate for male faces is also respectable.  It compares
+favorably with recent CNN gender results reported for smaller and less
+challenging data sets than ours [6].  On the other hand, our CNN struggles
+to correctly identify female faces, and it gives up on over 12% of female
+test inputs.  By lowering the female softmax threshold below 0.58, we could
+increase the correctly-classified female fraction to around 80%.  But such
+a threshold relaxation would come at the unacceptable cost of also
+increasing the incorrectly-classified female fraction.
 
 <table style="width:100%">
   <thead>
@@ -353,6 +353,11 @@ of also increasing the incorrectly-classified female fraction.
 
 *Table 1. Classification results for a held-out truth set of 1037 non-face
 + 1812 male + 1687 female = 4536 image chips.*
+
+After aggregating subtotals within Table 1, we find 84.46% of our test
+images were correctly classifed and 9.72% were incorrectly classified.  The
+CNN was uncertain about and assigned no label to the remaining 5.82% of the
+test set.
 
 ## Detecting and classifying faces in internet imagery
 
