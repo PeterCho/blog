@@ -40,7 +40,7 @@ indicates, face bounding boxes in our imagery corpus span a wide range of
 pixel widths.
 
 ![FaceLocalization]({{site.url}}/blog/images/face_localization/training_images/training_montage.png)
-*Fig. 1. Representative examples of annotated training images.  Red and
+*Fig. 1. Representative examples of annotated images.  Red and
 cyan bounding boxes marking human faces and hands are best seen after
 zooming into these images.*
 
