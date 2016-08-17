@@ -169,12 +169,12 @@ by half.  In the final layer, softmax probabilities are computed for the 3
 classes.  The one with the highest score yields the classification label
 output corresponding to the image chip input.
 
-The network pictured in figure 5 contains a total of 38,886,688 weights
-whose values we train from scratch.  In order to combat overfitting this
-large number of variables, we intentionally perform dropout after each ReLU
-step [12].  Dropout probabilities grow in magnitude with increasing layer
-depth as follows: 0.1, 0.25, 0.25, 0.5, 0.5, 0.5, 0.5.  We also employ
-L2-regularization to minimize overfitting.
+The network pictured in figure 5 contains a total of 10,575,136 weights and
+1283 biases whose values we train from scratch.  In order to combat
+overfitting this large number of variables, we intentionally perform
+dropout after each ReLU step [12].  Dropout probabilities grow in magnitude
+with increasing layer depth as follows: 0.1, 0.25, 0.25, 0.5, 0.5, 0.5,
+0.5.  We also employ L2-regularization to minimize overfitting.
 
 We implement this CNN using the caffe framework [13].  Its weights and
 biases are initialized with random values drawn from a Gaussian
