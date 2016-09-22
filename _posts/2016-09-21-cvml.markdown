@@ -1,15 +1,27 @@
 ---
 layout: post
-title:  "Visualizing the Preferred Inputs, Activation Responses and Learned
-Clusterings of Two Simple CNNs"
+title:  "Visualizing Preferred Inputs, Activation Responses and Learned
+Clusterings of Two Trained CNNs"
 date:   2016-09-21 12:00:00
 categories: Deep Learning
 ---
 
 ## Preferred Inputs
 
-![CNNVis]({{site.url}}/blog/images/cnn_vis/model2e_2t_architectures.jpg)
-*Fig. *. Architectures for two different CNNs which classify facial genders.*
+
+![CNNVis]({{site.url}}/blog/images/cnn_vis/padded_model2e_2t_architectures.jpg)
+*Fig. *. Architectures for 4 [left] and 6 [right] convolutional layer
+neural networks designed to classify faces.*
+
+![CNNVis]({{site.url}}/blog/images/cnn_vis/model2e_vs_2t_training_curves.jpg)
+*Fig. *. Training curves for the 4 [left] and 6 [right] convolutional layer
+models.*
+
+![CNNVis]({{site.url}}/blog/images/cnn_vis/fc7_reconstructions_2e_2t.png)
+*Fig. *. Three reconstructions of preferred inputs for the female and male neurons
+within the final fully connected layers of the 4 [left] and 6 [right]
+convoluational layer models.*
+
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=CSrUYNdaH08" target="_blank"><img src="http://img.youtube.com/vi/CSrUYNdaH08/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
@@ -21,6 +33,7 @@ target="_blank"><img src="http://img.youtube.com/vi/8oyBVBwnb_Q/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. *.  Architecture and preferred neuronal inputs for the 6-layer CNN.
 Click on image above in order to play video.*
+
 
 
 ## Activation Responses
