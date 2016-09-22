@@ -1,0 +1,27 @@
+---
+layout: post
+title:  "Visualizing the Preferred Inputs, Activation Responses and Learned
+Clusterings of Two Simple CNNs"
+date:   2016-09-21 12:00:00
+categories: Deep Learning
+---
+
+## Preferred Inputs
+
+![CNNVis]({{site.url}}/blog/images/cnn_vis/model2e_2t_architectures.jpg)
+*Fig. *. Architectures for two different CNNs which classify facial genders.*
+
+## Activation Responses
+
+![CNNVis]({{site.url}}/blog/images/cnn_vis/female_activated_neurons.png)
+*Fig. *. Activated neurons for an input female face test image.*
+
+![CNNVis]({{site.url}}/blog/images/cnn_vis/male_activated_neurons.png)
+*Fig. *. Activated neurons for an input male face test image.*
+
+## Learned Clusterings
+
+## References
+
+1.  See "Detecting Faces and Hands via Data Augmentation, Image Scaling
+and Instance Segmentation" post dated Jun 27, 2016.
