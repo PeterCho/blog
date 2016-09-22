@@ -11,15 +11,60 @@ categories: Deep Learning
 ![CNNVis]({{site.url}}/blog/images/cnn_vis/model2e_2t_architectures.jpg)
 *Fig. *. Architectures for two different CNNs which classify facial genders.*
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=CSrUYNdaH08" target="_blank"><img src="http://img.youtube.com/vi/CSrUYNdaH08/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. *.  Architecture and preferred neuronal inputs for the 4-layer CNN.
+Click on image above in order to play video.*
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=8oyBVBwnb_Q"
+target="_blank"><img src="http://img.youtube.com/vi/8oyBVBwnb_Q/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. *.  Architecture and preferred neuronal inputs for the 6-layer CNN.
+Click on image above in order to play video.*
+
+
 ## Activation Responses
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=PW1DxeCQYO4"
+target="_blank"><img src="http://img.youtube.com/vi/PW1DxeCQYO4/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. *.  Activation responses of trained neurons within the 4
+convolutional layer network to 50 female and 50 male test images.
+Click on image above in order to play video.*
+
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=SUeiqIVD9gc" target="_blank"><img src="http://img.youtube.com/vi/SUeiqIVD9gc/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. *.  Activation responses of trained neurons within the 6
+convolutional layer network to 50 female and 50 male test images.
+Click on image above in order to play video.*
+
 
 ![CNNVis]({{site.url}}/blog/images/cnn_vis/female_activated_neurons.png)
 *Fig. *. Activated neurons for an input female face test image.*
+
 
 ![CNNVis]({{site.url}}/blog/images/cnn_vis/male_activated_neurons.png)
 *Fig. *. Activated neurons for an input male face test image.*
 
 ## Learned Clusterings
+
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=52YpP-hradg" target="_blank"><img src="http://img.youtube.com/vi/52YpP-hradg/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. *.  Image graph for O(7K) test images generated from descriptors
+extracted from fully connected layer 5 in the 6 convolutional layer network.
+Click on image above in order to play video.*
+
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=ZsO2qQhA9UY"
+target="_blank"><img src="http://img.youtube.com/vi/ZsO2qQhA9UY/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. *.  Nearest neighbors among FC5 layer descriptors to images of female
+and male faces oriented at multiple yaw angles.*
+
+
+
 
 ## References
 
