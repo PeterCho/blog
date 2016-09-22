@@ -53,6 +53,14 @@ convolutional layer network to 50 female and 50 male test images.
 Click on image above in order to play video.*
 
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=nZNLX5T9aAA"
+target="_blank"><img src="http://img.youtube.com/vi/nZNLX5T9aAA/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. *.  Activation responses of trained neurons within the 6
+convolutional layer network to 20 female face, 20 male face and 20 non-face
+test images.  Click on image above in order to play video.*
+
+
 ![CNNVis]({{site.url}}/blog/images/cnn_vis/female_activated_neurons.png)
 *Fig. *. Activated neurons for an input female face test image.*
 
