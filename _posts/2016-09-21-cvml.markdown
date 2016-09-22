@@ -81,5 +81,17 @@ and male faces oriented at multiple yaw angles.*
 
 ## References
 
-1.  See "Detecting Faces and Hands via Data Augmentation, Image Scaling
-and Instance Segmentation" post dated Jun 27, 2016.
+
+
+*.  S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep Network
+Training by Reducing Internal Covariate Shift", ICML (2015).
+
+*.  Justin Johnson's cnn-vis project, See https://github.com/jcjohnson/cnn-vis.
+
+*.  K. Simonyan and A. Vedaldi and A. Zisserman, "Deep Inside Convolutional
+Networks: Visualising Image Classification Models and Saliency Maps", ICLR
+(2014).
+
+*.  J. Yosinski, J. Clune, A. Nguyen, T. Fuchs, H. Lipson H (2015)
+"Understanding Neural Networks Through Deep Visualization", ICML 2015 Deep
+Learning workshop.
