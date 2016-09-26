@@ -176,7 +176,7 @@ consequently begin to explore such visualizations in the following section.
 </table>
 
 *Table 2a. Model I classification results for a held-out truth set of 1059
-non-face + 1380 male + 1418 female = 3857 image chips.  The model correctly
+non-face + 1380 male + 1418 female = 3857 image chips.  Model I correctly
 classifies 85.66% of the test images, incorrectly classifies 12.03% and is
 uncertain about 2.3%.*
 
@@ -239,7 +239,7 @@ uncertain about 2.3%.*
 </table>
 
 *Table 2b. Model II classification results for a held-out truth set of 1059
-non-face + 1380 male + 1418 female = 3857 image chips.  The model correctly
+non-face + 1380 male + 1418 female = 3857 image chips.  Model II correctly
 classifies 88.40% of the test images, incorrectly classifies 10.32% and is
 uncertain about 1.27%.*
 
@@ -336,14 +336,48 @@ for neurons in Model II.  Click on image above to play video.*
 
 ## Activation responses of trained CNN nodes to test images
 
-<a
-href="http://www.youtube.com/watch?feature=player_embedded&v=PW1DxeCQYO4"
+According to conventional wisdom, early layers in CNNs extract basic
+information from input images such as their gross color, edge and texture
+contents.  On the other hand, more abstract knowledge is supposed to be
+distilled in later layers.  In particular, a classifier's assignments
+should be insensitive to geometry and coloring details of input images.
+Indeed, training data augmentation specifically tries to increase network
+insensitivity to such seemingly irrelevant low-level information.
+
+To check this lore, we want to investigate neuron activations to a set of
+test images and qualitatively assess their dependence upon the inputs.  We
+do so for Model I in figure XX.  The video in this figure presents 50
+female and 50 male face inputs which are ordered according to their
+classification probabilities.  For each input image, the network neurons
+are color-coded according to their stimulation responses.  Bright,
+hot-colored neurons are activated more strongly than dim, cold-colored
+neurons.
+
+As the movie in figure XX plays and speeds up, we observe that activation
+patterns within the convolution layers look fairly random.  In contrast,
+the patterns of stimulation within the fully connected layers are much more
+correlated.  While the overall magnitude of neuron responses decrease as
+classifier probabilities go down, the relative strengths of neuron outputs
+in layers 5 and 6 are remarkably stable.  
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=PW1DxeCQYO4"
 target="_blank"><img src="http://img.youtube.com/vi/PW1DxeCQYO4/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. *.  Movie illustrating activation responses of trained neurons in
 Model I to 50 female and 50 male test images.  Click on image above to play
 video.*
 
+The patterns among fully connected layer activations are even more striking
+for Model II.  As the video in figure XX illustrates, relative hot and cold
+neurons in the FC5 and FC6 layers are generally insensitive to input image
+details.  Moreover, many of the neurons in the fully connected layers that
+respond strongly to female faces to not turn on for male countenances and
+vice-versa.  Interestingly, the first 43 neurons in FC6 are moderately
+stimulated for both female and male inputs.  And their activation levels
+remain steady even as overall female and male face classification
+probabilities decline.  This pattern suggests the first 43 neurons in FC6
+encode the concept of human face independent of gender.  In contrast, the
+next O(150) FC6 neurons encode female and male gender information.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=SUeiqIVD9gc"
 target="_blank"><img src="http://img.youtube.com/vi/SUeiqIVD9gc/0.jpg"
@@ -352,16 +386,38 @@ alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 Model II to 50 female and 50 male test images.  Click on image above 
 to play video.*
 
+Reconstructed preferred image inputs support these hypotheses.  For
+example, figure XX [YY] illustrates representative reconstructions for
+neurons activated in the FC5, FC6 and FC7 layers of Model II by a female
+[male] face.  Reconstructions for neurons which do not activate are
+replaced by grey thumbnails in these figures.  For the FC5 layer, the
+reconstructed inputs for neurons activated by the female [male] face look
+female [male].  This same pattern generally holds for the FC6 layer except
+for its first 43 neurons.  Reconstructions of preferred image inputs for
+these initial FC6 nodes all contain a single eye which exhibits no obvious
+gender characteristics.
 
 ![CNNVis]({{site.url}}/blog/images/cnn_vis/female_activated_neurons.png)
 *Fig. *. Preferred input image reconstructions for some Model II neurons
 activated by an input female face test image.*
 
-
 ![CNNVis]({{site.url}}/blog/images/cnn_vis/male_activated_neurons.png)
 *Fig. *. Preferred input image reconstructions for some Model II neurons
 activated by an input male face test image.*
 
+Further support for our contention that the FC6 layer in Model II contains
+general face, female face, male face and non-face neurons is provided by
+figure XX.  Its movie displays network activations for 10 female and male
+test images as well as 10 non-face inputs.  The face images were
+intentionally selected based upon their relatively weak gender
+classification probabilities.  Yet Model II has no trouble distinguishing
+these faces from their non-face counterparts.  As the figure's movie plays,
+we observe that the first 43 neurons in FC6 are again moderately activated
+for all the face images.  Moreover, the last O(100) neurons are strongly
+stimulated by all the non-face images.  These activation patterns strongly
+suggest that Model II has hierarchically learned to firstly distinguish
+between face and non-face categories and secondly separate faces into
+female and male subclasses.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=nZNLX5T9aAA"
 target="_blank"><img src="http://img.youtube.com/vi/nZNLX5T9aAA/0.jpg"
@@ -371,12 +427,19 @@ male face and 10 non-face test images.  Though the classifier is uncertain
 about gender for these examples, it has no difficulty distinguishing faces
 from non-faces.  Click on image above to play video.*
 
+Given Model II's apparent learning of gender-independent faces, we are
+motivated to ask if this network might have learned other concepts which we
+did not explicitly set out to teach it.  In particular, we wonder whether
+this classifier might be able to distinguish among human traits such as age
+or ethnicity, image properties like blurriness or monochromaticity, and/or
+geometric differences such as facial pose.  To address these questions, we
+employ an image search system as a final, useful visualization tool [ref]
+in the next section.
 
 ## Trained CNN clusterings of test images
 
 
-<a
-href="http://www.youtube.com/watch?feature=player_embedded&v=52YpP-hradg"
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=52YpP-hradg"
 target="_blank"><img src="http://img.youtube.com/vi/52YpP-hradg/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. *.  Image graph for O(7K) test images generated from descriptors
