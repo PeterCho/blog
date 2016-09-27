@@ -14,26 +14,27 @@ of useful image processing tasks.  But though their utility is now
 quantitatively established, qualitative understanding of CNNs remains
 limited.  So in this blog posting, we employ some previously developed
 visualization techniques as well as present new methods to gain insight
-into trained networks.  As we'll see, visualizing CNN results confirms some
-existing lore and also reveals new surprises.
+into trained networks.  As we will see, visualizing trained CNNs reveals
+some surprises.
 
 We work again with a corpus of female face, male face and non-face images
-which we have described in previous postings [ref].  The pixel size for
+which have been described in previous postings [ref].  The pixel size for
 each input image is 96x96.  In the past, we padded extracted faces smaller
 than 96x96 with black pixels.  Now, we instead scale the smaller pixel
-dimension of any input chip up to 96 while maintaining the original aspect
-ratio.  To our surprise, we found this simple preprocessing change
-significantly improves CNN classification.  Representative examples of
-rescaled face inputs are pictured in fig XXX.
+dimension of any input chip to 96, maintain the original aspect ratio and
+crop the larger pixel dimension.  To avoid working with overly upsampled
+input faces, we discard any image chip whose original horizontal pixel
+dimension is less than 20 pixels in size.  We found these preprocessing
+scaling changes significantly improve CNN classification.  Representative
+examples of rescaled face inputs are pictured in fig XXX.
 
-To avoid working with overly upsampled input faces, we now ignore any image
-chip whose original horizontal pixel dimension is less than 20 pixels in
-size.  Table 1 breaks down our ground-truthed female, male and non face
-images into training, validation and testing sets.  As in our previous
-posting [ref], we perform data augmentation on female and male facial
-images in order to increase the training set size.  So our final training
-set includes 416223 images = 160283 female faces + 153892 male faces +
-102048 non-faces.
+
+Table 1 breaks down our ground-truthed female, male and non face images
+into training, validation and testing sets.  As in our previous posting
+[ref], we perform data augmentation on female and male facial images in
+order to increase the training set size.  So our final training set
+includes 416223 images = 160283 female faces + 153892 male faces + 102048
+non-faces.
 
 <table style="width:100%">
   <thead>
@@ -97,7 +98,7 @@ We train Models I and II using our O(416K) augmented images via the caffe
 framework [ref].  The 0.003 base learning rate and 25K learning rate
 step-down hyperparameters for Model I are less aggressive than their 0.03
 and 10K Model II counterparts which batch normalization enables.  As the
-learning curves plotted in figure XX demonstrate, fewer training epochs are
+learning curve plots in figure XX demonstrate, fewer training epochs are
 required to fit the O(11.6M) variables of Model II than the O(10.6M)
 variables of Model I.
 
@@ -241,22 +242,22 @@ non-face + 1380 male + 1418 female = 3857 image chips.  Model II correctly
 classifies 88.40% of the test images, incorrectly classifies 10.32% and is
 uncertain about 1.27%.*
 
-To gain intuition into the differences between Models I and II, it is
+To gain intuition into salient differences between Models I and II, it is
 helpful to visualize what each network has learned in multiple ways.  We
-consequently explore several visualizations of these trained
-networks in the following sections.
+consequently explore several visualizations of these trained networks in
+the following sections.
 
 ## Preferred imagery inputs for trained CNN nodes
 
 Traditional backpropagation iteratively applies gradients to adjust the
-weights of a neural network and minimize a loss function quantifying the
-discrepancy between fixed input image labels and their classifier-generated
-counterparts.  But backpropagation can also be used to generate images that
-maximally activate neurons in a trained network [refs].  Network weights
-are held fixed while pixel values of input test images are iteratively
-perturbed to maximize stimulation outputs of trained neurons.  We employ
-Justin Johnson's python script which calls caffe to reconstruct such
-preferred input images [ref].
+weights of a neural network and minimize a loss function which quantifies
+the discrepancy between fixed input image labels and their
+classifier-generated counterparts.  But backpropagation can also be used to
+generate images that maximally activate neurons in a trained network
+[refs].  Network weights are held fixed while pixel values of input test
+images are iteratively perturbed to maximize stimulation outputs of trained
+neurons.  We employ Justin Johnson's python script which calls caffe to
+reconstruct such preferred input images [ref].
 
 Previous researchers have found that regularization of preferred input
 reconstruction plays a critical role in the quality of synthesized images
@@ -274,9 +275,8 @@ example, three preferred image inputs for the female and male nodes in the
 FC7 layer of Models I and II are pictured in figure XX.  Looking at these
 facial reconstructions, we see that those from deeper Model II are
 obviously higher fidelity than those from Model I.  Moreover, preferred
-inputs for nodes in next-to-last fully connected layers typically contain
-multiple instances of target objects as previous investigators have
-reported [ref].
+inputs for nodes in fully connected layers typically contain multiple
+instances of target objects as previous investigators have reported [ref].
 
 ![CNNVis]({{site.url}}/blog/images/cnn_vis/fc7_reconstructions_2e_2t.png)
 *Fig. *. Three representative reconstructions of preferred image inputs for
@@ -289,13 +289,13 @@ relationships among the nodes' reconstructions.  Synthesized results are
 presented in figure XX.  At the start of the figure's video, we see the
 overall layout for nodes and edges of Model I.  Edges are color-coded
 according to their weights.  Hotter [cooler] edges correspond to larger
-[small]er weight values following ReLU thresholding.
+[smaller] weight values following ReLU thresholding.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=CSrUYNdaH08"
 target="_blank"><img src="http://img.youtube.com/vi/CSrUYNdaH08/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. *.  Movie illustrating reconstructions of preferred input images for
-neurons in Model I.  Click on image above in order to play video.*
+all neurons in Model I.  Click on image above in order to play video.*
 
 As the movie in figure XX zooms into the top input data layer, we see its
 three color channels represented by blue, green and red versions of an
@@ -312,16 +312,14 @@ green data channels.  As the movie plays, we also see that a purple-colored
 preferred input among the layer 1 nodes has strong edge connections to both
 the red and blue input channels.
 
-The nodes in convolutional layers 2, 3 and 4 of Model I favor input
-textures whose complexity grows with increasing layer depth.  With some
-imagination, one can see individual face parts like eyes and mouths among
-the layer 4 reconstructions.  Entire faces appear inside the preferred
-inputs for nodes in fully connected layers 5 and 6.  Individual FC5 and FC6
-node reconstructions often exhibit multiple face parts.  Other nodes in the
-fully connected layers prefer complex texture inputs.  They consequently
-are stimulated by non-facial input data.  Finally, the last 3 nodes in
-layer 7 clearly respond to male face, female face and non-face imagery.
-
+Model I nodes in convolutional layers 2, 3 and 4 favor input textures whose
+complexity grows with increasing layer depth.  With some imagination, one
+can pick out individual face parts like eyes and mouths among the layer 4
+reconstructions.  Entire faces appear inside the preferred inputs for many
+nodes in fully connected layers 5 and 6.  Other FC5 and FC6 nodes prefer
+complex texture inputs.  They consequently are stimulated by non-facial
+input data.  Finally, the last three nodes in layer 7 clearly respond to
+male face, female face and non-face imagery.
 
 Reconstructed examples of preferred node inputs for Model II are
 qualitatively similar to those for Model I.  But as the video in figure XX
@@ -335,7 +333,7 @@ is noteworthy.
 target="_blank"><img src="http://img.youtube.com/vi/8oyBVBwnb_Q/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. *.  Movie illustrating reconstructions of preferred input images
-for neurons in Model II.  Click on image above to play video.*
+for all neurons in Model II.  Click on image above to play video.*
 
 ## Activation responses of trained CNN nodes to test images
 
@@ -360,7 +358,7 @@ As the movie in the figure plays and its frame rate accelerates, we observe
 that activation patterns among the convolution layers look fairly random.
 In contrast, patterns of stimulation within the fully connected layers are
 much more correlated.  While the overall magnitude of neuron responses
-decrease as classifier probabilities go down, the relative strengths of
+decreases as classifier probabilities go down, the relative strengths of
 neuron outputs in layers 5 and 6 are remarkably stable.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=PW1DxeCQYO4"
@@ -375,11 +373,11 @@ II.  As figure XX illustrates, relative hot and cold neurons in the FC5 and
 FC6 layers are generally insensitive to input imagery details.  Moreover,
 many of the neurons in the fully connected layers that respond strongly to
 female faces do not turn on for male countenances and vice-versa.
-Interestingly, the first 43 neurons in FC6 are moderately stimulated for
+Interestingly, the first 41 neurons in FC6 are moderately stimulated for
 both female and male inputs.  Their activation levels remain steady even as
 overall female and male face classification probabilities decline.  This
-trend suggests the first 43 neurons in FC6 encode the concept of human face
-independent of gender.  In contrast, the next O(150) FC6 neurons encode
+trend suggests the first 41 neurons in FC6 encode the concept of human face
+independent of gender.  In contrast, the next 149 FC6 neurons encode
 female and male gender information.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=SUeiqIVD9gc"
@@ -389,16 +387,16 @@ alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 Model II to 50 female and 50 male test images.  Click on image above 
 to play video.*
 
-Preferred image reconstructions reinforce these activation findings.  For
-example, figure XX [YY] illustrates representative reconstructions for
-neurons in the FC5, FC6 and FC7 layers of Model II stimulated by a female
-[male] face.  Reconstructions for neurons which do not activate are
-replaced by grey thumbnails in these figures.  For the FC5 layer, the
-reconstructed inputs for neurons activated by the female [male] face look
-female [male].  This same pattern generally holds for the FC6 layer except
-for its first 43 neurons.  Reconstructions of preferred image inputs for
-these initial FC6 nodes all contain a single eye which exhibits no obvious
-gender characteristics.
+Preferred image reconstructions reinforce these gender-neutral /
+gender-specific findings.  For example, figure XX [YY] illustrates
+representative reconstructions for neurons in the FC5, FC6 and FC7 layers
+of Model II stimulated by a female [male] face.  Reconstructions for
+inactive neurons are replaced by grey thumbnails in these figures.  For the
+FC5 layer, the reconstructed inputs for neurons stimulated by the female
+[male] face look female [male].  This same pattern generally holds for the
+FC6 layer except for its first 41 neurons.  Reconstructions of preferred
+image inputs for these initial FC6 nodes all contain a single eye which
+exhibits no obvious gender characteristics.
 
 ![CNNVis]({{site.url}}/blog/images/cnn_vis/female_activated_neurons.png)
 *Fig. *. Preferred input image reconstructions for some Model II neurons
@@ -409,18 +407,17 @@ activated by an input female face test image.*
 activated by an input male face test image.*
 
 Our contention that the FC6 layer in Model II contains general face, female
-face, male face and non-face neurons is further supported by the
-visualization presented in figure XX.  Its movie displays network
-activations for 10 female, 10 male and 10 non-face test inputs.  The face
-images were intentionally selected based upon their relatively weak gender
-classification probabilities.  Yet Model II has no trouble distinguishing
-the faces from the non-faces.  As the movie plays, we observe that the
-first 43 neurons in FC6 are again moderately activated by all the face
-images.  Moreover, the last O(100) neurons are strongly stimulated by all
-the non-face images.  These activation patterns strongly suggest that Model
-II has learned to distinguish between face and non-face categories.  Then
-perhaps hierarchically, Model II separates faces into female and male
-subclasses.
+face, male face and non-face neurons is further supported by the results in
+figure XX.  Its movie displays network activations for 10 female, 10 male
+and 10 non-face test inputs.  The face images were intentionally selected
+based upon their relatively weak gender classification probabilities.  Yet
+Model II has no trouble distinguishing the faces from the non-faces.  As
+the movie plays, we observe that the first 41 neurons in FC6 are steadily
+activated by all the face images.  Moreover, the last 66 neurons are
+strongly stimulated by all the non-face images.  These activation patterns
+suggest that Model II has learned to distinguish between face and non-face
+categories.  Then perhaps hierarchically, Model II separates faces into
+female and male subclasses.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=nZNLX5T9aAA"
 target="_blank"><img src="http://img.youtube.com/vi/nZNLX5T9aAA/0.jpg"
@@ -436,8 +433,8 @@ we did not explicitly set out to teach it.  In particular, we wonder
 whether the classifier might be able to distinguish among human traits such
 as age or ethnicity, image properties like blurriness or monochromaticity,
 and/or geometric differences such as facial pose.  To address these
-questions, we employ an image search system as a final, useful
-visualization tool in the next section.
+questions, we generate an image graph as a final, useful visualization tool
+in the next section.
 
 ## Trained CNN clusterings of test images
 
@@ -455,7 +452,7 @@ descriptive than its FC6 counterpart.  We consequently explore Model II
 relationships between input facial test images and their reduced
 86-dimensional FC5 descriptors.
 
-Watching the movies in figures XX and XX, we surmise that semantic
+After watching the movies in figures XX and XX, we surmise that semantic
 information is encoded within the orientations but not magnitudes of
 descriptor vectors.  We consequently renormalize all reduced 86-dimensional
 FC5 descriptors so that they have unit Euclidean length.  Conventional
@@ -489,11 +486,11 @@ To verify this learned face pose hypothesis, we consider one final
 visualization in fig XX.  This figure presents a series of
 intentionally-selected female and male faces whose orientations relative to
 the camera range from left profile to right profile.  Each image in the
-series acts as a query for nearest neighbors within the 86-dimensional
+series acts as a query for nearest neighbors in the 86-dimensional
 descriptor space.  The 15 test images closest in FC5 feature space are
-displayed as thumbnails in carousels below the query inputs.  As the movie
-in fig XX plays, we observe an imperfect but striking correlation between
-the facial orientations of the queries and responses.
+displayed as carousel thumbnails below the query inputs.  As the movie
+plays, we observe an imperfect but striking correlation between the facial
+orientations of the queries and responses.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=ZsO2qQhA9UY"
 target="_blank"><img src="http://img.youtube.com/vi/ZsO2qQhA9UY/0.jpg"
