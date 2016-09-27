@@ -515,46 +515,46 @@ we leave investigation of these intriguing correlations to future work.
 
 ## References
 
-1.  A. Krizhevsky, I. Sutskever and G.E. Hinton, "ImageNet Classification
-with Deep Convolutional Neural Networks", NIPS (2012).
+1.  [A. Krizhevsky, I. Sutskever and G.E. Hinton, "ImageNet Classification
+with Deep Convolutional Neural Networks", NIPS (2012).](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
 
-2.  See "Classifying Gender in Internet Images via a Convolutional Neural
-Network for Faces" (Aug 2016) entry in this blog.
+2.  See ["Classifying Gender in Internet Images via a Convolutional Neural
+Network for Faces" (Aug 2016)](http://petercho.github.io/blog//deep/learning/2016/08/09/cvml.html) entry in this blog.
 
-3.  See "Detecting Faces and Hands via Data Augmentation, Image Scaling and
-Instance Segmentation" (Jun 2016) entry in this blog.
+3.  See ["Detecting Faces and Hands via Data Augmentation, Image Scaling and
+Instance Segmentation" (Jun 2016)](http://petercho.github.io/blog//deep/learning/2016/06/27/cvml.html) entry in this blog.
 
-4.  S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep Network
-Training by Reducing Internal Covariate Shift", ICML (2015).
+4.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep Network
+Training by Reducing Internal Covariate Shift", ICML (2015).](https://arxiv.org/pdf/1502.03167.pdf)
 
-5.  See ethereon.github.io/netscope/quickstart.html.
+5.  See [ethereon.github.io/netscope/quickstart.html.](http://ethereon.github.io/netscope/quickstart.html)
 
-6.  See http://caffe.berkeleyvision.org.
+6.  See [http://caffe.berkeleyvision.org.](http://caffe.berkeleyvision.org./)
 
-7.  K. Simonyan and A. Vedaldi and A. Zisserman, "Deep Inside Convolutional
+7.  [K. Simonyan and A. Vedaldi and A. Zisserman, "Deep Inside Convolutional
 Networks: Visualising Image Classification Models and Saliency Maps", ICLR
-(2014).
+(2014).](https://arxiv.org/pdf/1312.6034.pdf)
 
-8.  A. Mahendran and A. Vedaldi, "Understanding Deep Image Representations
-by Inverting Them", CVPR (2015).
+8.  [A. Mahendran and A. Vedaldi, "Understanding Deep Image Representations
+by Inverting Them", CVPR (2015).](https://www.robots.ox.ac.uk/~vgg/publications/2015/Mahendran15/mahendran15.pdf)
 
-9. A. Dosovitskiy and T. Brox. "Inverting Convolutional Networks with
-Convolutional Networks", arXiv preprint arXiv:1506.02753 (2015).
+9. [A. Dosovitskiy and T. Brox. "Inverting Convolutional Networks with
+Convolutional Networks", arXiv preprint arXiv:1506.02753 (2015).](https://arxiv.org/pdf/1506.02753v4.pdf)
 
-10.  J. Yosinski, J. Clune, A. Nguyen, T. Fuchs, H. Lipson H "Understanding
+10.  [J. Yosinski, J. Clune, A. Nguyen, T. Fuchs, H. Lipson H "Understanding
 Neural Networks Through Deep Visualization", ICML Deep Learning workshop
-(2015).
+(2015).](http://yosinski.com/media/papers/Yosinski__2015__ICML_DL__Understanding_Neural_Networks_Through_Deep_Visualization__.pdf)
 
-11.  See https://github.com/jcjohnson/cnn-vis.
+11.  See [https://github.com/jcjohnson/cnn-vis.](https://github.com/jcjohnson/cnn-vis)
 
 12.  [J.  Bergstra and Y. Bengio, "Random Search for Hyper-Parameter
 Optimization", JMLR (2012).](http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf)
 
-13.  P. Cho and M. Yee, "Image Search System", 41st AIPR workshop (2012).
+13.  [P. Cho and M. Yee, "Image Search System", 41st AIPR workshop (2012).](http://dl.acm.org/citation.cfm?id=2495247)
 
-14.  K. Simonyan and A. Zisserman, Very Deep Convolutional Networks for
-Large-Scale Image Recognition, arXiv 1409.1556, (2015).
+14.  [K. Simonyan and A. Zisserman, Very Deep Convolutional Networks for
+Large-Scale Image Recognition, arXiv 1409.1556, (2015).](https://arxiv.org/pdf/1409.1556v6.pdf)
 
-15.  A. Radford, L. Metz and S. Chintala, "Unsupervised Representational
+15.  [A. Radford, L. Metz and S. Chintala, "Unsupervised Representational
 Learning with Deep Convolutional Generative Adversarial Networks", arXiv
-preprint arXiv:1511.06434v2 (2016).
+preprint arXiv:1511.06434v2 (2016).](https://arxiv.org/pdf/1511.06434.pdf)
