@@ -20,7 +20,7 @@ Traditional backpropagation iteratively applies gradients to adjust the
 weights of a neural network and minimize discrepancies between fixed input
 image labels and their classifier-generated counterparts.  But
 
-![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/downsized_empty_maze.png)
+![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/doublepadded_empty_maze.png)
 *Fig. XX. A 10x10 maze generated recursively.*
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/padded_Qmap_score_history.png)
