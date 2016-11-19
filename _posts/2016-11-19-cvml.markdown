@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Solving Mazes via Deep Q Learning"
+title:  "Solving Mazes via Deep Reinforcement Learning"
 date:   2016-11-19 12:00:00
 categories: Deep Learning
 ---
@@ -11,16 +11,21 @@ Since the breakthrough paper of Krizhevsky et al in 2012 [1], convolution
 neural networks have repeatedly been demonstrated to perform a growing list
 of useful image processing tasks. 
 
-![CNNVis]({{site.url}}/blog/images/cnn_vis/rescaled_training_images.jpg)
-*Fig. 1. Three female and three male head chips extracted from the internet
-image in figure 1 of our previous blog entry [2].  These chips are unpadded
-and rescaled versions of those appearing in figure 2 of [2].*
+
+
 
 ## Q learning
 
 Traditional backpropagation iteratively applies gradients to adjust the
 weights of a neural network and minimize discrepancies between fixed input
 image labels and their classifier-generated counterparts.  But
+
+![MazeRL]({{site.url}}/blog/images/maze_rl_vis/empty_maze.png)
+*Fig. XX. A 10x10 maze generated recursively.*
+
+![MazeRL]({{site.url}}/blog/images/maze_rl_vis/Qmap_score_history.jpg)
+*Fig. XX. Fractional correct maze score plotted versus episode number
+during reinforcement learning.*
 
 ## Deep Q learning
 
@@ -29,6 +34,19 @@ hyperparameters.  We let fully connected layers 5 and 6 in Model II contain
 256 neurons.  FC5 and FC6 activation values thus form 256-dimensional
 global descriptors for input test images.  But many of the FC5 and FC6
 descriptor coordinates are strongly correlated.  So the genuine dimensions
+
+![MazeRL]({{site.url}}/blog/images/maze_rl_vis/log10_losses_history.jpg)
+*Fig. XX. Log base 10 of loss function plotted versus episode number during
+deep Q learning.*
+
+![MazeRL]({{site.url}}/blog/images/maze_rl_vis/Qmap_score_history.jpg)
+*Fig. XX. Fractional correct maze score plotted versus episode number
+during deep Q learning.*
+
+![MazeRL]({{site.url}}/blog/images/maze_rl_vis/trained_padded_weights.png)
+*Fig. XX. Visualization of trained weights in first layer of neural
+network.*
+
 
 ## References
 
