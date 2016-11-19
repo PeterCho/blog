@@ -27,6 +27,14 @@ image labels and their classifier-generated counterparts.  But
 *Fig. XX. Fractional correct maze score plotted versus episode number
 during reinforcement learning.*
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=QXr8LJHTpNE"
+target="_blank"><img src="http://img.youtube.com/vi/QXr8LJHTpNE/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. XX.  Movie illustrating solving of a 10x10 maze via tabular Q learning .  Click on image above to play video.*
+
+
+
+
 ## Deep Q learning
 
 The numbers of nodes in each layer of a CNN are freely chosen
@@ -43,15 +51,20 @@ deep Q learning.*
 *Fig. XX. Fractional correct maze score plotted versus episode number
 during deep Q learning.*
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=KW0X0gB1B2I"
+target="_blank"><img src="http://img.youtube.com/vi/KW0X0gB1B2I/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. XX.  Movie illustrating solving of a 10x10 maze via deep Q learning .  Click on image above to play video.*
+
+
 ![MazeRL]({{site.url}}/blog/images/maze_rl_vis/trained_padded_weights.png)
 *Fig. XX. Visualization of trained weights in first layer of neural
 network.*
 
-
 ## References
 
-1.  [A. Krizhevsky, I. Sutskever and G.E. Hinton, "ImageNet Classification
-with Deep Convolutional Neural Networks", NIPS (2012).](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+*.  [D. Silver, "Deep Reinforcement Learning", ICLR 2015.](http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf)
 
 2.  See ["Classifying Gender in Internet Images via a Convolutional Neural
 Network for Faces" (Aug 2016)](http://petercho.github.io/blog//deep/learning/2016/08/09/cvml.html) entry in this blog.
+
