@@ -20,10 +20,10 @@ Traditional backpropagation iteratively applies gradients to adjust the
 weights of a neural network and minimize discrepancies between fixed input
 image labels and their classifier-generated counterparts.  But
 
-![MazeRL]({{site.url}}/blog/images/maze_rl_vis/empty_maze.png)
+![MazeRL]({{site.url}}/blog/images/maze_rl/empty_maze.png)
 *Fig. XX. A 10x10 maze generated recursively.*
 
-![MazeRL]({{site.url}}/blog/images/maze_rl_vis/Qmap_score_history.jpg)
+![MazeRL]({{site.url}}/blog/images/maze_rl/Qmap_score_history.jpg)
 *Fig. XX. Fractional correct maze score plotted versus episode number
 during reinforcement learning.*
 
@@ -43,11 +43,11 @@ hyperparameters.  We let fully connected layers 5 and 6 in Model II contain
 global descriptors for input test images.  But many of the FC5 and FC6
 descriptor coordinates are strongly correlated.  So the genuine dimensions
 
-![MazeRL]({{site.url}}/blog/images/maze_rl_vis/log10_losses_history.jpg)
+![MazeRL]({{site.url}}/blog/images/maze_rl/log10_losses_history.jpg)
 *Fig. XX. Log base 10 of loss function plotted versus episode number during
 deep Q learning.*
 
-![MazeRL]({{site.url}}/blog/images/maze_rl_vis/Qmap_score_history.jpg)
+![MazeRL]({{site.url}}/blog/images/maze_rl/Qmap_score_history.jpg)
 *Fig. XX. Fractional correct maze score plotted versus episode number
 during deep Q learning.*
 
@@ -57,7 +57,7 @@ alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. XX.  Movie illustrating solving of a 10x10 maze via deep Q learning .  Click on image above to play video.*
 
 
-![MazeRL]({{site.url}}/blog/images/maze_rl_vis/trained_padded_weights.png)
+![MazeRL]({{site.url}}/blog/images/maze_rl/trained_padded_weights.png)
 *Fig. XX. Visualization of trained weights in first layer of neural
 network.*
 
