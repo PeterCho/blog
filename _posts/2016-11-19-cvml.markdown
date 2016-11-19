@@ -43,11 +43,11 @@ hyperparameters.  We let fully connected layers 5 and 6 in Model II contain
 global descriptors for input test images.  But many of the FC5 and FC6
 descriptor coordinates are strongly correlated.  So the genuine dimensions
 
-![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/log10_losses_history.jpg)
+![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/padded_log10_losses_history.png)
 *Fig. XX. Log base 10 of loss function plotted versus episode number during
 deep Q learning.*
 
-![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/Qmap_score_history.jpg)
+![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/padded_Qmap_score_history.png)
 *Fig. XX. Fractional correct maze score plotted versus episode number
 during deep Q learning.*
 
