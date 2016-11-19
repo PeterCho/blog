@@ -30,7 +30,7 @@ during reinforcement learning.*
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=QXr8LJHTpNE"
 target="_blank"><img src="http://img.youtube.com/vi/QXr8LJHTpNE/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. XX.  Movie illustrating solving of a 10x10 maze via tabular Q learning .  Click on image above to play video.*
+*Fig. XX.  Movie illustrating solving the 10x10 maze in figure XX tabular Q learning .  Click on image above to play video.*
 
 
 
