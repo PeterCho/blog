@@ -34,6 +34,31 @@ Is it O.K.?
 
 ## Q learning
 
+
+Quoting almost verbatim the discussion of Watkins and Dayan [ref], we note
+that the agent's Q-learning experience consists of a sequence of episodes.
+In the $n^{th}$ episode, the agent
+
+* starts in current state $s_n$,
+
+* selects and performs an action $a_n$,
+
+* receives a reward $r_n$,
+
+* transitions to subsequent state $s'_n$,
+
+* adjusts its $Q$ value according to 
+
+$$Q_n(s,a) = \begin{cases}
+& (1 - \alpha) Q_{n-1}(s_n,a_n) + \alpha [ r_n + \gamma \, {\rm max}_b
+Q_{n-1}(s'_n,b)]  \qquad & {\rm if} \> s = s_n \> {\rm and} \> a = a_n\\
+& Q_{n-1}(s,a) \qquad\qquad\qquad\qquad &{\rm otherwise}
+\end{cases}
+$$
+
+
+
+
 Traditional backpropagation iteratively applies gradients to adjust the
 weights of a neural network and minimize discrepancies between fixed input
 image labels and their classifier-generated counterparts.  But
@@ -81,8 +106,13 @@ network.*
 
 ## References
 
+*.  [C. Watkins and P. Dayan, "Technical Note: Q-Learning", Machine
+Learning ((1992)) 279.](http://www.gatsby.ucl.ac.uk/~dayan/papers/cjch.pdf)
+
+*.  Reference to recursively generating mazes and code we used to do so
+
 *.  [D. Silver, "Deep Reinforcement Learning", ICLR 2015.](http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf)
 
-2.  See ["Classifying Gender in Internet Images via a Convolutional Neural
-Network for Faces" (Aug 2016)](http://petercho.github.io/blog//deep/learning/2016/08/09/cvml.html) entry in this blog.
+*.  Atari paper
+
 
