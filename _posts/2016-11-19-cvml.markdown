@@ -111,6 +111,9 @@ Learning ((1992)) 279.](http://www.gatsby.ucl.ac.uk/~dayan/papers/cjch.pdf)
 
 *.  Reference to recursively generating mazes and code we used to do so
 
+*.  [T. Matiisen, "Demystifying Deep Reinforcement Learning", 2016]
+(https://www.nervanasys.com/demystifying-deep-reinforcement-learning/)
+
 *.  [D. Silver, "Deep Reinforcement Learning", ICLR 2015.](http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf)
 
 *.  Atari paper
