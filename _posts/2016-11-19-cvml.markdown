@@ -8,31 +8,59 @@ use_math: true
 
 ## Reinforcement learning
 
-Since the breakthrough paper of Krizhevsky et al in 2012 [1], convolution
-neural networks have repeatedly been demonstrated to perform a growing list
-of useful image processing tasks. 
+In a standard reinforcement learning setting, an agent sequentially
+interacts with its environment and learns a mapping from states to actions
+by trial-and-error [1,2].  The agent observes the state of the environment
+and then chooses some action to perform.  The action generally changes the
+environment's state, and the environment scores the change via a reward
+signal.  Over time, the agent learns to perform actions which maximize its
+cumulative reward when starting from some initial state and proceeding
+towards a terminal state.
 
+Reinforcement learning (({\rm RL})) has been applied to a wide array of
+practical problems which include robot control, autonomous flight, resource
+allocation, route planning and financial trading [3,4].  Game playing
+represents another RL application which is perhaps impractical but
+pedagogically instructive.  In 2015, Deep Mind researchers developed an RL
+system which achieved super-human performance on multiple Atari games [5].
+Even more impressively, another RL system made newspaper headlines when it
+recently beat a world champion in the game of Go [6].  Reinforcement
+learning arguably demonstrates the first signs of true artificial
+intelligence.
 
-$$ a^2+b^2 = c^2 $$
+In this blog entry, we dip our toes into reinforcement learning by
+constructing a system which solves mazes.  We intentionally focus here upon
+maze path finding which is nontrivial yet sufficiently simple to be
+solvable via non-RL techniques.  We can thus monitor the progress of an RL
+agent as it iteratively converges towards a unique solution.
 
-Let's test some inline math $x$, $y$, $x_1$, $y_1$.
+We start by building an RL system which implements a Q value function by
+table lookup.  We then replace the table over environment states and agent
+actions with a neural network that performs function approximation.  Though
+deep Q learning is overkill for maze solving, this approach can be applied
+to a much larger and more difficult set of problems in the future.
 
-Test a display math:
-$$
-   |\psi_1\rangle = a|0\rangle + b|1\rangle
-$$
-Is it O.K.?
+## Tabular Q learning
 
-Test a display math with equation number:
-$$
-  \begin{align}
-    |\psi_1\rangle &= a|0\rangle + b|1\rangle \\
-    |\psi_2\rangle &= c|0\rangle + d|1\rangle
-  \end{align}
-$$
-Is it O.K.?
+In order to generate a random maze of specified size, we first implement a
+standard depth-first search algorithm [7]. The maze starts as a 2D lattice
+of cells which are each bounded by four walls.  We initially take the cell
+located in the bottom right corner of the lattice as the current cell.
+After it is marked as visited, one of the current cell's unvisited
+neighbors is randomly chosen, and the current cell is pushed onto a stack.
+The walls between the current and neighbor cells are then removed.  The
+neighbor cell is reset as the current cell, and it is marked as visited.
+If all of the current cell's neighbors have previously been visited, we pop
+a cell from the stack and take it as the current cell.  This recursive
+process continues until every cell in the maze has been visited.
 
-## Q learning
+Figure 1 illustrates an example of a 10x10 maze generated via this
+depth-first search approach.  The graphics routines used to render the maze
+are based upon C++ codes in [8].
+
+![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/doublepadded_empty_maze.png)
+*Fig. 1. A 10x10 maze generated via a depth-first search algorithm.*
+
 
 
 Quoting almost verbatim the discussion of Watkins and Dayan [ref], we note
@@ -63,9 +91,6 @@ Traditional backpropagation iteratively applies gradients to adjust the
 weights of a neural network and minimize discrepancies between fixed input
 image labels and their classifier-generated counterparts.  But
 
-![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/doublepadded_empty_maze.png)
-*Fig. XX. A 10x10 maze generated recursively.*
-
 ![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/padded_Qmap_score_history.png)
 *Fig. XX. Fractional correct maze score plotted versus episode number
 during reinforcement learning.*
@@ -73,7 +98,8 @@ during reinforcement learning.*
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=QXr8LJHTpNE"
 target="_blank"><img src="http://img.youtube.com/vi/QXr8LJHTpNE/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. XX.  Movie illustrating solving the 10x10 maze in figure XX tabular Q learning .  Click on image above to play video.*
+*Fig. XX.  Movie illustrating iteratively solving the 10x10 maze in figure
+XX via tabular Q learning .  Click on image above to play video.*
 
 
 
@@ -106,16 +132,72 @@ network.*
 
 ## References
 
+1.  [R.S. Sutton and A.G. Barton, "Reinforcement Learning: An
+Introduction", 2nd edition
+((2016)). ](https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf)
+
+2.  [M.E. Harmon and S.S. Harmon, "Reinforcement Learning: A Tutorial"
+((1997)). ](http://www.dtic.mil/dtic/tr/fulltext/u2/a323194.pdf)
+
+3.  [S. Singh, "Successes of Reinforcement Learning" ((2009)).](http://umichrl.pbworks.com/w/page/7597597/Successes%20of%20Reinforcement%20Learning)
+
+4.  [J. Schulman, "Deep Reinforcement Learning", Machine Learning
+Summer School ((2016)).](http://learning.mpi-sws.org/mlss2016/slides/2016-MLSS-RL.pdf)
+
+5.  [V. Mnih et al, "Human-level control through deep reinforcement
+learning", Nature ((2015) 529-533.](
+http://www.nature.com/nature/journal/v518/n7540/full/nature14236.html)
+
+6.  [D. Silver et al, "Mastering the game of Go with deep neural networks
+and tree search", Nature ((2016)), 484 - 489.](http://www.nature.com/nature/journal/v529/n7587/full/nature16961.html)
+
+7.  [See the "Depth-first search" section in the "Maze generation
+algorithm" Wikipedia
+entry.](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
+
+8.  [S. Kosarevsky, "Depth-first Seach Random Maze Generator ((2014)). ](https://github.com/corporateshark/random-maze-generator)
+
 *.  [C. Watkins and P. Dayan, "Technical Note: Q-Learning", Machine
 Learning ((1992)) 279.](http://www.gatsby.ucl.ac.uk/~dayan/papers/cjch.pdf)
 
-*.  Reference to recursively generating mazes and code we used to do so
 
-*.  [T. Matiisen, "Demystifying Deep Reinforcement Learning", 2016]
-(https://www.nervanasys.com/demystifying-deep-reinforcement-learning/)
 
-*.  [D. Silver, "Deep Reinforcement Learning", ICLR 2015.](http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf)
+*.  [V. Mnih, K. Kavukcuoglu, D. Silver, A. Graves, I. Antonoglou,
+D. Wierstra and M. Riedmiller, "Playing Atari with Deep Reinforcement
+Learning" ((2013)).](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
 
-*.  Atari paper
+
+*.  [T. Matiisen, "Demystifying Deep Reinforcement Learning", ((2016)).](https://www.nervanasys.com/demystifying-deep-reinforcement-learning/)
+
+*.  [D. Silver, "Deep Reinforcement Learning", ICLR ((2015)).](http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf)
+
+*.  [M. Riedmiller, "Neural Fitted Q Iteration - First Experiences with a
+Data Efficient Neural Reinforcement Learning Method" ((2005)).](http://ml.informatik.uni-freiburg.de/_media/publications/rieecml05.pdf)
+
+
+*.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
+http://karpathy.github.io/2016/05/31/rl/)
+
+
+
+$$ a^2+b^2 = c^2 $$
+
+Let's test some inline math $x$, $y$, $x_1$, $y_1$.
+
+Test a display math:
+$$
+   |\psi_1\rangle = a|0\rangle + b|1\rangle
+$$
+
+Test a display math with equation number:
+$$
+  \begin{align}
+    |\psi_1\rangle &= a|0\rangle + b|1\rangle \\
+    |\psi_2\rangle &= c|0\rangle + d|1\rangle
+  \end{align}
+$$
+
+
+
 
 
