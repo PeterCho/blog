@@ -54,54 +54,88 @@ If all of the current cell's neighbors have previously been visited, we pop
 a cell from the stack and take it as the current cell.  This recursive
 process continues until every cell in the maze has been visited.
 
-Figure 1 illustrates an example of a 10x10 maze generated via this
-depth-first search approach.  The graphics routines used to render the maze
-are based upon C++ codes in [8].
+An example of a 10x10 maze generated via this depth-first search approach
+is illustrated on the left side of figure 1.  The graphics routines used to
+render the maze are based upon C++ codes in [8].  The solution to this maze
+can readily be found by again initializing the bottom right corner of the
+lattice as the current cell.  Looping over up, right, down and left
+directions, we ignore any direction vector for which the current cell has a
+wall.  We further ignore any direction vector for which the neighbor cell
+already has an assigned direction.  Otherwise, the neighbor cell is
+assigned a direction vector pointing towards the current cell, and
+direction finding is recursively performed on the neighbor cell.  The
+resulting flow field is illustrated on the right side of figure 1.
 
-![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/doublepadded_empty_maze.png)
-*Fig. 1. A 10x10 maze generated via a depth-first search algorithm.*
+![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/empty_vs_solved_mazes.png)
+*Fig. 1. ((Left)) A 10x10 maze generated via a depth-first search
+algorithm.  ((Right)) Green arrows indicate directions to follow in
+order to reach the blue X in the bottom right corner starting from any cell
+within the maze.*
 
+We now want to reproduce this unique solution for the 10x10 maze using
+"Q-learning" which represents a model-free form of RL [9].  Q-learning
+finds a mapping from state/action pairs to so-called Q-values.  $Q =
+Q^\pi(s,a)$ is the expected reward for executing action $a$ at state $s$
+and following policy $\pi$ thereafter.  Once an agent learns all possible
+Q-values, its optimal policy is simply given by $\pi^* (s) = a^* $ where
+$a^* $ is the action which maximizes $Q(s,a)$.
 
+The agent's Q-learning experience consists of a sequence of steps.  In the
+$n^{th}$ step, the agent
 
-Quoting almost verbatim the discussion of Watkins and Dayan [ref], we note
-that the agent's Q-learning experience consists of a sequence of episodes.
-In the $n^{th}$ episode, the agent
-
-* starts in current state $s_n$,
+* observes its current state $s_n$,
 
 * selects and performs an action $a_n$,
 
 * receives a reward $r_n$,
 
-* transitions to subsequent state $s'_n$,
+* transitions to subsequent state $s'_{n+1}$,
 
-* adjusts its $Q$ value according to 
+* adjusts its Q-value according to the off-policy Temporal-Difference
+(({\rm TD})) control equation
 
-$$Q_n(s,a) = \begin{cases}
-& (1 - \alpha) Q_{n-1}(s_n,a_n) + \alpha [ r_n + \gamma \, {\rm max}_b
-Q_{n-1}(s'_n,b)]  \qquad & {\rm if} \> s = s_n \> {\rm and} \> a = a_n\\
-& Q_{n-1}(s,a) \qquad\qquad\qquad\qquad &{\rm otherwise}
-\end{cases}
-$$
+$$Q(s_n,a_n)  \leftarrow
+(1 - \alpha) Q(s_n,a_n) + \alpha \bigl [ r_n + \gamma \, {\rm max}_b
+Q(s'_{n+1},b) \bigr ].  $$
 
+Here $0 \le \alpha \le 1$ represents a learning rate, while $0 \le \gamma
+\le 1$ denotes a discount factor for future rewards [9].
 
+For our maze problem, lattice cells represent states, and single-cell
+movements in up, right, down or left directions correspond to actions.  If
+the agent performs an illegal move which causes it to crash into an
+internal or external maze wall, the agent immediately loses the game.  On
+the other hand, if the agent successfully navigates its way through the
+maze to the bottom right corner cell marked by the blue "X" in figure 1b,
+it wins the game.  For RL systems learning to play games, it is common that
+the reward function returns zero for all moves except at terminal states.
+So if the the agent wins [loses] the game, we assign it rewards +1 [-1].
+After playing many game episodes, the agent should learn by trial-and-error
+which set of states and actions typically lead to the winning end state.
 
+We initialize $Q(s,a)$ with random values uniformly ranging over interval
+[-1,1].  At the start of each new episode, we also randomly select the
+agent's starting location within the maze or equivalently its initial
+state.  For every step in the game, the agent's action is chosen randomly
+among the four possible direction vectors.  Working with a learning rate
+$\alpha= 0.75$ and reward discount factor $\gamma = 0.95$, we then
+iteratively update the Q-values using the off-policy TD control
+equation.
 
-Traditional backpropagation iteratively applies gradients to adjust the
-weights of a neural network and minimize discrepancies between fixed input
-image labels and their classifier-generated counterparts.  But
+$$ \rho  \equiv 
+{\rm Number \; of \; maze \; cells \; whose \; Q \; values \;
+yield \; correct \; direction \; actions \over Number \; of \; maze \; 
+cells} $$
 
-![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/padded_Qmap_score_history.png)
-*Fig. XX. Fractional correct maze score plotted versus episode number
-during reinforcement learning.*
+![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/tabular_Q_convergence.png)
+*Fig. XX. Fractional correct maze cell direction actions plotted versus
+episode number during tabular Q learning.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=QXr8LJHTpNE"
 target="_blank"><img src="http://img.youtube.com/vi/QXr8LJHTpNE/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. XX.  Movie illustrating iteratively solving the 10x10 maze in figure
+*Fig. XX.  Movie illustrating iterative solving of the 10x10 maze in figure
 XX via tabular Q learning .  Click on image above to play video.*
-
-
 
 
 ## Deep Q learning
@@ -112,13 +146,13 @@ hyperparameters.  We let fully connected layers 5 and 6 in Model II contain
 global descriptors for input test images.  But many of the FC5 and FC6
 descriptor coordinates are strongly correlated.  So the genuine dimensions
 
-![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/padded_log10_losses_history.png)
-*Fig. XX. Log base 10 of loss function plotted versus episode number during
-deep Q learning.*
-
-![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/padded_Qmap_score_history.png)
-*Fig. XX. Fractional correct maze score plotted versus episode number
+![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/log10_losses_history.png)
+*Fig. XX. Logarithm base 10 of loss function plotted versus episode number
 during deep Q learning.*
+
+![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/deep_Q_convergence.png)
+*Fig. XX. Fractional correct maze direction actions plotted versus episode
+number during deep Q learning.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KW0X0gB1B2I"
 target="_blank"><img src="http://img.youtube.com/vi/KW0X0gB1B2I/0.jpg"
@@ -157,7 +191,7 @@ entry.](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
 
 8.  [S. Kosarevsky, "Depth-first Seach Random Maze Generator ((2014)). ](https://github.com/corporateshark/random-maze-generator)
 
-*.  [C. Watkins and P. Dayan, "Technical Note: Q-Learning", Machine
+9.  [C. Watkins and P. Dayan, "Technical Note: Q-Learning", Machine
 Learning ((1992)) 279.](http://www.gatsby.ucl.ac.uk/~dayan/papers/cjch.pdf)
 
 
