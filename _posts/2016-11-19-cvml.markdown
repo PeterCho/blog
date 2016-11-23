@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Solving Mazes via Deep Reinforcement Learning"
+title:  "Solving Mazes via Reinforcement Q Learning"
 date:   2016-11-19 12:00:00
 categories: Deep Learning
 use_math: true
@@ -67,18 +67,17 @@ direction finding is recursively performed on the neighbor cell.  The
 resulting flow field is illustrated on the right side of figure 1.
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/empty_vs_solved_mazes.png)
-*Fig. 1. ((Left)) A 10x10 maze generated via a depth-first search
-algorithm.  ((Right)) Green arrows indicate directions to follow in
-order to reach the blue X in the bottom right corner starting from any cell
-within the maze.*
+*Fig. 1. [Left] A 10x10 maze generated via a depth-first search
+algorithm.  [Right] Green arrows indicate directions to follow in order
+to reach the bottom right corner starting from any cell within the maze.*
 
-We now want to reproduce this unique solution for the 10x10 maze using
-"Q-learning" which represents a model-free form of RL [9].  Q-learning
-finds a mapping from state/action pairs to so-called Q-values.  $Q =
-Q^\pi(s,a)$ is the expected reward for executing action $a$ at state $s$
-and following policy $\pi$ thereafter.  Once an agent learns all possible
-Q-values, its optimal policy is simply given by $\pi^* (s) = a^* $ where
-$a^* $ is the action which maximizes $Q(s,a)$.
+We now want to reproduce this unique solution for the $10 \times 10$ maze
+using "Q-learning" which represents a model-free form of RL [9].
+Q-learning finds a mapping from state/action pairs to so-called Q-values.
+$Q = Q^\pi(s,a)$ is the expected reward for executing action $a$ at state
+$s$ and following policy $\pi$ thereafter.  Once an agent learns all
+possible Q-values, its optimal policy is simply given by $\pi^* (s) = a^* $
+where $a^* $ is the action which maximizes $Q(s,a)$.
 
 The agent's Q-learning experience consists of a sequence of steps.  In the
 $n^{th}$ step, the agent
@@ -94,9 +93,12 @@ $n^{th}$ step, the agent
 * adjusts its Q-value according to the off-policy Temporal-Difference
 (({\rm TD})) control equation
 
-$$Q(s_n,a_n)  \leftarrow
+$$ \begin{align}
+Q(s_n,a_n)  \leftarrow
 (1 - \alpha) Q(s_n,a_n) + \alpha \bigl [ r_n + \gamma \, {\rm max}_b
-Q(s'_{n+1},b) \bigr ].  $$
+Q(s'_{n+1},b) \bigr ].  \\
+  \end{align}
+$$
 
 Here $0 \le \alpha \le 1$ represents a learning rate, while $0 \le \gamma
 \le 1$ denotes a discount factor for future rewards [9].
@@ -113,29 +115,44 @@ So if the the agent wins [loses] the game, we assign it rewards +1 [-1].
 After playing many game episodes, the agent should learn by trial-and-error
 which set of states and actions typically lead to the winning end state.
 
-We initialize $Q(s,a)$ with random values uniformly ranging over interval
-[-1,1].  At the start of each new episode, we also randomly select the
-agent's starting location within the maze or equivalently its initial
+We initialize $Q(s,a)$ with random values uniformly ranging over the
+interval [-1,1].  At the start of a new episode, we also randomly select
+the agent's beginning location in the maze or equivalently its initial
 state.  For every step in the game, the agent's action is chosen randomly
-among the four possible direction vectors.  Working with a learning rate
+among up, right, left and down movements.  Working with learning rate
 $\alpha= 0.75$ and reward discount factor $\gamma = 0.95$, we then
-iteratively update the Q-values using the off-policy TD control
-equation.
+iteratively update the Q-values using equation ((1)).
 
-$$ \rho  \equiv 
-{\rm Number \; of \; maze \; cells \; whose \; Q \; values \;
-yield \; correct \; direction \; actions \over Number \; of \; maze \; 
-cells} $$
+As the solution to the $10 \times 10$ maze is already known, we can monitor
+the progress of tabular Q-learning towards finding the answer presented in
+figure 1b.  After each trial episode, we simply count the number of maze
+cells for which $\max_a Q(s,a)$ yields the correct direction.  Normalizing
+by the total number of maze cells, we plot the ratio in figure 2 as a
+function of episode number.  After approximately 16K episodes,
+trial-and-error tabular Q-learning solves the maze.
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/tabular_Q_convergence.png)
-*Fig. XX. Fractional correct maze cell direction actions plotted versus
+*Fig. 2. Fractional correct maze cell direction actions plotted versus
 episode number during tabular Q learning.*
+
+Figure 3 presents a movie which displays the evolution of tabular Q
+learning over time.  Since the $Q(s,a)$ is initially filled with noise, its
+maximal action directions are randomly oriented at the movie's beginning.
+Flow field directions which cause the agent to illegally crash into an
+interior or exterior maze wall are colored red.  Legal, though perhaps
+incorrect, maze movements are indicated by arrows colored green.
+Neighboring pairs of arrows pointing in contradictory directions are
+colored orange.  As the movie plays, we observe that the agent rapidly
+learns to not crash into walls.  It takes longer for all of the
+contradictory direction pairs to be resolved.  But eventually,
+reinforcement learning settles upon a self-consistent maze solution which
+agrees with figure 1b.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=QXr8LJHTpNE"
 target="_blank"><img src="http://img.youtube.com/vi/QXr8LJHTpNE/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. XX.  Movie illustrating iterative solving of the 10x10 maze in figure
-XX via tabular Q learning .  Click on image above to play video.*
+*Fig. 3.  Movie illustrating tabular Q learning for the 10x10 maze in
+figure 1a.  Click on image above to play video.*
 
 
 ## Deep Q learning
@@ -157,12 +174,13 @@ number during deep Q learning.*
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KW0X0gB1B2I"
 target="_blank"><img src="http://img.youtube.com/vi/KW0X0gB1B2I/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. XX.  Movie illustrating solving of a 10x10 maze via deep Q learning .  Click on image above to play video.*
+*Fig. XX.  Movie illustrating deep Q learning for a 10x10 maze .  Click on
+image above to play video.*
 
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/trained_padded_weights.png)
-*Fig. XX. Visualization of trained weights in first layer of neural
-network.*
+*Fig. XX. Visualization of trained weights in the neural network's first
+layer.*
 
 ## References
 
@@ -235,3 +253,10 @@ $$
 
 
 
+
+
+
+$$ \rho  \equiv 
+{\rm Number \; of \; maze \; cells \; whose \; Q \; values \;
+yield \; correct \; direction \; actions \over Number \; of \; maze \; 
+cells} $$
