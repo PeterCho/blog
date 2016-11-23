@@ -146,7 +146,7 @@ colored orange.  As the movie plays, we observe that the agent rapidly
 learns to not crash into walls.  It takes longer for all of the
 contradictory direction pairs to be resolved.  But eventually,
 reinforcement learning settles upon a self-consistent maze solution which
-agrees with figure 1b.
+agrees with the result in figure 1b.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=QXr8LJHTpNE"
 target="_blank"><img src="http://img.youtube.com/vi/QXr8LJHTpNE/0.jpg"
@@ -154,14 +154,48 @@ alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. 3.  Movie illustrating tabular Q learning for the 10x10 maze in
 figure 1a.  Click on image above to play video.*
 
-
 ## Deep Q learning
 
-The numbers of nodes in each layer of a CNN are freely chosen
-hyperparameters.  We let fully connected layers 5 and 6 in Model II contain
-256 neurons.  FC5 and FC6 activation values thus form 256-dimensional
-global descriptors for input test images.  But many of the FC5 and FC6
-descriptor coordinates are strongly correlated.  So the genuine dimensions
+For agents with relatively small numbers of states and actions, it is
+feasible to explicitly compute $Q(s,a)$ in table form.  But many
+interesting applications of reinforcement learning have huge numbers of
+possible states which renders tabular Q-learning totally impractical.  For
+such cases, we must approximate $Q(s,a)$ via some function which can be
+learned by trial-and-error.  Over the past decade, researchers have found a
+set of tricks which enable neural networks to act as function approximators
+for Q-learning [10-12].  We apply their techniques to the maze solving
+problem.
+
+We first represent a maze with $n \times n$ cells by a $(2n-1) \times
+(2n-1)$ occupancy grid.  Grid locations with zero occupancy correspond to
+traversable maze cells.  The grid location corresponding to the agent's
+current maze position is set to occupancy one.  On the other hand, the
+$n_{wall \; cells}$ locations in the occupancy grid representing maze walls
+are set equal to $-1 / n_{wall \; cells}$.  The sum over all occupancy grid
+values consequently equals zero.  We flatten the rows of the occupancy grid
+into a single column vector which becomes the input layer to the neural
+network.
+
+The network's output layer contains the number of nodes needed to represent
+all possible actions $a$ corresponding to any input state $s$.  So for maze
+problems, our network's contains 4 outputs corresponding to up, right, down
+and left agent movements.  The values of the output nodes equal $Q(s,a)$.
+It is important to note that no a priori constraint is placed upon illegal
+actions for state $s$.  Instead, the agent should learn via negative
+reinforcement to avoid illegal moves.
+
+As for all other neural networks, we must choose a set of hyperparameters
+which govern how our maze network operates and trains.  After running
+several experiments, we select a network configuration with two hidden
+layers that each contain 10 nodes.  We adopt ReLU nonlinearities in all but
+the final layers.  The last layer generates activations by an identity
+operator.  During network training via conventional back propagation, we
+initialize the learning rate to 0.0003 and slowly decrease it to 0.0001.
+Following [hinton, kaparthy], we update network weights using RMS
+propagation with a 0.9 decay rate.
+
+
+
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/log10_losses_history.png)
 *Fig. XX. Logarithm base 10 of loss function plotted versus episode number
@@ -174,7 +208,7 @@ number during deep Q learning.*
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KW0X0gB1B2I"
 target="_blank"><img src="http://img.youtube.com/vi/KW0X0gB1B2I/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. XX.  Movie illustrating deep Q learning for a 10x10 maze .  Click on
+*Fig. XX.  Movie illustrating deep Q learning for a 10x10 maze.  Click on
 image above to play video.*
 
 
@@ -212,51 +246,19 @@ entry.](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
 9.  [C. Watkins and P. Dayan, "Technical Note: Q-Learning", Machine
 Learning ((1992)) 279.](http://www.gatsby.ucl.ac.uk/~dayan/papers/cjch.pdf)
 
+10.  [M. Riedmiller, "Neural Fitted Q Iteration - First Experiences with a
+Data Efficient Neural Reinforcement Learning Method" ((2005)).](http://ml.informatik.uni-freiburg.de/_media/publications/rieecml05.pdf)
 
-
-*.  [V. Mnih, K. Kavukcuoglu, D. Silver, A. Graves, I. Antonoglou,
+11.  [V. Mnih, K. Kavukcuoglu, D. Silver, A. Graves, I. Antonoglou,
 D. Wierstra and M. Riedmiller, "Playing Atari with Deep Reinforcement
 Learning" ((2013)).](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
 
+12.  [D. Silver, "Deep Reinforcement Learning", ICLR ((2015)).](http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf)
 
-*.  [T. Matiisen, "Demystifying Deep Reinforcement Learning", ((2016)).](https://www.nervanasys.com/demystifying-deep-reinforcement-learning/)
+13.  [T. Matiisen, "Demystifying Deep Reinforcement Learning", ((2016)).](https://www.nervanasys.com/demystifying-deep-reinforcement-learning/)
 
-*.  [D. Silver, "Deep Reinforcement Learning", ICLR ((2015)).](http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf)
-
-*.  [M. Riedmiller, "Neural Fitted Q Iteration - First Experiences with a
-Data Efficient Neural Reinforcement Learning Method" ((2005)).](http://ml.informatik.uni-freiburg.de/_media/publications/rieecml05.pdf)
-
+* Hinton coursera on RMS prop
 
 *.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
 http://karpathy.github.io/2016/05/31/rl/)
 
-
-
-$$ a^2+b^2 = c^2 $$
-
-Let's test some inline math $x$, $y$, $x_1$, $y_1$.
-
-Test a display math:
-$$
-   |\psi_1\rangle = a|0\rangle + b|1\rangle
-$$
-
-Test a display math with equation number:
-$$
-  \begin{align}
-    |\psi_1\rangle &= a|0\rangle + b|1\rangle \\
-    |\psi_2\rangle &= c|0\rangle + d|1\rangle
-  \end{align}
-$$
-
-
-
-
-
-
-
-
-$$ \rho  \equiv 
-{\rm Number \; of \; maze \; cells \; whose \; Q \; values \;
-yield \; correct \; direction \; actions \over Number \; of \; maze \; 
-cells} $$
