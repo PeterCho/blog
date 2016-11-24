@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Solving Mazes via Reinforcement Q Learning"
+title:  "Solving Mazes via Reinforcement Q-Learning"
 date:   2016-11-19 12:00:00
 categories: Deep Learning
 use_math: true
@@ -34,13 +34,13 @@ maze path finding which is nontrivial yet sufficiently simple to be
 solvable via non-RL techniques.  We can thus monitor the progress of an RL
 agent as it iteratively converges towards a unique solution.
 
-We start by building an RL system which implements a Q value function by
+We start by building an RL system which implements a Q-value function by
 table lookup.  We then replace the table over environment states and agent
 actions with a neural network that performs function approximation.  Though
-deep Q learning is overkill for maze solving, this approach can be applied
+deep Q-learning is overkill for maze solving, this approach can be applied
 to a much larger and more difficult set of problems in the future.
 
-## Tabular Q learning
+## Tabular Q-learning
 
 In order to generate a random maze of specified size, we first implement a
 standard depth-first search algorithm [7]. The maze starts as a 2D lattice
@@ -134,9 +134,9 @@ trial-and-error tabular Q-learning solves the maze.
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/tabular_Q_convergence.png)
 *Fig. 2. Fractional correct maze cell direction actions plotted versus
-episode number during tabular Q learning.*
+episode number during tabular Q-learning.*
 
-The evolution of tabular Q learning over time is portrayed in the movie of
+The evolution of tabular Q-learning over time is portrayed in the movie of
 figure 3.  Since $Q(s,a)$ is initially filled with noise, its maximal
 action directions are randomly oriented at the movie's beginning.  Flow
 field directions which cause the agent to illegally crash into an interior
@@ -151,10 +151,10 @@ self-consistent maze solution which agrees with the result in figure 1.
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=QXr8LJHTpNE"
 target="_blank"><img src="http://img.youtube.com/vi/QXr8LJHTpNE/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. 3.  Movie illustrating tabular Q learning for the 10x10 maze in
+*Fig. 3.  Movie illustrating tabular Q-learning for the 10x10 maze in
 figure 1.  Click on image above to play video.*
 
-## Deep Q learning
+## Deep Q-learning
 
 For agents with relatively small numbers of states and actions, it is
 feasible to explicitly compute $Q(s,a)$ in table form.  But many
@@ -246,22 +246,29 @@ around while generally decreasing.  The logarithmic plot in figure 4
 demonstrates such loss function behavior for one particular $10 \times 10$
 maze.  Actions inferred from neural network Q-value outputs also converge
 to the solution for this particular maze after O(({\rm 150K})) training
-episodes (({\rm see \; figure \; 5})).  The movie in figure 6 displays the
-evolution of the maze flow field from random orientations to the
-self-consistent answer as Q-learning progresses.
+episodes (({\rm see \; figure \; 5})).  We note that the order of magnitude
+increase in the number of training episodes needed to achieve convergence
+for deep Q-learning compared to tabular Q-learning is comparable to the
+increase in their ratio of free parameters.
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/log10_losses_history.png)
 *Fig. 4. Base-10 logarithm of loss function plotted versus episode number
-during deep Q learning for a $10 \times 10$ maze.*
+during deep Q-learning for a $10 \times 10$ maze.*
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/deep_Q_convergence.png)
 *Fig. 5. Fractional correct maze direction actions plotted versus episode
-number during deep Q learning for a $10 \times 10$ maze.*
+number during deep Q-learning for a $10 \times 10$ maze.*
+
+The movie in figure 6 displays the evolution of the maze flow field from
+random orientations to the self-consistent answer as deep Q-learning
+progresses.  We again observe that the agent rapidly learns to not crash
+into walls.  But it takes much longer for all contradictory pairs of
+neighboring maze directions to be resolved.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KW0X0gB1B2I"
 target="_blank"><img src="http://img.youtube.com/vi/KW0X0gB1B2I/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. 6.  Movie illustrating deep Q learning for a 10x10 maze.  Click on
+*Fig. 6.  Movie illustrating deep Q-learning for a 10x10 maze.  Click on
 image above to play video.*
 
 It is instructive to examine trained weight values in order to gain insight
