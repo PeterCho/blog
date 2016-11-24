@@ -20,10 +20,10 @@ towards a terminal state.
 Reinforcement learning (({\rm RL})) has been applied to a wide array of
 practical problems which include robot control, autonomous flight, resource
 allocation, route planning and financial trading [3,4].  Game playing
-represents another RL application which is perhaps impractical but
-pedagogically instructive.  In 2015, Deep Mind researchers developed an RL
-system which achieved super-human performance on multiple Atari games [5].
-Even more impressively, another RL system made newspaper headlines when it
+represents another perhaps impractical but pedagogically instructive RL
+application.  In 2015, Deep Mind researchers developed a system which
+achieved super-human performance on multiple Atari games [5].  Even more
+impressively, another RL breakthrough made newspaper headlines when it
 recently beat a world champion in the game of Go [6].  Reinforcement
 learning arguably demonstrates the first signs of true artificial
 intelligence.
@@ -62,9 +62,10 @@ right corner of the lattice as the current cell.  Looping over up, right,
 down and left directions, we ignore any direction vector for which the
 current cell has a wall.  We further ignore any direction vector for which
 the neighbor cell already has an assigned direction.  Otherwise, the
-neighbor cell is assigned a direction vector pointing towards the current
-cell, and direction finding is recursively performed on the neighbor cell.
-The resulting flow field is illustrated on the right side of figure 1.
+neighbor cell is assigned the direction vector pointing towards the current
+cell.  Direction finding then recursively continues with the neighbor cell.
+The resulting flow field for the entire maze is displayed on the right side
+of figure 1.
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/empty_vs_solved_mazes.png)
 *Fig. 1. [Left] A 10x10 maze generated via a depth-first search
@@ -100,32 +101,32 @@ Q(s'_{n+1},b) \bigr ].  \\
   \end{align}
 $$
 
-Here $0 \le \alpha \le 1$ represents a learning rate, while $0 \le \gamma
-\le 1$ denotes a discount factor for future rewards [9].
+Here $0 \le \alpha \le 1$ represents a TD learning rate, while $0 \le
+\gamma \le 1$ denotes a discount factor for future rewards [9].
 
-For our maze problem, lattice cells represent states, and single-cell
-movements in up, right, down or left directions correspond to actions.  If
-the agent performs an illegal move which causes it to crash into an
-internal or external maze wall, the agent immediately loses the game.  On
-the other hand, if the agent successfully navigates its way through the
-maze to the bottom right corner cell marked by the blue "X" in figure 1b,
-it wins the game.  For RL systems learning to play games, it is common that
-the reward function returns zero for all moves except at terminal states.
-So if the the agent wins [loses] the game, we assign it rewards +1 [-1].
-After playing many game episodes, the agent should learn by trial-and-error
-which set of states and actions typically lead to the winning end state.
+For our maze problem, lattice cells represent states, and up, right, down
+or left single-cell movements correspond to actions.  If the agent performs
+an illegal move which causes it to crash into an internal or external maze
+wall, the agent immediately loses the game.  On the other hand, if the
+agent successfully navigates its way through the maze to the bottom right
+corner cell, it wins the game.  For RL systems learning to play games, it
+is common that the reward function return zero for all moves except at
+terminal states.  When the agent wins [loses] the game, we assign it a +1
+[-1] reward.  After playing many game episodes, the agent should learn by
+trial-and-error which set of states and actions lead to the winning end
+state.
 
-We initialize $Q(s,a)$ with random values uniformly ranging over the
+We initialize $Q(s,a)$ with random values ranging uniformly over the
 interval [-1,1].  At the start of a new episode, we also randomly select
-the agent's beginning location in the maze or equivalently its initial
-state.  For every step in the game, the agent's action is chosen randomly
-among up, right, left and down movements.  Working with learning rate
-$\alpha= 0.75$ and reward discount factor $\gamma = 0.95$, we then
-iteratively update the Q-values using equation ((1)).
+the agent's beginning location in the maze.  For every step in the game,
+the agent's action is chosen randomly among up, right, left and down
+movements.  Working with TD learning rate $\alpha= 0.75$ and reward
+discount factor $\gamma = 0.95$, we then iteratively update the Q-values
+using control equation ((1)).
 
 As the solution to the $10 \times 10$ maze is already known, we can monitor
-the progress of tabular Q-learning towards finding the answer presented in
-figure 1b.  After each trial episode, we simply count the number of maze
+the progress of tabular Q-learning towards finding the answer displayed in
+figure 1.  After each trial episode, we simply count the number of maze
 cells for which $\max_a Q(s,a)$ yields the correct direction.  Normalizing
 by the total number of maze cells, we plot the ratio in figure 2 as a
 function of episode number.  After approximately 16K episodes,
@@ -135,36 +136,34 @@ trial-and-error tabular Q-learning solves the maze.
 *Fig. 2. Fractional correct maze cell direction actions plotted versus
 episode number during tabular Q learning.*
 
-Figure 3 presents a movie which displays the evolution of tabular Q
-learning over time.  Since the $Q(s,a)$ is initially filled with noise, its
-maximal action directions are randomly oriented at the movie's beginning.
-Flow field directions which cause the agent to illegally crash into an
-interior or exterior maze wall are colored red.  Legal, though perhaps
-incorrect, maze movements are indicated by arrows colored green.
-Neighboring pairs of arrows pointing in contradictory directions are
-colored orange.  As the movie plays, we observe that the agent rapidly
-learns to not crash into walls.  It takes longer for all of the
-contradictory direction pairs to be resolved.  But eventually,
-reinforcement learning settles upon a self-consistent maze solution which
-agrees with the result in figure 1b.
+The evolution of tabular Q learning over time is portrayed in the movie of
+figure 3.  Since $Q(s,a)$ is initially filled with noise, its maximal
+action directions are randomly oriented at the movie's beginning.  Flow
+field directions which cause the agent to illegally crash into an interior
+or exterior maze wall are colored red.  Legal, though perhaps incorrect,
+maze movements are indicated by arrows colored green.  Neighboring pairs of
+arrows pointing in contradictory directions are colored orange.  As the
+movie plays, we observe that the agent rapidly learns to not crash into
+walls.  It takes longer for all contradictory direction pairs to be
+resolved.  But eventually, reinforcement learning settles upon a
+self-consistent maze solution which agrees with the result in figure 1.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=QXr8LJHTpNE"
 target="_blank"><img src="http://img.youtube.com/vi/QXr8LJHTpNE/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. 3.  Movie illustrating tabular Q learning for the 10x10 maze in
-figure 1a.  Click on image above to play video.*
+figure 1.  Click on image above to play video.*
 
 ## Deep Q learning
 
 For agents with relatively small numbers of states and actions, it is
 feasible to explicitly compute $Q(s,a)$ in table form.  But many
-interesting applications of reinforcement learning have huge numbers of
-possible states which renders tabular Q-learning totally impractical.  For
-such cases, we must approximate $Q(s,a)$ via some function which can be
-learned by trial-and-error.  Over the past decade, researchers have found a
-set of tricks which enable neural networks to act as function approximators
-for Q-learning [10-12].  We apply their techniques to the maze solving
-problem.
+interesting applications of reinforcement learning have huge state spaces
+which render tabular Q-learning totally impractical.  For such problems, we
+must approximate $Q(s,a)$ via some function which can be learned by
+trial-and-error.  Over the past decade, researchers have found a set of
+tricks which enable neural networks to act as function approximators for
+Q-learning [10-12].  We apply their techniques to maze solving.
 
 We first represent a maze with $m \times m$ cells by a $(2m-1) \times
 (2m-1)$ occupancy grid.  Grid locations with zero occupancy correspond to
@@ -178,32 +177,32 @@ network.
 
 The network's output layer contains the number of nodes needed to represent
 all possible actions $a$ corresponding to any input state $s$.  So for maze
-problems, our network's contains 4 outputs corresponding to up, right, down
-and left agent movements.  The values of the output nodes equal $Q(s,a)$.
-It is important to note that no a priori constraint is placed upon illegal
-actions for state $s$.  Instead, the agent should learn via negative
+problems, our network's output layer contains 4 nodes associated with up,
+right, down and left movements.  The output nodes' values equal $Q(s,a)$.
+It is important to note that no *a priori* constraint is placed upon
+illegal actions for state $s$.  Instead, the agent must learn via negative
 reinforcement to avoid illegal moves.
 
-As for all other neural networks, we must choose a set of hyperparameters
-which govern how our maze network operates and trains.  After running
-several experiments, we select a fully-connected network configuration with
-two hidden layers that each contain 10 nodes.  Following ref. [13], we
-choose not to include bias terms into this network.  It consequently
-contains 3750 variables which must be fit.
+As for all other neural networks, we need to choose a set of
+hyperparameters which govern how our maze network operates and trains.
+After running several experiments, we select a fully-connected network
+configuration with two hidden layers that each contain 10 nodes.  Following
+ref. [13], we choose not to include bias terms into our network.  It
+consequently contains 3750 variables whose values must be fit.
 
 We adopt ReLU nonlinearities in all nodes except those in the final layer.
 The last layer generates activations by an identity operator.  During
-network training via conventional back propagation, we initialize the
+training via conventional back propagation, we initialize the network's
 learning rate to 0.0003 and slowly decrease it to 0.0001.  Rather than
 employ conventional stochastic gradient descent to update network weights,
 we instead utilize RMS propagation with a 0.9 decay rate [13, 14].
 
-Following references [11, 12], we take action $a_n$ at the $n^{th}$ step in
-an episode according to an $\epsilon$-greedy policy.  At the start of
-network training, $\epsilon = 1$.  But after every 1000 episodes, $\epsilon
-\rightarrow \max(0.9 \, \epsilon, 0.01)$.  We also store up to the last $5
-m^2$ transitions $(s_n, a_n, r_n, s'_{n+1})$ within a replay memory ${\cal
-D}$.  After every episode has finished, a random mini-batch of 
+At the $n^{th}$ step in an episode, we choose action $a_n$ according to an
+$\epsilon$-greedy policy [11,12].  At the start of network training,
+$\epsilon = 1$.  But after every 1000 episodes, $\epsilon \rightarrow
+\max(0.9 \, \epsilon, 0.01)$.  We also store up to the last $5 m^2$
+transitions $(s_n, a_n, r_n, s'_{n+1})$ within a replay memory ${\cal D}$.
+After every episode has finished, a random mini-batch of
 
 $$ N_d = 0.1 \times [{\rm replay \; memory \; capacity}]$$ 
 
@@ -233,24 +232,23 @@ state} \\
 \end{cases}
 $$
 
-The target term appearing within the loss function plays a role in
-reinforcement learning analogous to a class label in supervised learning.
-Researchers have previously found that using frequently-updated weights in
-a Q-learning target often leads to neural network training oscillations and
-instabilities [11, 12].  So they recommend computing the target with a set
-of old, fixed ${\bf w^-}$ parameters and periodically updating ${\bf w^-}$.
-We consequently copy ${\bf w} \to {\bf w^-}$ only after every tenth
-episode.
+The target term plays a role in reinforcement learning analogous to a class
+label in supervised learning.  Researchers have previously found that using
+frequently-updated weights in a Q-learning target often leads to neural
+network training oscillations and instabilities [11, 12].  So they
+recommend computing the target with a set of old, fixed ${\bf w^-}$
+parameters and periodically updating ${\bf w^-}$.  We consequently copy
+${\bf w} \to {\bf w^-}$ only after every tenth episode.
 
 We train the network using our own C++ codes rather than an off-the-shelf
-deep learning framework.  Over time, the loss function in eqn. (2) jumps
+deep learning framework.  Over time, the loss function in eqn. ((2)) jumps
 around while generally decreasing.  The logarithmic plot in figure 4
 demonstrates such loss function behavior for one particular $10 \times 10$
 maze.  Actions inferred from neural network Q-value outputs also converge
 to the solution for this particular maze after O(({\rm 150K})) training
 episodes (({\rm see \; figure \; 5})).  The movie in figure 6 displays the
-evolution of the flow-field from random orientations to the self-consistent
-answer as Q-learning progresses.
+evolution of the maze flow field from random orientations to the
+self-consistent answer as Q-learning progresses.
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/log10_losses_history.png)
 *Fig. 4. Base-10 logarithm of loss function plotted versus episode number
@@ -266,8 +264,8 @@ alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. 6.  Movie illustrating deep Q learning for a 10x10 maze.  Click on
 image above to play video.*
 
-It is interesting to examine trained weight values in order to gain insight
-into how the neural network learns.  For visualization purposes only, we
+It is instructive to examine trained weight values in order to gain insight
+into what the neural network learns.  For visualization purposes only, we
 renormalize the weights linking the input and first hidden layers in our
 network so that they all lie inside the interval [0,1].  For each of the 10
 nodes in the first hidden layer, its fully-connected weights are reformed
@@ -279,23 +277,22 @@ blue [red].
 *Fig. 7. Visualization of trained weights which connect the neural
 network's input and first hidden layers.*
 
-Comparing the coloring patterns for the trained weights in figure 7 with
-the structure of the $10 \times 10$ maze in figure 6, we clearly see that
-the network learns the wall layout for the maze.  While wall knowledge is
-an obvious prerequisite for solving a maze, it is reassuring to confirm
-that the agent develops this basic understanding about its environment via
-reinforcement learning.  
+Comparing the colored patterns for the trained weights in figure 7 with the
+structure of the $10 \times 10$ maze in figure 6, we clearly see that the
+network learns the wall layout for the maze.  While wall knowledge is an
+obvious prerequisite for maze solving, it is reassuring to confirm that the
+agent develops this basic understanding about its environment via
+reinforcement learning.
 
 We had hoped to find other clear clues about network maze solving within
 its first set of trained weights.  Some of the warmer-colored occupancy
 cells in figure 7 tantalizingly correspond to dead ends or long traversable
 stretches inside the maze.  But after inspecting analogous weight matrices
 for several other randomly-generated $10 \times 10$ mazes, we did not find
-a consistent pattern among larger trained weight values.  
-
-Perhaps more insight into could be gained by visualizing trained weight
-matrices linking higher layers in the neural network.  We leave such
-exploration for future work.
+a consistent pattern among larger trained weight values.  Perhaps more
+insight could be gained by visualizing trained weight matrices linking
+higher layers in the neural network.  We leave such exploration for future
+work.
 
 ## References
 
@@ -312,7 +309,7 @@ Introduction", 2nd edition
 Summer School ((2016)).](http://learning.mpi-sws.org/mlss2016/slides/2016-MLSS-RL.pdf)
 
 5.  [V. Mnih et al, "Human-level control through deep reinforcement
-learning", Nature ((2015) 529-533.](
+learning", Nature ((2015)) 529-533.](
 http://www.nature.com/nature/journal/v518/n7540/full/nature14236.html)
 
 6.  [D. Silver et al, "Mastering the game of Go with deep neural networks
@@ -322,7 +319,7 @@ and tree search", Nature ((2016)), 484 - 489.](http://www.nature.com/nature/jour
 algorithm" Wikipedia
 entry.](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
 
-8.  [S. Kosarevsky, "Depth-first Seach Random Maze Generator ((2014)). ](https://github.com/corporateshark/random-maze-generator)
+8.  [S. Kosarevsky, "Depth-first Seach Random Maze Generator" ((2014)). ](https://github.com/corporateshark/random-maze-generator)
 
 9.  [C. Watkins and P. Dayan, "Technical Note: Q-Learning", Machine
 Learning ((1992)) 279.](http://www.gatsby.ucl.ac.uk/~dayan/papers/cjch.pdf)
