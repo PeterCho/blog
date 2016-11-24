@@ -186,14 +186,17 @@ reinforcement to avoid illegal moves.
 
 As for all other neural networks, we must choose a set of hyperparameters
 which govern how our maze network operates and trains.  After running
-several experiments, we select a network configuration with two hidden
-layers that each contain 10 nodes.  We adopt ReLU nonlinearities in all but
-the final layers.  The last layer generates activations by an identity
-operator.  During network training via conventional back propagation, we
-initialize the learning rate to 0.0003 and slowly decrease it to 0.0001.
-Rather than employ conventional stochastic gradient descent to update
-network weights, we instead utilize RMS propagation with a 0.9 decay rate
-[13, 14].
+several experiments, we select a fully-connected network configuration with
+two hidden layers that each contain 10 nodes.  Following ref. [13], we
+choose not to include bias terms into this network.  It consequently
+contains 3750 variables which must be fit.
+
+We adopt ReLU nonlinearities in all nodes except those in the final layer.
+The last layer generates activations by an identity operator.  During
+network training via conventional back propagation, we initialize the
+learning rate to 0.0003 and slowly decrease it to 0.0001.  Rather than
+employ conventional stochastic gradient descent to update network weights,
+we instead utilize RMS propagation with a 0.9 decay rate [13, 14].
 
 Following references [11, 12], we take action $a_n$ at the $n^{th}$ step in
 an episode according to an $\epsilon$-greedy policy.  At the start of
@@ -208,8 +211,11 @@ transitions is sampled from ${\cal D}$.  Working with such random
 transitions helps break temporal correlations in the training data and
 allows the network to learn from a wider range of past policies.
 
-The neural network's weights $\bf w$ are iteratively adjusted so as to
-minimize the mean square error loss function
+
+All weights within our neural network are Xavier initialized as gaussian
+random variables distributed according to ${\cal N}(0, 1/\sqrt{n_{in}})$.
+During network training, the weights $\bf w$ are iteratively adjusted so as
+to minimize the mean square error loss function
 
 $$ \begin{align}
 L({\bf w}) = 
@@ -236,10 +242,9 @@ of old, fixed ${\bf w^-}$ parameters and periodically updating ${\bf w^-}$.
 We consequently copy ${\bf w} \to {\bf w^-}$ only after every tenth
 episode.
 
-All weights within our neural network are Xavier initialized as gaussian
-random variables distributed according to ${\cal N}(0, 1/\sqrt{n_{in}})$.
-During network training, the loss function in eqn. (2) jumps around but
-generally decreases over time.  The logarithmic plot in figure 4
+We train the network using our own C++ codes rather than an off-the-shelf
+deep learning framework.  Over time, the loss function in eqn. (2) jumps
+around while generally decreasing.  The logarithmic plot in figure 4
 demonstrates such loss function behavior for one particular $10 \times 10$
 maze.  Actions inferred from neural network Q-value outputs also converge
 to the solution for this particular maze after O(({\rm 150K})) training
@@ -261,10 +266,36 @@ alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
 *Fig. 6.  Movie illustrating deep Q learning for a 10x10 maze.  Click on
 image above to play video.*
 
+It is interesting to examine trained weight values in order to gain insight
+into how the neural network learns.  For visualization purposes only, we
+renormalize the weights linking the input and first hidden layers in our
+network so that they all lie inside the interval [0,1].  For each of the 10
+nodes in the first hidden layer, its fully-connected weights are reformed
+into a $(2 \times 10 - 1) \times (2 \times 10 -1)$ matrix.  Figure 7
+displays these matrices whose low [high] rescaled weight values are colored
+blue [red].
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/trained_padded_weights.png)
-*Fig. 7. Visualization of trained weights in the neural network's first
-layer.*
+*Fig. 7. Visualization of trained weights which connect the neural
+network's input and first hidden layers.*
+
+Comparing the coloring patterns for the trained weights in figure 7 with
+the structure of the $10 \times 10$ maze in figure 6, we clearly see that
+the network learns the wall layout for the maze.  While wall knowledge is
+an obvious prerequisite for solving a maze, it is reassuring to confirm
+that the agent develops this basic understanding about its environment via
+reinforcement learning.  
+
+We had hoped to find other clear clues about network maze solving within
+its first set of trained weights.  Some of the warmer-colored occupancy
+cells in figure 7 tantalizingly correspond to dead ends or long traversable
+stretches inside the maze.  But after inspecting analogous weight matrices
+for several other randomly-generated $10 \times 10$ mazes, we did not find
+a consistent pattern among larger trained weight values.  
+
+Perhaps more insight into could be gained by visualizing trained weight
+matrices linking higher layers in the neural network.  We leave such
+exploration for future work.
 
 ## References
 
@@ -305,9 +336,10 @@ Learning" ((2013)).](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
 
 12.  [D. Silver, "Deep Reinforcement Learning", ICLR ((2015)).](http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf)
 
-13. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 from
+13.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
+http://karpathy.github.io/2016/05/31/rl/)
+
+14. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 from
 Lecture 6 Coursera notes,
 ((2012)).](https://www.coursera.org/learn/neural-networks)
 
-14.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
-http://karpathy.github.io/2016/05/31/rl/)
