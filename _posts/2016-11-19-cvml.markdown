@@ -54,17 +54,17 @@ If all of the current cell's neighbors have previously been visited, we pop
 a cell from the stack and take it as the current cell.  This recursive
 process continues until every cell in the maze has been visited.
 
-An example of a 10x10 maze generated via this depth-first search approach
-is illustrated on the left side of figure 1.  The graphics routines used to
-render the maze are based upon C++ codes in [8].  The solution to this maze
-can readily be found by again initializing the bottom right corner of the
-lattice as the current cell.  Looping over up, right, down and left
-directions, we ignore any direction vector for which the current cell has a
-wall.  We further ignore any direction vector for which the neighbor cell
-already has an assigned direction.  Otherwise, the neighbor cell is
-assigned a direction vector pointing towards the current cell, and
-direction finding is recursively performed on the neighbor cell.  The
-resulting flow field is illustrated on the right side of figure 1.
+An example of a $10 \times 10$ maze generated via this depth-first search
+approach is illustrated on the left side of figure 1.  The graphics
+routines used to render the maze are based upon C++ codes in [8].  The
+solution to this maze can readily be found by again initializing the bottom
+right corner of the lattice as the current cell.  Looping over up, right,
+down and left directions, we ignore any direction vector for which the
+current cell has a wall.  We further ignore any direction vector for which
+the neighbor cell already has an assigned direction.  Otherwise, the
+neighbor cell is assigned a direction vector pointing towards the current
+cell, and direction finding is recursively performed on the neighbor cell.
+The resulting flow field is illustrated on the right side of figure 1.
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/nondeepQ/empty_vs_solved_mazes.png)
 *Fig. 1. [Left] A 10x10 maze generated via a depth-first search
@@ -166,12 +166,12 @@ set of tricks which enable neural networks to act as function approximators
 for Q-learning [10-12].  We apply their techniques to the maze solving
 problem.
 
-We first represent a maze with $n \times n$ cells by a $(2n-1) \times
-(2n-1)$ occupancy grid.  Grid locations with zero occupancy correspond to
+We first represent a maze with $m \times m$ cells by a $(2m-1) \times
+(2m-1)$ occupancy grid.  Grid locations with zero occupancy correspond to
 traversable maze cells.  The grid location corresponding to the agent's
 current maze position is set to occupancy one.  On the other hand, the
 $n_{wall \; cells}$ locations in the occupancy grid representing maze walls
-are set equal to $-1 / n_{wall \; cells}$.  The sum over all occupancy grid
+are set equal to $-1 / n_{wall \; cells}$.  The sum of all occupancy grid
 values consequently equals zero.  We flatten the rows of the occupancy grid
 into a single column vector which becomes the input layer to the neural
 network.
@@ -191,29 +191,79 @@ layers that each contain 10 nodes.  We adopt ReLU nonlinearities in all but
 the final layers.  The last layer generates activations by an identity
 operator.  During network training via conventional back propagation, we
 initialize the learning rate to 0.0003 and slowly decrease it to 0.0001.
-Following [hinton, kaparthy], we update network weights using RMS
-propagation with a 0.9 decay rate.
+Rather than employ conventional stochastic gradient descent to update
+network weights, we instead utilize RMS propagation with a 0.9 decay rate
+[13, 14].
 
+Following references [11, 12], we take action $a_n$ at the $n^{th}$ step in
+an episode according to an $\epsilon$-greedy policy.  At the start of
+network training, $\epsilon = 1$.  But after every 1000 episodes, $\epsilon
+\rightarrow \max(0.9 \, \epsilon, 0.01)$.  We also store up to the last $5
+m^2$ transitions $(s_n, a_n, r_n, s'_{n+1})$ within a replay memory ${\cal
+D}$.  After every episode has finished, a random mini-batch of 
 
+$$ N_d = 0.1 \times [{\rm replay \; memory \; capacity}]$$ 
 
+transitions is sampled from ${\cal D}$.  Working with such random
+transitions helps break temporal correlations in the training data and
+allows the network to learn from a wider range of past policies.
+
+The neural network's weights $\bf w$ are iteratively adjusted so as to
+minimize the mean square error loss function
+
+$$ \begin{align}
+L({\bf w}) = 
+{1 \over N_d} \sum_{d \in {\cal D}} 
+{1 \over 2} \bigl[ {\rm target} - Q(s, a, {\bf w}) \bigr]^2 \\
+  \end{align}
+$$
+
+where
+
+$$ {\rm target} = \begin{cases}
+& r + \gamma \max_{a'} Q(s', a')   & {\rm if} \; s' \ne {\rm terminal \;
+state} \\
+& r \qquad\qquad\qquad\qquad\quad  & {\rm if} \; s' = {\rm terminal \; state. }
+\end{cases}
+$$
+
+The target term appearing within the loss function plays a role in
+reinforcement learning analogous to a class label in supervised learning.
+Researchers have previously found that using frequently-updated weights in
+a Q-learning target often leads to neural network training oscillations and
+instabilities [11, 12].  So they recommend computing the target with a set
+of old, fixed ${\bf w^-}$ parameters and periodically updating ${\bf w^-}$.
+We consequently copy ${\bf w} \to {\bf w^-}$ only after every tenth
+episode.
+
+All weights within our neural network are Xavier initialized as gaussian
+random variables distributed according to ${\cal N}(0, 1/\sqrt{n_{in}})$.
+During network training, the loss function in eqn. (2) jumps around but
+generally decreases over time.  The logarithmic plot in figure 4
+demonstrates such loss function behavior for one particular $10 \times 10$
+maze.  Actions inferred from neural network Q-value outputs also converge
+to the solution for this particular maze after O(({\rm 150K})) training
+episodes (({\rm see \; figure \; 5})).  The movie in figure 6 displays the
+evolution of the flow-field from random orientations to the self-consistent
+answer as Q-learning progresses.
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/log10_losses_history.png)
-*Fig. XX. Logarithm base 10 of loss function plotted versus episode number
-during deep Q learning.*
+*Fig. 4. Base-10 logarithm of loss function plotted versus episode number
+during deep Q learning for a $10 \times 10$ maze.*
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/deep_Q_convergence.png)
-*Fig. XX. Fractional correct maze direction actions plotted versus episode
-number during deep Q learning.*
+*Fig. 5. Fractional correct maze direction actions plotted versus episode
+number during deep Q learning for a $10 \times 10$ maze.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KW0X0gB1B2I"
 target="_blank"><img src="http://img.youtube.com/vi/KW0X0gB1B2I/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. XX.  Movie illustrating deep Q learning for a 10x10 maze.  Click on
+*Fig. 6.  Movie illustrating deep Q learning for a 10x10 maze.  Click on
 image above to play video.*
 
 
 ![MazeRL]({{site.url}}/blog/images/maze_rl/deepQ/trained_padded_weights.png)
-*Fig. XX. Visualization of trained weights in the neural network's first
+*Fig. 7. Visualization of trained weights in the neural network's first
 layer.*
 
 ## References
@@ -255,10 +305,9 @@ Learning" ((2013)).](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
 
 12.  [D. Silver, "Deep Reinforcement Learning", ICLR ((2015)).](http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf)
 
-13.  [T. Matiisen, "Demystifying Deep Reinforcement Learning", ((2016)).](https://www.nervanasys.com/demystifying-deep-reinforcement-learning/)
+13. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 from
+Lecture 6 Coursera notes,
+((2012)).](https://www.coursera.org/learn/neural-networks)
 
-* Hinton coursera on RMS prop
-
-*.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
+14.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
 http://karpathy.github.io/2016/05/31/rl/)
-
