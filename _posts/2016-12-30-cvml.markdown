@@ -6,18 +6,14 @@ categories: Deep Learning
 use_math: true
 ---
 
-## Reinforcement learning
-
-## Tabular Q-learning
-The resulting flow field for the entire maze is displayed on the right side
-of figure 1.
+## Supervised learning vs reinforcement learning
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/SL_vs_RL.png)
 *Fig. 1. Schematic diagram adapted from [] comparing supervised learning
 with reinforcement learning.*
 
 
-
+## RL system architecture
 
 $$ \begin{align}
 Q(s_n,a_n)  \leftarrow
@@ -29,7 +25,7 @@ $$
 Here $0 \le \alpha \le 1$ represents a TD learning rate, while $0 \le
 \gamma \le 1$ denotes a discount factor for future rewards [9].
 
-## Deep Q-learning
+## Pong results
 
 ## References
 
