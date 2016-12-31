@@ -1,0 +1,42 @@
+---
+layout: post
+title:  "Learning to Play Atari Pong via Policy Gradients"
+date:   2016-12-30 12:00:00
+categories: Deep Learning
+use_math: true
+---
+
+## Reinforcement learning
+
+## Tabular Q-learning
+The resulting flow field for the entire maze is displayed on the right side
+of figure 1.
+
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/SL_vs_RL.png)
+*Fig. 1. Schematic diagram adapted from [] comparing supervised learning
+with reinforcement learning.*
+
+
+
+
+$$ \begin{align}
+Q(s_n,a_n)  \leftarrow
+(1 - \alpha) Q(s_n,a_n) + \alpha \bigl [ r_n + \gamma \, {\rm max}_b
+Q(s'_{n+1},b) \bigr ].  \\
+  \end{align}
+$$
+
+Here $0 \le \alpha \le 1$ represents a TD learning rate, while $0 \le
+\gamma \le 1$ denotes a discount factor for future rewards [9].
+
+## Deep Q-learning
+
+## References
+
+*.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
+http://karpathy.github.io/2016/05/31/rl/)
+
+*. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 from
+Lecture 6 Coursera notes,
+((2012)).](https://www.coursera.org/learn/neural-networks)
+
