@@ -49,8 +49,8 @@ $$ \cal{L}_i = A_i \log p(a_i | x_i). $$
 ## Deep RL system architecture
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/preprocessing.png)
-*Fig. XX. Raw ALE frames are converted into 32 x 32 input vectors via
-cropping, downsampling and differencing.*
+*Fig. XX. Raw ALE frames are converted into 32 x 32 input state vectors
+after cropping, downsampling and differencing.*
 
 Here $0 \le \alpha \le 1$ represents a TD learning rate, while $0 \le
 \gamma \le 1$ denotes a discount factor for future rewards [9].
