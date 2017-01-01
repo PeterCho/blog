@@ -57,6 +57,13 @@ Here $0 \le \alpha \le 1$ represents a TD learning rate, while $0 \le
 
 ## Pong results
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=5C4_ztYXZZY"
+target="_blank"><img src="http://img.youtube.com/vi/5C4_ztYXZZY/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
+*Fig. XX.  Movie excerpt of Deep RL agent trained via policy gradients playing
+against built-in Pong AI.  Click on image above to play video.*
+
+
 ## References
 
 *.  [J. Schulman, "Deep Reinforcement Learning: Lecture 1 Intro" UC
