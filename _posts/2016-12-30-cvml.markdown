@@ -149,8 +149,12 @@ against built-in Pong AI.  Click on image above to play video.*
 *.  [J. Schulman, "Deep Reinforcement Learning, Lecture 1: Introduction" UC
 Berkeley course CS 294, ((2015))](http://rll.berkeley.edu/deeprlcourse-fa15/docs/2015.08.26.Lecture01Intro.pdf)
 
-*.  [J. Schulman, N. Heess, T. Weber & P. Abbeel, "Gradient Estimation
+*.  [J. Schulman, N. Heess, T. Weber and P. Abbeel, "Gradient Estimation
 using Stochastic Computation Graphs", arXiv: 1506.05254v3 ((2016)).](https://arxiv.org/pdf/1506.05254v3.pdf)
+
+*.  [M. G. Bellemare, Y. Naddaf, J. Veness and M. Bowling, "The Arcade
+Learning Environment: An Evaluation Platform for General Agents", J. AI
+Research 47 ((2013)) 253.](http://www.arcadelearningenvironment.org)
 
 *.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
 http://karpathy.github.io/2016/05/31/rl/)
@@ -159,4 +163,3 @@ http://karpathy.github.io/2016/05/31/rl/)
 Lecture 6 Coursera notes,
 ((2012)).](https://www.coursera.org/learn/neural-networks)
 
-*.  [ALE references goes here]
