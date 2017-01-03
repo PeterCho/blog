@@ -135,9 +135,41 @@ decreased.
 
 ## Deep RL system architecture
 
+Games provide good test environments for reinforcement learning.  Following
+the release of the Arcade Learning Environment in 2013 [ref], Deep Mind
+published several impressive Atari game learning results based upon Deep Q
+networks [refs].  After this breakthrough, computer games in general and
+Atari games in particular have become popular benchmarks among RL
+practioners for developing new algorithms and evaluating their performance.
+In this post, we explore the ability of deep RL methods based upon policy
+gradients to play the basic Atari game Pong.
+
+Our investigation follows the general approach outlined by Andrej Kaparthy
+in his "Pong from Pixels" blog writeup [ref].  Since Pong screens are so
+simple, we can retain their essential information content even after
+aggressively cropping and subsampling raw 160 x 210 images down to 32 x 32.
+We further follow Kaparthy and work with temporally differenced screens
+rather than sets of temporally successive ALE frames.  We also quantize all
+differenced pixels values into zeros and ones.  As figure illustrates, our
+Pong environment state is therefore represented by a 1024 binary vector at
+each time step.
+
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/preprocessing.png)
 *Fig. XX. Raw ALE frames are converted into 32 x 32 input state vectors
 after cropping, downsampling and differencing.*
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <table style="width:100%">
   <thead>
@@ -235,6 +267,8 @@ using Stochastic Computation Graphs", arXiv: 1506.05254v3 ((2016)).](https://arx
 *.  [M. G. Bellemare, Y. Naddaf, J. Veness and M. Bowling, "The Arcade
 Learning Environment: An Evaluation Platform for General Agents", J. AI
 Research 47 ((2013)) 253.](http://www.arcadelearningenvironment.org)
+
+*.  [Deep mind Atari paper refs go here]
 
 *.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
 http://karpathy.github.io/2016/05/31/rl/)
