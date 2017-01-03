@@ -145,59 +145,59 @@ after cropping, downsampling and differencing.*
 <table style="width:100%">
   <thead>
     <tr>
-      <th style="text-align: center">Hyperparameter</th>
-      <th style="text-align: center">Value</th>
-      <th style="text-align: center">Description</th>
+      <th style="text-align: left">Hyperparameter</th>
+      <th style="text-align: center">Value    </th>
+      <th style="text-align: left">Description</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: center">Batch size</td>
+      <td style="text-align: left">Epoch frames</td>
+      <td style="text-align: center">5E4</td>
+      <td style="text-align: left">Number of ALE frames per epoch</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Batch size</td>
       <td style="text-align: center">2E4</td>
-      <td style="text-align: center">Number of training inputs for each
+      <td style="text-align: left">  Number of training inputs per
 gradient descent computation</td>
     </tr>
     <tr>
-      <td style="text-align: center">Learning rate</td>
+      <td style="text-align: left">Learning rate</td>
       <td style="text-align: center">1E-3</td>
-      <td style="text-align: center">Learning rate for RMSProp</td>
+      <td style="text-align: left">  Learning rate for RMSProp</td>
     </tr>
     <tr>
-      <td style="text-align: center">RMSProp decay rate</td>
+      <td style="text-align: left">RMSProp decay rate</td>
       <td style="text-align: center">0.9</td>
-      <td style="text-align: center">Decay rate for RMSprop weights cache</td>
+      <td style="text-align: left">Decay rate for RMSprop weights cache</td>
     </tr>
     <tr>
-      <td style="text-align: center">RMSProp denom const</td>
+      <td style="text-align: left">RMSProp denom const</td>
       <td style="text-align: center">1E-5</td>
-      <td style="text-align: center">Constant added to squared gradient in
-denominator of RMSProp update</td>
+      <td style="text-align: left">Constant preventing zero RMSProp denominator</td>
     </tr>
     <tr>
-      <td style="text-align: center">lambda</td>
+      <td style="text-align: left">Leaky ReLU slope</td>
       <td style="text-align: center">1E-2</td>
-      <td style="text-align: center">L2 regularization coefficient</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">Leaky ReLU slope</td>
-      <td style="text-align: center">1E-2</td>
-      <td style="text-align: center">Slope for negative inputs in Leaky
+      <td style="text-align: left">Slope for negative inputs in Leaky
 ReLU nonlinearity</td>
     </tr>
     <tr>
-      <td style="text-align: center">gamma</td>
-      <td style="text-align: center">0.99</td>
-      <td style="text-align: center">RL discount factor</td>
+      <td style="text-align: left"> $\lambda$ </td>
+      <td style="text-align: center">1E-2</td>
+      <td style="text-align: left">L2 regularization coefficient</td>
     </tr>
     <tr>
-      <td style="text-align: center">Epoch frames</td>
-      <td style="text-align: center">5E4</td>
-      <td style="text-align: center">Number of ALE frames per epoch</td>
+      <td style="text-align: left"> $\gamma$ </td>
+      <td style="text-align: center">0.99</td>
+      <td style="text-align: left">RL discount factor</td>
     </tr>
+
   </tbody>
 </table>
 
-*Table 1.  List of hyperparameter values used in our Deep RL system.*
+*Table 1.  List of hyperparameter values used within the Deep RL system.*
 
 
 ## Pong results
