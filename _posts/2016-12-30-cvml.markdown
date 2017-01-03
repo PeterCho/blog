@@ -114,8 +114,66 @@ $$ \cal{L}_i = A_i \log p(a_i | x_i). $$
 *Fig. XX. Raw ALE frames are converted into 32 x 32 input state vectors
 after cropping, downsampling and differencing.*
 
-Here $0 \le \alpha \le 1$ represents a TD learning rate, while $0 \le
-\gamma \le 1$ denotes a discount factor for future rewards [9].
+
+
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: center">Hyperparameter</th>
+      <th style="text-align: center">Value</th>
+      <th style="text-align: center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">Batch size</td>
+      <td style="text-align: center">2E4</td>
+      <td style="text-align: center">Number of training inputs for each
+gradient descent computation</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Learning rate</td>
+      <td style="text-align: center">1E-3</td>
+      <td style="text-align: center">Learning rate for RMSProp</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">RMSProp decay rate</td>
+      <td style="text-align: center">0.9</td>
+      <td style="text-align: center">Decay rate for RMSprop weights cache</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">RMSProp denom const</td>
+      <td style="text-align: center">1E-5</td>
+      <td style="text-align: center">Constant added to squared gradient in
+denominator of RMSProp update</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">lambda</td>
+      <td style="text-align: center">1E-2</td>
+      <td style="text-align: center">L2 regularization coefficient</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Leaky ReLU slope</td>
+      <td style="text-align: center">1E-2</td>
+      <td style="text-align: center">Slope for negative inputs in Leaky
+ReLU nonlinearity</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">gamma</td>
+      <td style="text-align: center">0.99</td>
+      <td style="text-align: center">RL discount factor</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Epoch frames</td>
+      <td style="text-align: center">5E4</td>
+      <td style="text-align: center">Number of ALE frames per epoch</td>
+    </tr>
+  </tbody>
+</table>
+
+*Table 1.  List of hyperparameter values used in our Deep RL system.*
+
 
 ## Pong results
 
@@ -163,3 +221,4 @@ http://karpathy.github.io/2016/05/31/rl/)
 Lecture 6 Coursera notes,
 ((2012)).](https://www.coursera.org/learn/neural-networks)
 
+*.  [Leaky ReLU reference]
