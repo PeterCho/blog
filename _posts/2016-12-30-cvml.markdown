@@ -89,7 +89,8 @@ minimizing $H(q,p)$.  The cross entropy loss function consequently assumes
 the form 
 
 $$ \begin{align}
-{\cal{L}}_{SL} & = - \sum_{ {\rm training \, samples} \, x, y} 
+{\cal{L}}_{SL} & = - 
+        \sum_{ \substack{ {\rm training} \\ {\rm samples} \, x, y} }
         q(x) \log p(y | x) \\
 	& = - {1 \over N} \sum_{i = 1}^N \log p(y_i|x_i) \\
 \end{align}
@@ -107,12 +108,16 @@ Reinforcement learning also utilizes three functions to quantify expected
 cumulative returns given particular environment states and agent actions.
 Firstly, the state-value function
 
-$$ V^\pi(s) = E \bigl[ r_0 + r_1 + r_2 + \cdots | s_0 = s \bigr] $$
+$$ V^\pi(s) = E \bigl[ r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots | 
+s_t = s \bigr] $$
 
 measures expected future return when the environment starts in state $s$
-and follows policy $\pi$.  Secondly, the state-action value function
+and follows policy $\pi$.  The discount factor $0 < \gamma < 1$ appearing
+in this expression reduces long term dependencies by downweighting future
+rewards.  Secondly, the state-action value function
 
-$$ Q^\pi(s,a) = E \bigl[ r_0 + r_1 + r_2 + \cdots | s_0 = s, a_0 = a \bigr]
+$$ Q^\pi(s,a) = E \bigl[ r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots | 
+s_t = s, a_t = a \bigr]
 $$
 
 measures expected future return given starting environment state $s$ and
@@ -121,17 +126,30 @@ agent action $a$.  Finally, the advantage function
 $$ A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s) $$
 
 quantifies how much more valuable is the agent's performing action $a$
-rather than its expected counterpart coming from policy $\pi$.  
+rather than the expected action coming from policy $\pi$.
 
-The reinforcement learning loss function is analogous to that in eqn 2 for
-supervised learning.  But the advantage function is used to modulate
-individual loss terms:
+The reinforcement learning loss function is similar to that in eqn 2 for
+supervised learning.  But an advantage function estimator
 
-$$ {\cal{L}}_{RL} = - {1 \over T} \sum_{t = 0}^{T-1} A_t \log p(a_t | s_t). $$
+$$ \hat{A}_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots - V^\pi_t $$
+
+is used to modulate its individual terms:
+
+$$ {\cal{L}}_{RL} = - {1 \over T} \sum_{t = 0}^{T-1} \hat{A}_t \log \pi(a_t |
+s_t). $$
 
 Probabilities for good actions with positive advantages are consequently
-increased, while probabilities for bad actions with negative advantages are
-decreased.
+increased by this RL loss function, while bad actions with negative
+advantages are discouraged.
+
+It is useful to draw one more analogy between RL and SL when neural
+networks are employed as function approximators.  For classification
+problems, we can train a network to map inputs onto probability
+distributions over output labels.  Similarly for sequential decision making
+problems, neural nets may be used to map environment states onto policies
+for agent actions.  The resulting stochastic policy $\pi(a|s;\theta)$ then
+depends parameterically upon a vector $\theta$ of neural network weights.
+
 
 ## Deep RL system architecture
 
@@ -145,17 +163,17 @@ performance.  In this post, we explore the ability of deep RL methods to
 play the basic Atari game Pong.
 
 Our investigation adopts the general approach outlined by Andrej Kaparthy
-in his "Pong from Pixels" blog writeup [ref].  Since Pong screens are so
+in his "Pong from Pixels" blog report [ref].  Since Pong screens are so
 simple, we can retain their essential information content even after
 aggressively cropping and subsampling raw 160 x 210 images down to 32 x 32.
 We further follow Kaparthy and work with temporally differenced screens
 rather than sets of temporally successive ALE frames.  We also quantize all
 differenced pixels values into zeros and ones.  As figure XX illustrates,
-our Pong environment state is represented at each time step by a 1024
+the Pong environment state is compressed at each time step into a 1024
 binary vector.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/preprocessing.png)
-*Fig. XX. Raw ALE frames are converted into 32 x 32 input state vectors
+*Fig. XX. Raw ALE frames are converted into 32 x 32 binary state vectors
 after cropping, downsampling and differencing.*
 
 
@@ -176,51 +194,51 @@ after cropping, downsampling and differencing.*
     <tr>
       <th style="text-align: left">Hyperparameter</th>
       <th style="text-align: center">Value    </th>
-      <th style="text-align: left">Description</th>
+      <th style="text-align: center">Description</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td style="text-align: left">Epoch frames</td>
       <td style="text-align: center">5E4</td>
-      <td style="text-align: left">Number of ALE frames per epoch</td>
+      <td style="padding: 0 35px">Number of ALE frames per epoch</td>
     </tr>
     <tr>
       <td style="text-align: left">Batch size</td>
       <td style="text-align: center">2E4</td>
-      <td style="text-align: left">  Number of training inputs per
+      <td style="padding: 0 35px">  Number of training inputs per
 gradient descent computation</td>
     </tr>
     <tr>
       <td style="text-align: left">Learning rate</td>
       <td style="text-align: center">1E-3</td>
-      <td style="text-align: left">  Learning rate for RMSProp</td>
+      <td style="padding: 0 35px"> Learning rate for RMSProp</td>
     </tr>
     <tr>
       <td style="text-align: left">RMSProp decay rate</td>
       <td style="text-align: center">0.9</td>
-      <td style="text-align: left">Decay rate for RMSprop weights cache</td>
+      <td style="padding: 0 35px">Decay rate for RMSprop weights cache</td>
     </tr>
     <tr>
       <td style="text-align: left">RMSProp denom const</td>
       <td style="text-align: center">1E-5</td>
-      <td style="text-align: left">Constant preventing zero RMSProp denominator</td>
+      <td style="padding: 0 35px">Constant preventing zero RMSProp denominator</td>
     </tr>
     <tr>
       <td style="text-align: left">Leaky ReLU slope</td>
       <td style="text-align: center">1E-2</td>
-      <td style="text-align: left">Slope for negative inputs in Leaky
+      <td style="padding: 0 35px">Slope for negative inputs in Leaky
 ReLU nonlinearity</td>
     </tr>
     <tr>
       <td style="text-align: left"> $\lambda$ </td>
       <td style="text-align: center">1E-2</td>
-      <td style="text-align: left">L2 regularization coefficient</td>
+      <td style="padding: 0 35px">L2 regularization coefficient</td>
     </tr>
     <tr>
       <td style="text-align: left"> $\gamma$ </td>
       <td style="text-align: center">0.99</td>
-      <td style="text-align: left">RL discount factor</td>
+      <td style="padding: 0 35px">RL discount factor</td>
     </tr>
 
   </tbody>
@@ -252,7 +270,7 @@ training epoch.*
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=5C4_ztYXZZY"
 target="_blank"><img src="http://img.youtube.com/vi/5C4_ztYXZZY/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. XX.  Movie excerpt of Deep RL agent trained via policy gradients playing
+*Fig. XX.  Movie excerpt of RL agent trained via policy gradients playing
 against built-in Pong AI.  Click on image above to play video.*
 
 
@@ -268,7 +286,12 @@ using Stochastic Computation Graphs", arXiv: 1506.05254v3 ((2016)).](https://arx
 Learning Environment: An Evaluation Platform for General Agents", J. AI
 Research 47 ((2013)) 253.](http://www.arcadelearningenvironment.org)
 
-*.  [Deep mind Atari paper refs go here]
+*.  [V. Mnih, K. Kavukcuoglu, D. Silver, A. Graves, I. Antonoglou,
+D. Wierstra and M. Riedmiller, "Playing Atari with Deep Reinforcement
+Learning" ((2013)).](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
+
+*.  [V. Mnih et al, "Human-Level Control through Deep Reinforcement
+Learning", Nature 518 ((2015)) 529.](http://files.davidqiu.com/research/nature14236.pdf)
 
 *.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
 http://karpathy.github.io/2016/05/31/rl/)
