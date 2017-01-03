@@ -9,13 +9,13 @@ use_math: true
 ## Reinforcement learning vs supervised learning 
 
 Reinforcement Learning $(\rm RL)$ is typically described in terms of an
-agent interacting with an a priori unknown environment.  The environment's
-starting state is first sampled from some underlying distribution.  The
-agent observes the state and performs some action.  The environment then
-issues a reward whose dependence upon the state and action is initially
-unknown and stochastic.  The basic goal in RL is to improve the agent's
-policy function mapping from environment state history to agent action so
-that the cumulative reward is maximized.
+agent interacting with an *a priori* unknown environment.  The
+environment's starting state is first sampled from some underlying
+distribution.  The agent observes the state and performs some action.  The
+environment then issues a reward whose dependence upon the state and action
+is initially unknown and stochastic.  The basic goal in RL is to improve
+the agent's policy function which maps from environment state history to
+agent action so that the cumulative reward is maximized.
 
 Supervised Learning $(\rm SL)$ may be regarded as a special case of
 Reinforcement Learning.  The environment first samples pairs of input
@@ -23,90 +23,115 @@ states and corresponding output labels from some distribution.  The agent
 observes an input state and makes a prediction for the output label.  The
 environment subsequently issues a negative reward which depends upon the
 disparity between the predicted and genuine output labels.  The basic goal
-in SL is to improve the agent's mapping function from input state to output
-label so that the cumulative negative reward is minimized.
+in SL is to improve the agent's prediction function which maps from input
+state to output label so that the cumulative negative reward is minimized.
 
-It's useful to draw a picture which highlights similarities and differences
-between supervised and reinforcement learning.  
+It's useful to draw a schematic picture which highlights similarities and
+differences between reinforcement and supervised learning.  Figure 1
+presents such a diagram adapted from refs [] and [].
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/SL_vs_RL.png)
-*Fig. 1. Schematic comparison between supervised learning
-with reinforcement learning.  Figure adapted from refs [] and [].*
+*Fig. 1. Schematic comparison between reinforcement and supervised
+learning.  For RL, time-dependent states, actions and rewards are
+represented by $s_t$, $a_t$ and $r_t$.  For SL, time-independent input
+states, prediction model and output labels are denoted by $x_i$, $h$ and
+$y_i$.*
 
-RL is fundamentally more complicated than SL.
+As the figure indicates, reinforcement learning is fundamentally more
+complex than supervised learning.  In particular, RL must contend with
+several challenges not present in SL:
 
-*.  Stateful world problem
++  Stateful world problem
 
-  An RL agent interacts with an environment whose later states depend upon
-earlier states as well as earlier agent actions.  In contrast, input states
-in supervised learning problems are independent of time and each other.
+   An RL agent interacts with an environment whose later states depend upon
+   earlier states as well as earlier agent actions.  In contrast, input states
+   in supervised learning problems do not depend upon time nor each other.
 
-*.  Action-reward timing problem
++  Reward delay problem
 
- An RL agent can experience a long delay between the instant when it
- performs some relevant action and the time when the environment issues
- an associated reward signal.  In the interim, the agent generally
- performs many other actions.  In contrast, reward signals in supervised
- learning settings are in one-to-one correspondence with agent predictions.
+   An RL agent can experience a long delay between the instant when it
+   performs some relevant action and the time when the environment issues an
+   associated reward signal.  In the interim, the agent generally performs
+   other actions which become entangled with the eventual reward.  In
+   contrast, reward signals in supervised learning settings are immediate
+   and in one-to-one correspondence with agent predictions.  
 
-*.  Exploration vs exploitation problem
++  Exploration vs exploitation problem
 
- An RL agent needs to be encouraged to search unfamiliar parts of state
-space to avoid getting trapped in locally maximal but globally suboptimal
-performance regions.  In contrast, an SL agent generally observes all input
-states within its training environment.
+   An RL agent needs encouragement to search unfamiliar parts of state
+   space to avoid getting trapped into locally maximal but globally suboptimal
+   performance regions.  In contrast, an SL agent generally observes all input
+   states within its training environment.  
 
-*.  Step size problem
++  Step size problem
 
- An RL agent which works with an initially large step size can be forced
-into some poor-performance region of state space from which it may never
-escape even if its step size is later diminished.  In contrast, an SL agent
-often settles into a reasonable local minimum as its step size is annealed.
+   An RL agent which works with an initially large step size can be forced
+   into some poor-performance region of state space from which it may never
+   escape even if its step size is later diminished.  In contrast, an SL agent
+   often finds a good local minimum region as its step size is annealed.
 
+Similarities and differences between reinforcement and supervised learning
+extend to their loss functions.  It is useful to start by deriving the
+cross entropy loss for SL classification.  Given a set of training inputs
+$x_i$ and outputs $y_i$ , we let $q$ represent the probability distribution
+for the truth data and $p$ denote the probability distribution for the
+prediction model.  Since $p$ should be as close as possible to $q$, the
+Kullback-Leibler divergence of $p$ from $q$ should be minimal.  The KL
+divergence enters into the definition of cross entropy between $q$ and $p$:
 
+$$ H(q,p) = H(q) + D_{KL}(q || p)  $$
 
+$$ -E_q (\log p) = -E_q(\log q) + E_q \bigl(\log(q / p) \bigr) . $$
 
-
-
-
-
-
-
-
-
-
-We start by deriving the cross entropy loss function for supervised
-learning classification problems.  Given a set of inputs $x_i$ with
-corresponding output labels $y_i$ , we let $q$ represent the probability
-distribution for the training data and $p$ denote the prediction model's
-probability distribution.  Since $p$ should be as close as possible to $q$,
-the Kullback-Leibler divergence of $p$ from $q$ should be minimal.  The KL
-divergence $D_{KL}(q || p)$ enters into the definition of the cross entropy
-between $q$ and $p$:
-
-$$ H(q,p) = H(q) + D_{KL}(q || p) $$
-
-where the entropy $H(q)$ of the ground-truth $q$ distribution may be
-regarded as an unimportant invariant.  So minimizing $D_{KL}$ with respect
-to $p$ is equivalent to minimizing $H(q,p)$ with respect to $p$.  We may
-consequently set the initial loss function as
+As the ground-truth entropy $H(q)$ may be regarded as an unimportant
+invariant, minimizing $D_{KL}$ with respect to $p$ is equivalent to
+minimizing $H(q,p)$.  The cross entropy loss function consequently assumes
+the form 
 
 $$ \begin{align}
-\cal{L} & = H(q,p) \\
-        & = E_q (-\log p) \\
-        & = - \sum_{ {\rm training \, samples} \, x} q(x) \log p(x) \\
-	& = \sum_{i = 1}^N {1 \over N} \cdot \bigl[ -\log p(y_i|x_i) \bigr] \\
-	& \equiv {1 \over N} \sum_{i = 1}^N \cal{L}_i (y_i|x_i) \\
+{\cal{L}}_{SL} & = - \sum_{ {\rm training \, samples} \, x, y} 
+        q(x) \log p(y | x) \\
+	& = - {1 \over N} \sum_{i = 1}^N \log p(y_i|x_i) \\
 \end{align}
 $$
 
-For reinforcement learning problems, each output label $y_i$ is replaced by
-a sampled action $a_i$.  Individual contributions in eqn (5) are also
-modulated by "advantage" coefficients which quantify how much more valuable
-were the sampled actions than their expected counterparts:
+In order to transition from supervised to reinforcement learning problems,
+we follow figure 1 and substitute state $s_t$ for input $x_i$.  The agent is
+assumed to follow a stochastic policy $\pi(a|s)$ which specifies the
+probability it will execute action $a$ when the environment is in state
+$s$.  We therefore replace SL output label $y_i$ by RL sampled action
+$a_t$.
 
-$$ \cal{L}_i = A_i \log p(a_i | x_i). $$
 
+Reinforcement learning also utilizes three functions to quantify expected
+cumulative returns given particular environment states and agent actions.
+Firstly, the state-value function
+
+$$ V^\pi(s) = E \bigl[ r_0 + r_1 + r_2 + \cdots | s_0 = s \bigr] $$
+
+measures expected future return when the environment starts in state $s$
+and follows policy $\pi$.  Secondly, the state-action value function
+
+$$ Q^\pi(s,a) = E \bigl[ r_0 + r_1 + r_2 + \cdots | s_0 = s, a_0 = a \bigr]
+$$
+
+measures expected future return given starting environment state $s$ and
+agent action $a$.  Finally, the advantage function
+
+$$ A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s) $$
+
+quantifies how much more valuable is the agent's performing action $a$
+rather than its expected counterpart coming from policy $\pi$.  
+
+The reinforcement learning loss function is analogous to that in eqn 2 for
+supervised learning.  But the advantage function is used to modulate
+individual loss terms:
+
+$$ {\cal{L}}_{RL} = - {1 \over T} \sum_{t = 0}^{T-1} A_t \log p(a_t | s_t). $$
+
+Probabilities for good actions with positive advantages are consequently
+increased, while probabilities for bad actions with negative advantages are
+decreased.
 
 ## Deep RL system architecture
 
