@@ -30,7 +30,7 @@ It's useful to draw a schematic picture which highlights similarities and
 differences between reinforcement and supervised learning.  Figure 1
 presents such a diagram adapted from refs [] and [].
 
-![PongRL]({{site.url}}/blog/images/pong_policy_learning/SL_vs_RL.png)
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/RL_vs_SL.png)
 *Fig. 1. Schematic comparison between reinforcement and supervised
 learning.  For RL, time-dependent states, actions and rewards are
 represented by $s_t$, $a_t$ and $r_t$.  For SL, time-independent input
