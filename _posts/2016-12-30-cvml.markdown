@@ -247,13 +247,18 @@ ReLU nonlinearity</td>
 *Table 1.  List of hyperparameter values used within the Deep RL system.*
 
 
-## Pong results
+## Pong training results
 
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/padded_eventual_rewards.jpg)
 *Fig. XX. RL agent's eventual reward averaged over an entire episode
 plotted as a function of training epoch.  The agent wins against its AI
 opponent when its average eventual reward value becomes positive.*
+
+
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/weight_evolution_montage_1K.jpg)
+*Fig. XX. Training evolution of 10 random weights selected from the 0th,
+1st and 2nd hidden layers of the neural network.*
 
 
 
