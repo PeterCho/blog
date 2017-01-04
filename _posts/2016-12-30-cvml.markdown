@@ -13,7 +13,7 @@ agent interacting with an *a priori* unknown environment.  The
 environment's starting state is first sampled from some underlying
 distribution.  The agent observes the state and performs some action.  The
 environment then issues a reward whose dependence upon the state and action
-is initially unknown and stochastic.  The basic goal in RL is to improve
+is initially unknown and stochastic.  The basic goal of RL is to improve
 the agent's policy function which maps from environment state history to
 agent action so that the cumulative reward is maximized.
 
@@ -23,7 +23,7 @@ states and corresponding output labels from some distribution.  The agent
 observes an input state and makes a prediction for the output label.  The
 environment subsequently issues a negative reward which depends upon the
 disparity between the predicted and genuine output labels.  The basic goal
-in SL is to improve the agent's prediction function which maps from input
+of SL is to improve the agent's prediction function which maps from input
 state to output label so that the cumulative negative reward is minimized.
 
 It's useful to draw a schematic picture which highlights similarities and
@@ -50,7 +50,7 @@ several challenges not present in SL:
 +  Reward delay problem
 
    An RL agent can experience a long delay between the instant when it
-   performs some relevant action and the time when the environment issues an
+   performs some action and the time when the environment issues an
    associated reward signal.  In the interim, the agent generally performs
    other actions which become entangled with the eventual reward.  In
    contrast, reward signals in supervised learning settings are immediate
@@ -76,70 +76,70 @@ cross entropy loss for SL classification.  Given a set of training inputs
 $x_i$ and outputs $y_i$ , we let $q$ represent the probability distribution
 for the truth data and $p$ denote the probability distribution for the
 prediction model.  Since $p$ should be as close as possible to $q$, the
-Kullback-Leibler divergence of $p$ from $q$ should be minimal.  The KL
-divergence enters into the definition of cross entropy between $q$ and $p$:
+Kullback-Leibler divergence of $p$ from $q$ should be minimal.  
+
+The KL divergence enters into the definition of cross entropy between $q$
+and $p$:
 
 $$ H(q,p) = H(q) + D_{KL}(q || p)  $$
 
-$$ -E_q (\log p) = -E_q(\log q) + E_q \bigl(\log(q / p) \bigr) . $$
+$$ -E_q (\log p) = -E_q(\log q) + E_q \bigl(\log(q / p) \bigr) \> . $$
 
-As the ground-truth entropy $H(q)$ may be regarded as an unimportant
-invariant, minimizing $D_{KL}$ with respect to $p$ is equivalent to
+The ground-truth entropy $H(q)$ may be regarded as an unimportant
+invariant.  So minimizing $D_{KL}$ with respect to $p$ is equivalent to
 minimizing $H(q,p)$.  The cross entropy loss function consequently assumes
-the form 
+the form
 
 $$ \begin{align}
 {\cal{L}}_{SL} & = - 
         \sum_{ \substack{ {\rm training} \\ {\rm samples} \, x, y} }
         q(x) \log p(y | x) \\
-	& = - {1 \over N} \sum_{i = 1}^N \log p(y_i|x_i) \\
+	& = - {1 \over N} \sum_{i = 1}^N \log p(y_i|x_i) \> . \\
 \end{align}
 $$
 
-In order to transition from supervised to reinforcement learning problems,
-we follow figure 1 and substitute state $s_t$ for input $x_i$.  The agent is
-assumed to follow a stochastic policy $\pi(a|s)$ which specifies the
-probability it will execute action $a$ when the environment is in state
-$s$.  We therefore replace SL output label $y_i$ by RL sampled action
-$a_t$.
+In order to begin converting this SL loss expression to an RL loss
+function, we first rename variables following figure 1 and substitute state
+$s_t$ for input $x_i$.  The agent is assumed to follow a stochastic policy
+$\pi(a|s)$ which specifies the probability it will execute action $a$ when
+the environment is in state $s$.  We therefore replace SL output label
+$y_i$ by RL sampled action $a_t$ and probability distribution $p$ by $\pi$.
 
-
-Reinforcement learning also utilizes three functions to quantify expected
-cumulative returns given particular environment states and agent actions.
-Firstly, the state-value function
+RL loss also depends upon cumulative returns which are quantified by three
+related functions.  The first state-value function
 
 $$ V^\pi(s) = E \bigl[ r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots | 
 s_t = s \bigr] $$
 
 measures expected future return when the environment starts in state $s$
 and follows policy $\pi$.  The discount factor $0 < \gamma < 1$ appearing
-in this expression reduces long term dependencies by downweighting future
-rewards.  Secondly, the state-action value function
+in this equation reduces long term dependencies by downweighting future
+rewards.  The second state-action value function
 
 $$ Q^\pi(s,a) = E \bigl[ r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots | 
 s_t = s, a_t = a \bigr]
 $$
 
 measures expected future return given starting environment state $s$ and
-agent action $a$.  Finally, the advantage function
+agent action $a$.  The third advantage function
 
 $$ A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s) $$
 
 quantifies how much more valuable is the agent's performing action $a$
 rather than the expected action coming from policy $\pi$.
 
-The reinforcement learning loss function is similar to that in eqn 2 for
-supervised learning.  But an advantage function estimator
+The reinforcement learning loss function incorporates an advantage function
+estimator
 
 $$ \hat{A}_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots - V^\pi_t $$
 
-is used to modulate its individual terms:
+as training sample modulators:
 
 $$ {\cal{L}}_{RL} = - {1 \over T} \sum_{t = 0}^{T-1} \hat{A}_t \log \pi(a_t |
 s_t). $$
 
 Probabilities for good actions with positive advantages are consequently
-increased by this RL loss function, while bad actions with negative
+increased within this RL loss expression, while bad actions with negative
 advantages are discouraged.
 
 It is useful to draw one more analogy between RL and SL when neural
@@ -150,8 +150,7 @@ problems, neural nets may be used to map environment states onto policies
 for agent actions.  The resulting stochastic policy $\pi(a|s;\theta)$ then
 depends parameterically upon a vector $\theta$ of neural network weights.
 
-
-## Deep RL system architecture
+## Deep RL system 
 
 Games provide good test environments for reinforcement learning.  Following
 the release of the Arcade Learning Environment in 2013 [ref], Deep Mind
@@ -250,15 +249,15 @@ ReLU nonlinearity</td>
 ## Pong training results
 
 
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/weight_evolution_montage_1K.jpg)
+*Fig. XX. Training evolution of 10 random weights selected from the 0th,
+1st and 2nd hidden layers of the neural network.*
+
+
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/padded_eventual_rewards.jpg)
 *Fig. XX. RL agent's eventual reward averaged over an entire episode
 plotted as a function of training epoch.  The agent wins against its AI
 opponent when its average eventual reward value becomes positive.*
-
-
-![PongRL]({{site.url}}/blog/images/pong_policy_learning/weight_evolution_montage_1K.jpg)
-*Fig. XX. Training evolution of 10 random weights selected from the 0th,
-1st and 2nd hidden layers of the neural network.*
 
 
 
