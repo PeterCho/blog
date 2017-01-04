@@ -271,11 +271,11 @@ player can obtain is 21.*
 *Fig. XX. Number of ALE frames per Pong episode plotted as a function of
 training epoch.*
 
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=5C4_ztYXZZY"
+<a
+href="http://www.youtube.com/watch?feature=player_embedded&v=5C4_ztYXZZY"
 target="_blank"><img src="http://img.youtube.com/vi/5C4_ztYXZZY/0.jpg"
-alt="IMAGE ALT TEXT HERE" width="720" height="480" border="10" /></a>
-*Fig. XX.  Movie excerpt of RL agent trained via policy gradients playing
+alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+*Fig. XX.  Movie excerpt of RL agent around training epoch 700 playing
 against built-in Pong AI.  Click on image above to play video.*
 
 
