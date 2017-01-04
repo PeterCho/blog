@@ -199,13 +199,12 @@ after cropping, downsampling and temporal differencing.*
 
 The preprocessed screen vector becomes the input layer to a policy neural
 network.  As our input signal is sparse, the standard approach of
-extracting imagery features via initial convolutional layers seems like
-overkill.  After experimenting with several different network
-configurations, we settled upon the one illustrated in figure XX which has
-two fully connected hidden layers.  Following Kaparthy, we neglect biases
-in this network.  But unlike ref[kaparthy], we include 3 softmax nodes in
-the output layer that compute agent probabilities for paddle up, down and
-no movement actions.
+extracting imagery features via initial set of convolutional layers seems
+like overkill.  So we experimented with various fully connected network
+configurations and settled upon the one with two hidden layers illustrated
+in figure XX.  Following Kaparthy, we neglect biases in this network.  But
+unlike ref[kaparthy], we include 3 softmax nodes in the output layer that
+compute agent probabilities for paddle up, down and no movement actions.
 
 The 35K+ weights in the neural network of figure XX are Xavier initialized
 according to the gaussian distribution ${\cal N}(0,\sqrt{2}/\sqrt{n_{in}})$
