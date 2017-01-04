@@ -169,7 +169,7 @@ $$
 The "policy gradient" approach to reinforcement learning may be applied to
 a wide range of problems.  Provided stateful world, reward delay,
 exploration vs exploitation and step size problems are not too severe, it
-can yield good results.
+yields interesting results.
 
 ## Deep RL system 
 
@@ -196,6 +196,22 @@ time step into a 1024 binary vector as figure XX illustrates.
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/preprocessing.png)
 *Fig. XX. Raw ALE frames are converted into 32 x 32 binary state vectors
 after cropping, downsampling and temporal differencing.*
+
+The preprocessed screen vector becomes the input layer to a policy neural
+network.  As our input signal is sparse, the standard approach of
+extracting imagery features via initial convolutional layers seems like
+overkill.  After experimenting with several different network
+configurations, we settled upon the one illustrated in figure XX which has
+two fully connected hidden layers.  Following Kaparthy, we neglect biases
+in this network.  But unlike ref[kaparthy], we include 3 softmax nodes in
+the output layer that compute agent probabilities for paddle up, down and
+no movement actions.
+
+The 35K+ weights in the neural network of figure XX are Xavier initialized
+according to the gaussian distribution ${\cal N}(0,\sqrt{2}/\sqrt{n_{in}})$
+[He 2015].  In order to avoid weight death during training, we utilize
+leaky ReLU rather than conventional ReLU nonlinear thresholding in each
+hidden layer node [Maas 2013].
 
 
 
@@ -324,10 +340,14 @@ Learning", Nature 518 ((2015)) 529.](http://files.davidqiu.com/research/nature14
 *.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
 http://karpathy.github.io/2016/05/31/rl/)
 
-*. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 from
-Lecture 6 Coursera notes,
-((2012)).](https://www.coursera.org/learn/neural-networks)
-
 *. [K. He, X. Zhang, S. Ren and J. Sun, "Delving Deep into Rectifiers:
 Surpassing Human-Level Performance on ImageNet Classification",
 arXiv:1502.01852v1 ((2015)).](https://arxiv.org/pdf/1502.01852.pdf)
+
+*. [A.L. Maas, A. Y. Hannun, A.Y. Ng, 
+"Rectifier Nonlinearities Improve Neural Network Acoustic Models",
+Proc. 30th ICML ((2013)).](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
+
+*. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 from
+Lecture 6 Coursera notes,
+((2012)).](https://www.coursera.org/learn/neural-networks)
