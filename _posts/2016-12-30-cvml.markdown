@@ -206,7 +206,11 @@ in figure XX.  Following Kaparthy, we neglect biases in this network.  But
 unlike ref[kaparthy], we include 3 softmax nodes in the output layer that
 compute agent probabilities for paddle up, down and no movement actions.
 
-The 35K+ weights in the neural network of figure XX are Xavier initialized
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/network.png)
+*Fig. XX.  Neural network used to map Pong screen states into action
+probabilities.*
+
+The 35K+ weights inside the neural network of figure XX are Xavier initialized
 according to the gaussian distribution ${\cal N}(0,\sqrt{2}/\sqrt{n_{in}})$
 [He 2015].  In order to avoid weight death during training, we utilize
 leaky ReLU rather than conventional ReLU nonlinear thresholding in each
