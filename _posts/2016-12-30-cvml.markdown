@@ -182,7 +182,7 @@ among RL practioners for developing new algorithms and evaluating their
 performance.  Here we explore the policy gradient method's ability to learn
 to play the Atari game Pong.
 
-We adopt the general approach outlined by Andrej Kaparthy in his excellent
+We adopt the general approach outlined by Andrej Kaparthy in his lucid
 "Pong from Pixels" blog post [ref].  Since Pong screens are so simple, we
 can retain their essential information content even after aggressively
 cropping and subsampling raw 160 x 210 images down to 32 x 32.  Following
@@ -194,7 +194,7 @@ into zeros and ones.  So the Pong environment state is compressed at each
 time step into a 1024 binary vector (see figure XX).
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/preprocessing.png)
-*Fig. XX. Raw ALE frames are converted into 32 x 32 binary state vectors
+*Fig. XX. Raw ALE frames are reduced to 32 x 32 binary state vectors
 after cropping, downsampling and temporal differencing.*
 
 The preprocessed screen vector becomes the input layer to a policy network.
@@ -208,47 +208,32 @@ the network's output layer which compute agent probabilities for paddle up,
 down and no movement actions.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/network.png)
-*Fig. XX.  Neural network which maps compressed Pong screen states into
-action probabilities.*
+*Fig. XX.  Schematic diagram of the network which maps compressed Pong
+screen states into action probabilities.*
 
-The 35K+ weights inside the network of figure XX are Xavier initialized
-according to the gaussian distribution ${\cal N}(0,\sqrt{2}/\sqrt{n_{in}})$
-[He 2015].  In order to avoid weight death during training, we employ
-leaky ReLU rather than conventional ReLU nonlinearities in each hidden
-layer node [Maas 2013].  We also impose L2-regularization to prevent weight
-values from growing without bound.
+The 35K+ weights inside the network of figure XX are initialized according
+to the gaussian distribution ${\cal N}(0,\sqrt{2 / n_{in}})$ [He 2015].  In
+order to avoid weight death during training, we employ leaky ReLU rather
+than conventional ReLU nonlinearities in each hidden layer node [Maas
+2013].  We also impose L2-regularization to discourage weight values from
+growing without bound.
 
 The RL agent plays against a built-in computer AI during each episode of
-Pong.  The agent receives +1 reward whenever it beats the AI and a -1
-penalty whenever it loses.  The episode terminates when either player
-achieves a score of 21.  State, action and reward tuples are computed and
-stored for 20K ALE frames.  Gradient descent of network weights is then
-performed using the batch of 20K tuples.  We utilize RMS propagation to
-update network weights
-[Hinton Coursera].  
+Pong.  The agent receives a +1 reward whenever the AI fails to hit the ball
+and a -1 penalty if it misses.  The episode terminates when either player
+reaches a score of 21.  State, action and reward tuples are computed and
+stored for 20K ALE frames.  Gradient descent is then performed via RMS
+propagation, and network weights are updated [Hinton coursera].  The batch
+of training samples is subsequently discarded, and the next set of 20K
+tuples is collected.
 
-Rather than employing one of the currently popular deep learning software
-packages, we wrote our own C++ code to implement the entire pipeline from
-scratch.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+This RL system for Pong is fairly simple.  It depends upon a set of
+hyperparameters whose empirically determined values are listed in Table 1.
+For pedagogical purposes, we chose to implement the system's neural network
+from scratch in C++ rather than employ one of the many existing deep
+learning software packages.  Fortunately, the network is sufficiently
+compact that it effectively finishes training overnight when run on a
+modern CPU.
 
 <table style="width:100%">
   <thead>
@@ -305,10 +290,9 @@ ReLU nonlinearity</td>
   </tbody>
 </table>
 
-*Table 1.  List of hyperparameter values used within the Deep RL system.*
+*Table 1.  List of hyperparameter values used within the Pong RL system.*
 
-
-## Pong training results
+## RL system training and playing Pong
 
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/weight_evolution_montage_1K.jpg)
@@ -336,8 +320,8 @@ training epoch.*
 href="http://www.youtube.com/watch?feature=player_embedded&v=5C4_ztYXZZY"
 target="_blank"><img src="http://img.youtube.com/vi/5C4_ztYXZZY/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
-*Fig. XX.  Movie excerpt of RL agent around training epoch 700 playing
-against built-in Pong AI.  Click on image above to play video.*
+*Fig. XX.  Movie excerpt of the RL agent playing against the built-in Pong
+AI.  Click on image above to start the video.*
 
 
 ## References
