@@ -191,10 +191,10 @@ successive ALE frames.  But we choose to retain all pixels corresponding to
 the agent's paddle to prevent its disappearing in differenced images if the
 paddle remains stationary.  We further quantize differenced pixel values
 into zeros and ones.  So the Pong environment state is compressed at each
-time step into a 1024 binary vector (see figure XX).
+time step into a 1024 binary vector $\small($ see figure 2 $\small)$.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/preprocessing.png)
-*Fig. XX. Raw ALE frames are reduced to 32 x 32 binary state vectors
+*Fig. 2. Raw ALE frames are reduced to 32 x 32 binary state vectors
 after cropping, downsampling and temporal differencing.*
 
 The preprocessed screen vector becomes the input layer to a policy network.
@@ -202,16 +202,16 @@ As its input signal is sparse, the standard neural network approach of
 extracting imagery features via an initial set of convolutional layers
 seems like overkill.  So we instead experimented with various fully
 connected network configurations and settled upon the one with two hidden
-layers presented in figure XX.  Following Kaparthy, we neglect biases in
-this network.  But unlike ref[kaparthy], we include three softmax nodes in
-the network's output layer which compute agent probabilities for paddle up,
-down and no movement actions.
+layers presented in figure 3.  Following ref[Kaparthy], we neglect biases
+in this network.  But [kaparthy], we include three softmax nodes
+in the network's output layer which compute agent probabilities for paddle
+up, down and no movement actions.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/network.png)
-*Fig. XX.  Schematic diagram of the network which maps compressed Pong
+*Fig. 3.  Schematic diagram of the network which maps compressed Pong
 screen states into action probabilities.*
 
-The 35K+ weights inside the network of figure XX are initialized according
+The 35K+ weights inside the network of figure 3 are initialized according
 to the gaussian distribution ${\cal N}(0,\sqrt{2 / n_{in}})$ [He 2015].  In
 order to avoid weight death during training, we employ leaky ReLU rather
 than conventional ReLU nonlinearities in each hidden layer node [Maas
