@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Learning to Play Atari Pong via Policy Gradients"
+title:  "Teaching an RL Agent to Win at Pong with Minimal Paddle Movement"
 date:   2016-12-30 12:00:00
 categories: Deep Learning
 use_math: true
@@ -316,12 +316,12 @@ player can obtain is 21.*
 *Fig. XX. Number of ALE frames per Pong episode plotted as a function of
 training epoch.*
 
-<a
-href="http://www.youtube.com/watch?feature=player_embedded&v=5C4_ztYXZZY"
-target="_blank"><img src="http://img.youtube.com/vi/5C4_ztYXZZY/0.jpg"
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=xDoBMdJOYco"
+target="_blank"><img src="http://img.youtube.com/vi/xDoBMdJOYco/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
 *Fig. XX.  Movie excerpt of the RL agent playing against the built-in Pong
 AI.  Click on image above to start the video.*
+
 
 
 ## References
