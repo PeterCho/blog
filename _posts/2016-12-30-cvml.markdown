@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Teaching an RL Agent to Win at Pong with Minimal Paddle Movement"
+title:  "Teaching an RL Agent to Lazily Win at Atari Pong"
 date:   2016-12-30 12:00:00
 categories: Deep Learning
 use_math: true
@@ -229,7 +229,7 @@ tuples is collected.
 
 This RL system for Pong is fairly simple.  It depends upon a set of
 hyperparameters whose empirically determined values are listed in Table 1.
-For pedagogical purposes, we chose to implement the system's neural network
+For pedagogical purposes, we choose to implement the system's neural network
 from scratch in C++ rather than employ one of the many existing deep
 learning software packages.  Fortunately, the network is sufficiently
 compact that it effectively finishes training overnight when run on a
@@ -292,37 +292,92 @@ ReLU nonlinearity</td>
 
 *Table 1.  List of hyperparameter values used within the Pong RL system.*
 
-## RL system training and playing Pong
 
+## Jittery versus lazy RL agent Pong playing
 
-![PongRL]({{site.url}}/blog/images/pong_policy_learning/weight_evolution_montage_1K.jpg)
-*Fig. XX. Training evolution of 10 random weights selected from the 0th,
-1st and 2nd hidden layers of the neural network.*
+When training neural networks from scratch and searching for reasonable
+hyperparameter values, it is important to have multiple diagonstics to
+monitor learning progress.  One basic sanity check is to plot the values of
+random weights as the network evolves.  We can then see if learning stalls
+at any point.  For example, we observed weights dying in an earlier version
+of the neural network pictured in figure 3 which utilized ReLU
+nonlinearities.  After changing from ReLU to leaky ReLU activation
+functions, we no longer saw weight movement cease.  Instead, random weights
+typically evolved like those displayed in figure 4 for one particular
+training session of our Pong RL agent.
 
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_weights.jpg)
+*Fig. 4. Training evolution of 10 random weights selected from the input,
+1st and 2nd hidden layers of the neural network in figure 3.*
 
-![PongRL]({{site.url}}/blog/images/pong_policy_learning/padded_eventual_rewards.jpg)
-*Fig. XX. RL agent's eventual reward averaged over an entire episode
-plotted as a function of training epoch.  The agent wins against its AI
-opponent when its average eventual reward value becomes positive.*
+Loss function behavior provides another useful check on network training.
+Since the RL loss function can be either positive or negative, we plot the
+logarithm of its magnitude as a function of training epoch in figure 5.
+While the loss at individual time steps is noisy, the temporally smoothed
+blue curves appearing in the figure reassuringly demonstrate decreasing
+trends.
 
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_loss.jpg)
+*Fig. 5. Plots of "jittery" [LHS] and "lazy" [RHS] RL agent loss function
+magnitudes on a logarithmic scale as functions of training epoch.*
 
+In deep reinforcement learning, we expect an agent to initially take many
+poor random actions which are penalized by the environment.  When playing
+pong, our RL agent almost always loses each match to the built-in AI
+opponent.  Consequently, the agent's discounted reward at each time step is
+$-\gamma^n$ where $n$ denotes the number of ALE frames until it misses the
+ball.  But as training progresses, the agent should learn to make good
+moves rather than bad ones.  So its discounted eventual reward averaged
+over all episode time steps should increase.  The temporally smoothed
+curves in figure 6 illustrate such learning behavior.
 
-![PongRL]({{site.url}}/blog/images/pong_policy_learning/padded_delta_game_scores.jpg)
-*Fig. XX. Difference between game scores for RL agent and built-in AI
-plotted as a function of training epoch.  The maximum score which either
-player can obtain is 21.*
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_erewards.jpg)
+*Fig. 6. Plots of "jittery" [LHS] and "lazy" [RHS] RL agent average
+discounted eventual rewards per episode plotted as functions of training
+epoch.*
 
-![PongRL]({{site.url}}/blog/images/pong_policy_learning/padded_frames_history.jpg)
-*Fig. XX. Number of ALE frames per Pong episode plotted as a function of
-training epoch.*
+As the RL agent becomes more skilled, its volleys against the AI grow
+longer.  Pong game duration therefore goes up during early network
+training.  It is worth noting that the agent can win games against the
+built-in AI even if its averaged discounted eventual reward is slightly
+negative.  In particular, long volleys which the agent ultimately loses
+decrease its eventual reward score more than short winning volleys increase
+its averaged tally.  Of course, the agent's overall game score also
+increases as its pong playing ability improves.  More interestingly, the
+number of ALE frames per game actually goes down when the agent's expertise
+allows it to rapidly win.  Figures 7 and 8 exhibit all of of these learning
+behaviors.
+
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_rewards.jpg)
+*Fig. 7. Differences between game scores for "jittery" and "lazy" RL
+agents and built-in AI plotted as functions of training epoch.  The maximum
+score which either player can obtain is 21.*
+
+![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_frames.jpg)
+*Fig. 8. Number of ALE frames per Pong episode for "jittery" and "lazy" RL
+agents plotted as functions of training epoch.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=xDoBMdJOYco"
 target="_blank"><img src="http://img.youtube.com/vi/xDoBMdJOYco/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
-*Fig. XX.  Movie excerpt of the RL agent playing against the built-in Pong
-AI.  Click on image above to start the video.*
+*Fig. 9.  Movie excerpt of a "jittery" RL agent playing against the
+built-in Pong AI at end of episode 3600 [epoch = 854.87].  Click on image
+above to start the YouTube video.*
 
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=e1Xji8v7MK4"
+target="_blank"><img src="http://img.youtube.com/vi/e1Xji8v7MK4/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+*Fig. 10.  Movie excerpt of a "lazy" RL agent playing against the built-in
+Pong AI during at end of episode 5000 [epoch 920.43].  Click on image above
+to start the video.*
+
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=PsVPIyWaWtU"
+target="_blank"><img src="http://img.youtube.com/vi/PsVPIyWaWtU/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+*Fig. 11.  Movie excerpt of a "super lazy" RL agent playing against the
+built-in Pong AI.  Click on image above to start the video.*
 
 ## References
 
