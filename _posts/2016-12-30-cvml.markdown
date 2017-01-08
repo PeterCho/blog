@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Teaching an RL Agent to Lazily Win at Atari Pong"
+title:  "Teaching a Deep RL Agent to Lazily Win at Atari Pong"
 date:   2016-12-30 12:00:00
 categories: Deep Learning
 use_math: true
@@ -293,37 +293,38 @@ ReLU nonlinearity</td>
 *Table 1.  List of hyperparameter values used within the Pong RL system.*
 
 
-## Jittery versus lazy RL agent Pong playing
+## Hyperactive and lazy RL agent Pong playing
 
 When training neural networks from scratch and searching for reasonable
-hyperparameter values, it is important to have multiple diagonstics to
+hyperparameter values, it is important to have multiple diagnostics to
 monitor learning progress.  One basic sanity check is to plot the values of
 random weights as the network evolves.  We can then see if learning stalls
 at any point.  For example, we observed weights dying in an earlier version
 of the neural network pictured in figure 3 which utilized ReLU
 nonlinearities.  After changing from ReLU to leaky ReLU activation
-functions, we no longer saw weight movement cease.  Instead, random weights
-typically evolved like those displayed in figure 4 for one particular
-training session of our Pong RL agent.
+functions, we never again saw weight movement totally cease.  Instead,
+random weights typically evolved like those displayed in figure 4 for one
+particular training session spanning 2000 epochs of our Pong RL agent.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_weights.jpg)
 *Fig. 4. Training evolution of 10 random weights selected from the input,
 1st and 2nd hidden layers of the neural network in figure 3.*
 
 Loss function behavior provides another useful check on network training.
-Since the RL loss function can be either positive or negative, we plot the
-logarithm of its magnitude as a function of training epoch in figure 5.
-While the loss at individual time steps is noisy, the temporally smoothed
-blue curves appearing in the figure reassuringly demonstrate decreasing
-trends.
+Since sign of the RL loss function can be either positive or negative, we
+plot the logarithm of its magnitude as a function of training epoch in
+figure 5.  While the loss at individual time steps is noisy, the temporally
+smoothed blue curves appearing in the figure reassuringly exhibit
+decreasing trends.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_loss.jpg)
-*Fig. 5. Plots of "jittery" [LHS] and "lazy" [RHS] RL agent loss function
+*Fig. 5. Plots of "hyperactive" [LHS] and "lazy" [RHS] RL agent loss function
 magnitudes on a logarithmic scale as functions of training epoch.*
 
-In deep reinforcement learning, we expect an agent to initially take many
-poor random actions which are penalized by the environment.  When playing
-pong, our RL agent almost always loses each match to the built-in AI
+Since deep reinforcement learning starts with a policy network that is
+randomly initialized, we expect an agent early on in training to take many
+poor actions which are penalized by the environment.  When playing pong,
+our RL agent almost always begins by losing each match to the built-in AI
 opponent.  Consequently, the agent's discounted reward at each time step is
 $-\gamma^n$ where $n$ denotes the number of ALE frames until it misses the
 ball.  But as training progresses, the agent should learn to make good
@@ -332,7 +333,7 @@ over all episode time steps should increase.  The temporally smoothed
 curves in figure 6 illustrate such learning behavior.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_erewards.jpg)
-*Fig. 6. Plots of "jittery" [LHS] and "lazy" [RHS] RL agent average
+*Fig. 6. Plots of "hyperactive" [LHS] and "lazy" [RHS] RL agent average
 discounted eventual rewards per episode plotted as functions of training
 epoch.*
 
@@ -349,18 +350,18 @@ allows it to rapidly win.  Figures 7 and 8 exhibit all of of these learning
 behaviors.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_rewards.jpg)
-*Fig. 7. Differences between game scores for "jittery" and "lazy" RL
+*Fig. 7. Differences between game scores for "hyperactive" and "lazy" RL
 agents and built-in AI plotted as functions of training epoch.  The maximum
 score which either player can obtain is 21.*
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_frames.jpg)
-*Fig. 8. Number of ALE frames per Pong episode for "jittery" and "lazy" RL
+*Fig. 8. Number of ALE frames per Pong episode for "hyperactive" and "lazy" RL
 agents plotted as functions of training epoch.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=xDoBMdJOYco"
 target="_blank"><img src="http://img.youtube.com/vi/xDoBMdJOYco/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
-*Fig. 9.  Movie excerpt of a "jittery" RL agent playing against the
+*Fig. 9.  Movie excerpt of a "hyperactive" RL agent playing against the
 built-in Pong AI at end of episode 3600 [epoch = 854.87].  Click on image
 above to start the YouTube video.*
 
