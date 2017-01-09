@@ -310,9 +310,9 @@ particular training session spanning 2000 epochs of our Pong RL agent.
 1st and 2nd hidden layers of the neural network in figure 3.*
 
 Loss function behavior provides another useful check on network training.
-Since sign of the RL loss function can be either positive or negative, we
-plot the logarithm of its magnitude as a function of training epoch in
-figure 5.  While the loss at individual time steps is noisy, the temporally
+Since the RL loss function sign can be either positive or negative, we plot
+the logarithm of its magnitude as a function of training epoch in figure 5.
+The loss at individual time steps is obviously noisy.  But the temporally
 smoothed blue curves appearing in the figure reassuringly exhibit
 decreasing trends.
 
@@ -321,9 +321,9 @@ decreasing trends.
 magnitudes on a logarithmic scale as functions of training epoch.*
 
 Since deep reinforcement learning starts with a policy network that is
-randomly initialized, we expect an agent early on in training to take many
-poor actions which are penalized by the environment.  When playing pong,
-our RL agent almost always begins by losing each match to the built-in AI
+randomly initialized, we expect an agent to take many poor actions early on
+in traiing which are penalized by the environment.  When playing pong, our
+RL agent almost always begins by losing each match to the built-in AI
 opponent.  Consequently, the agent's discounted reward at each time step is
 $-\gamma^n$ where $n$ denotes the number of ALE frames until it misses the
 ball.  But as training progresses, the agent should learn to make good
@@ -336,17 +336,17 @@ curves in figure 6 illustrate such learning behavior.
 discounted eventual rewards per episode plotted as functions of training
 epoch.*
 
-As the RL agent becomes more skilled, its volleys against the AI grow
-longer.  Pong game duration therefore goes up during early network
-training.  It is worth noting that the agent can win games against the
-built-in AI even if its averaged discounted eventual reward is slightly
-negative.  In particular, long volleys which the agent ultimately loses
-decrease its eventual reward score more than short winning volleys increase
-its averaged tally.  Of course, the agent's overall game score also
-increases as its pong playing ability improves.  More interestingly, the
-number of ALE frames per game actually goes down when the agent's expertise
-allows it to rapidly win.  Figures 7 and 8 exhibit all of of these learning
-behaviors.
+As the RL agent becomes more skilled, matches against the built-in AI grow
+longer as it more frequently returns Pong shots.  Game duration
+consequently goes up during early network training.  It is worth noting
+that the agent can win games against the AI opponent even if its averaged
+discounted eventual reward is slightly negative.  In particular, long
+volleys which the agent ultimately loses decrease its eventual reward score
+more than short winning volleys increase its averaged tally.  Of course,
+the agent's overall game score also increases as its pong playing ability
+improves.  Eventually, the number of ALE frames per game actually goes down
+once the agent's expertise enables it to rapidly win.  All of these
+learning behaviors are exhibited in Figures 7 and 8.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_rewards.jpg)
 *Fig. 7. Differences between game scores for "hyperactive" and "lazy" RL
@@ -357,13 +357,53 @@ score which either player can obtain is 21.*
 *Fig. 8. Number of ALE frames per Pong episode for "hyperactive" and "lazy" RL
 agents plotted as functions of training epoch.*
 
+Of course, the most compelling demonstration of Pong reinforcement learning
+is actual agent play against the built-in AI.  The movie excerpt presented
+in figure XX shows the endgame for episode 3600 which corresponds to epoch
+854.87 in the LHS plots of figures 5 through 8.  Around this point in
+training, the Pong agent's game playing performance is just starting to
+grow superior to its opponent.  Indeed, the agent beats the AI 21 to 20 at
+the end of the movie in figure XX.  With more training, the RL agent
+discovers a systematic defect in the AI's response.  It learns to exploit
+this weakness and consistently crushes its opponent after 2000 training
+epochs.
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=xDoBMdJOYco"
 target="_blank"><img src="http://img.youtube.com/vi/xDoBMdJOYco/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
 *Fig. 9.  Movie excerpt of a "hyperactive" RL agent playing against the
-built-in Pong AI at end of episode 3600 [epoch = 854.87].  Click on image
-above to start the YouTube video.*
+built-in Pong AI at end of episode 3600.  Click on image above to start the
+YouTube video.*
 
+Our deep agent learns to win at Atari Pong via policy gradients.  But as
+the movie excerpt clearly illustrates, its paddle movement exhibits
+significant high frequency jitter.  The agent's jerky motions seem
+unnecessary, and we label its playing "hyperactive".  It's natural to ask
+if some sort of low-pass temporal filtering can be performed to reduce the
+jitter.
+
+We consequently conducted more experiments with the same policy network
+setup as pictured in figure 3.  But we had the environment modify the ALE's
+per-frame reward by a small penalty proportional to the agent's
+instantaneous acceleration magnitude:
+
+$$ {\rm Modified \> reward} = {\rm ALE \> reward}
+ - \alpha \bigl( y[n] - 2 y[n - 1] + y[n-2] \bigr) $$
+
+where $y[n]$ denotes the paddle's coordinate at the $n$th timestep.  After
+some empirical tests, we set proportionality coefficient $\alpha = 1E-3$
+for the paddle acceleration penalty term.
+
+Depending upon the policy network's random initialization, the inclusion of
+the anti-jitter reward signal sometimes causes the RL agent to become
+trapped in state space regions where it never learns to play pong
+effectively.  But in other cases, the weak penalty modification clearly
+induces the RL agent to play pong more like the way a human would.  In
+particular, the agent frequently selects the "no operation" action when the
+pong ball is located far away from its paddle.  As the movie in figure XX
+illustrates, the agent's new policy expends much less paddle energy than
+its hyperactive counterpart.  We call the more relaxed RL agent which
+avoids unnecessary paddle accelerations a "lazy" Pong player.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=e1Xji8v7MK4"
 target="_blank"><img src="http://img.youtube.com/vi/e1Xji8v7MK4/0.jpg"
@@ -372,6 +412,17 @@ alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
 Pong AI during at end of episode 5000 [epoch 920.43].  Click on image above
 to start the video.*
 
+We close by noting that one RL agents trained with the anti-acceleration
+reward signal stumbled upon the ultimate lazy player's solution.  In
+particular, it found that by moving a few steps away from its starting
+position and staying put, the agent could return every shot sent to its
+side of the court by the AI opponent.  This "super lazy" agent could thus
+win Pong games 21 to 0 without ever moving!  We note that the AI opponent
+did not always oblige the RL agent by shooting balls straight at its fixed
+location.  So this "super lazy" learned policy is not as good as the one
+corresponding to the reward curve on the RHS of figure 7.  But as the movie
+in figure XX illustrates, this randomly discovered strategy for playing
+Pong is very amusing.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=PsVPIyWaWtU"
 target="_blank"><img src="http://img.youtube.com/vi/PsVPIyWaWtU/0.jpg"
