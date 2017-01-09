@@ -8,34 +8,34 @@ use_math: true
 
 ## Reinforcement learning vs supervised learning 
 
-Reinforcement Learning $(\rm RL)$ is typically described in terms of an
-agent interacting with an *a priori* unknown environment.  The
+Reinforcement Learning $\small($ RL $\small)$ is typically described in
+terms of an agent interacting with an *a priori* unknown environment.  The
 environment's starting state is first sampled from some underlying
 distribution.  The agent observes the state and performs some action.  The
 environment then issues a reward whose dependence upon the state and action
 is initially unknown and stochastic.  The basic goal of RL is to improve
 the agent's policy function which maps from environment state history to
-agent action so that the cumulative reward is maximized.
+agent action so that its cumulative reward is maximized.
 
-Supervised Learning $(\rm SL)$ may be regarded as a special case of
-Reinforcement Learning.  The environment first samples pairs of input
-states and corresponding output labels from some distribution.  The agent
-observes an input state and makes a prediction for the output label.  The
-environment subsequently issues a negative reward which depends upon the
-disparity between the predicted and genuine output labels.  The basic goal
-of SL is to improve the agent's prediction function which maps from input
-state to output label so that the cumulative negative reward is minimized.
+Supervised Learning $\small($ SL $\small)$ may be regarded as a special
+case of Reinforcement Learning.  The environment first samples pairs of
+input states and corresponding output labels from some distribution.  The
+agent observes an input state and makes a prediction for the output label.
+The environment subsequently issues a negative reward which depends upon
+the disparity between the predicted and genuine output labels.  The basic
+goal of SL is to improve the agent's prediction function which maps from
+input state to output label so that its cumulative negative reward is
+minimized.
 
-It's useful to draw a schematic picture which highlights similarities and
+It is useful to draw a schematic picture which highlights similarities and
 differences between reinforcement and supervised learning.  Figure 1
-presents such a diagram adapted from refs [] and [].
+presents such a diagram adapted from refs [1] and [2].
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/RL_vs_SL.png)
 *Fig. 1. Schematic comparison between reinforcement and supervised
-learning.  For RL, time-dependent states, actions and rewards are
-represented by $s_t$, $a_t$ and $r_t$.  For SL, time-independent input
-states, prediction model and output labels are denoted by $x_i$, $h$ and
-$y_i$.*
+learning.  RL time-dependent states, actions and rewards are represented by
+$s_t$, $a_t$ and $r_t$.  SL time-independent input states, prediction model
+and output labels are denoted by $x_i$, $h$ and $y_i$.*
 
 As the figure indicates, reinforcement learning is fundamentally more
 complex than supervised learning.  In particular, RL must contend with
@@ -59,7 +59,7 @@ several challenges not present in SL:
 +  Exploration vs exploitation problem
 
    An RL agent needs encouragement to search unfamiliar parts of state
-   space to avoid getting trapped into locally maximal but globally suboptimal
+   space to avoid becoming trapped in locally maximal but globally suboptimal
    performance regions.  In contrast, an SL agent generally observes all input
    states within its training environment.  
 
@@ -87,8 +87,7 @@ $$ -E_q (\log p) = -E_q(\log q) + E_q \bigl(\log(q / p) \bigr) \> . $$
 
 The ground-truth entropy $H(q)$ may be regarded as an unimportant
 invariant.  So minimizing $D_{KL}$ with respect to $p$ is equivalent to
-minimizing $H(q,p)$.  The cross entropy loss function consequently assumes
-the form
+minimizing $H(q,p)$.  The cross entropy loss function assumes the form
 
 $$ \begin{align}
 L_{SL} & = - 
@@ -98,12 +97,12 @@ L_{SL} & = -
 \end{align}
 $$
 
-In order to begin converting this SL loss expression to an RL loss
-function, we first rename variables following figure 1 and substitute state
-$s_t$ for input $x_i$.  The agent is assumed to follow a stochastic policy
-$\pi(a|s)$ which specifies the probability it will execute action $a$ when
-the environment is in state $s$.  We therefore replace SL output label
-$y_i$ by RL sampled action $a_t$ and probability distribution $p$ by $\pi$.
+In order to begin converting this SL expression into an RL loss function,
+we first rename variables following figure 1.  Input $x_i$ is replaced by
+state $s_t$ and output label $y_i$ by sampled action $a_t$. The agent is
+assumed to follow a stochastic policy $\pi(a|s)$ which specifies the
+probability it will execute action $a$ when the environment is in state
+$s$.  Policy $\pi$ thus takes the place of probability distribution $p$.
 
 RL loss also depends upon cumulative returns which are quantified by three
 related functions.  The first state-value function
@@ -133,7 +132,7 @@ estimator
 
 $$ \hat{A}_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots - V^\pi_t $$
 
-as training sample modulators:
+into training sample modulation coefficients:
 
 $$ L_{RL} = - {1 \over T} \sum_{t = 0}^{T-1} \hat{A}_t \log \pi(a_t |
 s_t). $$
@@ -143,7 +142,7 @@ increased within this RL loss expression, while bad actions with negative
 advantages are discouraged.  Unlike $L_{SL}$ which is always positive, the
 overall sign of $L_{RL}$ is unknown since it generally contains comparable
 numbers of positive and negative terms.  But the magnitude of the RL loss
-should decrease as training proceeds.
+should generally decrease as training proceeds.
 
 It is useful to draw one more analogy between RL and SL when neural
 networks are employed as function approximators.  For classification
@@ -166,29 +165,29 @@ $$ \begin{align}
 \end{align}
 $$
 
-The "policy gradient" approach to reinforcement learning may be applied to
-a wide range of problems.  Provided stateful world, reward delay,
-exploration vs exploitation and step size problems are not too severe, it
-yields interesting results.
+Eqn 4 represents the "policy gradient" approach to reinforcement learning
+which may be applied to a wide range of problems.  Provided stateful world,
+reward delay, exploration vs exploitation and step size problems are not
+too severe, it yields interesting results.
 
 ## Deep RL system 
 
-Games provide good test environments for reinforcement learning.  After
-the release of the Arcade Learning Environment in 2013 [ref], Deep Mind
-researchers published several impressive Atari game learning results based
-upon Deep Q networks [refs].  Following this breakthrough, Atari games in
-particular and computer games in general have become popular benchmarks
-among RL practioners for developing new algorithms and evaluating their
-performance.  Here we explore the policy gradient method's ability to learn
-to play the Atari game Pong.
+Games provide good test environments for reinforcement learning.  After the
+release of the Arcade Learning Environment $\small($ ALE $\small)$ in 2013
+[3], Deep Mind researchers published several impressive Atari game learning
+results based upon Deep Q networks [4,5].  Following this breakthrough,
+Atari games in particular and computer games in general have become popular
+benchmarks among RL practioners for developing new algorithms and
+evaluating their performance.  Here we explore the policy gradient method's
+ability to learn to play the Atari game Pong.
 
-We adopt the general approach outlined by Andrej Kaparthy in his lucid
-"Pong from Pixels" blog post [ref].  Since Pong screens are so simple, we
-can retain their essential information content even after aggressively
-cropping and subsampling raw 160 x 210 images down to 32 x 32.  Following
-Kaparthy, we work with temporally differenced screens rather than sets of
-successive ALE frames.  But we choose to retain all pixels corresponding to
-the agent's paddle to prevent its disappearing in differenced images if the
+We adopt the general approach presented by Andrej Kaparthy in his lucid
+"Pong from Pixels" blog [6].  Since Pong screens are so simple, we can
+retain their essential information content even after aggressively cropping
+and subsampling raw 160 x 210 images down to 32 x 32.  Following Kaparthy,
+we work with temporally differenced screens rather than sets of successive
+ALE frames.  But we choose to retain all pixels corresponding to the
+agent's paddle to prevent its disappearing in differenced images when the
 paddle remains stationary.  We further quantize differenced pixel values
 into zeros and ones.  So the Pong environment state is compressed at each
 time step into a 1024 binary vector $\small($ see figure 2 $\small)$.
@@ -200,38 +199,38 @@ after cropping, downsampling and temporal differencing.*
 The preprocessed screen vector becomes the input layer to a policy network.
 As its input signal is sparse, the standard neural network approach of
 extracting imagery features via an initial set of convolutional layers
-seems like overkill.  So we instead experimented with various fully
-connected network configurations and settled upon the one with two hidden
-layers presented in figure 3.  Following ref[Kaparthy], we neglect biases
-in this network.  But [kaparthy], we include three softmax nodes
-in the network's output layer which compute agent probabilities for paddle
-up, down and no movement actions.
+seems like overkill.  We instead experimented with various fully connected
+network configurations and settled upon the one with two hidden layers
+sketched in figure 3.  Following reference [6], we neglect biases in this
+network.  But unlike [6], we include three softmax nodes in the network's
+output layer which compute agent probabilities for paddle up, down and no
+movement actions.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/network.png)
 *Fig. 3.  Schematic diagram of the network which maps compressed Pong
 screen states into action probabilities.*
 
-The 35K+ weights inside the network of figure 3 are initialized according
-to the gaussian distribution ${\cal N}(0,\sqrt{2 / n_{in}})$ [He 2015].  In
-order to avoid weight death during training, we employ leaky ReLU rather
-than conventional ReLU nonlinearities in each hidden layer node [Maas
-2013].  We also impose L2-regularization to discourage weight values from
-growing without bound.
+The 35K+ networkm weights in figure 3 are initialized according to the
+gaussian distribution ${\cal N}(0,\sqrt{2 / n_{in}})$ [7].  In order to
+avoid weight death during training, we employ leaky ReLU rather than
+conventional ReLU nonlinearities in each hidden layer node [8].  We also
+impose L2-regularization to discourage weight values from growing without
+bound.
 
 The RL agent plays against a built-in computer AI during each episode of
 Pong.  The agent receives a +1 reward whenever the AI fails to hit the ball
-and a -1 penalty if it misses.  The episode terminates when either player
-reaches a score of 21.  State, action and reward tuples are computed and
-stored for 20K ALE frames.  Gradient descent is then performed via RMS
-propagation, and network weights are updated [Hinton coursera].  The batch
-of training samples is subsequently discarded, and the next set of 20K
-tuples is collected.
+and a -1 penalty if it misses.  Episodes terminate when either player
+reaches a score of 21.  We compute and store state, action and reward
+tuples for 20K ALE frames.  Gradient descent is then performed via RMS
+propagation [9], and network weights are updated.  The batch of training
+samples is subsequently discarded, and the next set of 20K tuples is
+collected.
 
-This RL system for Pong is fairly simple.  It depends upon a set of
+Our RL system for Pong is fairly simple.  It depends upon a set of
 hyperparameters whose empirically determined values are listed in Table 1.
-For pedagogical purposes, we choose to implement the system's neural network
-from scratch in C++ rather than employ one of the many existing deep
-learning software packages.  Fortunately, the network is sufficiently
+For pedagogical purposes, we choose to implement the system's neural
+network from scratch in C++ rather than employ one of the many existing
+deep learning software packages.  Fortunately, the network is sufficiently
 compact that it effectively finishes training overnight when run on a
 modern CPU.
 
@@ -258,23 +257,23 @@ gradient descent computation</td>
     <tr>
       <td style="text-align: left">Learning rate</td>
       <td style="text-align: center">1E-3</td>
-      <td style="padding: 0 35px"> Learning rate for RMSProp</td>
+      <td style="padding: 0 35px"> Learning rate for RMS propagation</td>
     </tr>
     <tr>
       <td style="text-align: left">RMSProp decay rate</td>
       <td style="text-align: center">0.9</td>
-      <td style="padding: 0 35px">Decay rate for RMSprop weights cache</td>
+      <td style="padding: 0 35px">Decay rate for RMS propagation weights cache</td>
     </tr>
     <tr>
       <td style="text-align: left">RMSProp denom const</td>
       <td style="text-align: center">1E-5</td>
-      <td style="padding: 0 35px">Constant preventing zero RMSProp denominator</td>
+      <td style="padding: 0 35px">Constant preventing zero RMS propagation denominator</td>
     </tr>
     <tr>
       <td style="text-align: left">Leaky ReLU slope</td>
       <td style="text-align: center">1E-2</td>
       <td style="padding: 0 35px">Slope for negative inputs in Leaky
-ReLU nonlinearity</td>
+ReLU nonlinearities</td>
     </tr>
     <tr>
       <td style="text-align: left"> $\lambda$ </td>
@@ -382,34 +381,39 @@ built-in Pong AI.  Click on image above to start the video.*
 
 ## References
 
-*.  [J. Schulman, "Deep Reinforcement Learning, Lecture 1: Introduction" UC
-Berkeley course CS 294, ((2015))](http://rll.berkeley.edu/deeprlcourse-fa15/docs/2015.08.26.Lecture01Intro.pdf)
+1.  [J. Schulman, "Deep Reinforcement Learning, Lecture 1: Introduction" UC
+Berkeley course CS 294, $\small($ 2015 $\small)$](http://rll.berkeley.edu/deeprlcourse-fa15/docs/2015.08.26.Lecture01Intro.pdf)
 
-*.  [J. Schulman, N. Heess, T. Weber and P. Abbeel, "Gradient Estimation
-using Stochastic Computation Graphs", arXiv: 1506.05254v3 ((2016)).](https://arxiv.org/pdf/1506.05254v3.pdf)
+2.  [J. Schulman, N. Heess, T. Weber and P. Abbeel, "Gradient Estimation
+using Stochastic Computation Graphs", arXiv: 1506.05254v3 
+$\small($ 2016 $\small)$.](https://arxiv.org/pdf/1506.05254v3.pdf)
 
-*.  [M. G. Bellemare, Y. Naddaf, J. Veness and M. Bowling, "The Arcade
+3.  [M. G. Bellemare, Y. Naddaf, J. Veness and M. Bowling, "The Arcade
 Learning Environment: An Evaluation Platform for General Agents", J. AI
-Research 47 ((2013)) 253.](http://www.arcadelearningenvironment.org)
+Research 47 $\small($ 2013 $\small)$
+253.](http://www.arcadelearningenvironment.org)
 
-*.  [V. Mnih, K. Kavukcuoglu, D. Silver, A. Graves, I. Antonoglou,
+4.  [V. Mnih, K. Kavukcuoglu, D. Silver, A. Graves, I. Antonoglou,
 D. Wierstra and M. Riedmiller, "Playing Atari with Deep Reinforcement
-Learning" ((2013)).](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
+Learning" $\small($ 2013 $\small)$
+.](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
 
-*.  [V. Mnih et al, "Human-Level Control through Deep Reinforcement
-Learning", Nature 518 ((2015)) 529.](http://files.davidqiu.com/research/nature14236.pdf)
+5.  [V. Mnih et al, "Human-Level Control through Deep Reinforcement
+Learning", Nature 518 $\small($ 2015 $\small)$
+529.](http://files.davidqiu.com/research/nature14236.pdf)
 
-*.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels", ((2016)).](
-http://karpathy.github.io/2016/05/31/rl/)
+6.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels",
+$\small($ 2016 $\small)$ .]( http://karpathy.github.io/2016/05/31/rl/)
 
-*. [K. He, X. Zhang, S. Ren and J. Sun, "Delving Deep into Rectifiers:
+7. [K. He, X. Zhang, S. Ren and J. Sun, "Delving Deep into Rectifiers:
 Surpassing Human-Level Performance on ImageNet Classification",
-arXiv:1502.01852v1 ((2015)).](https://arxiv.org/pdf/1502.01852.pdf)
+arXiv:1502.01852v1 $\small($ 2015
+$\small)$.](https://arxiv.org/pdf/1502.01852.pdf)
 
-*. [A.L. Maas, A. Y. Hannun, A.Y. Ng, 
-"Rectifier Nonlinearities Improve Neural Network Acoustic Models",
-Proc. 30th ICML ((2013)).](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
+8. [A.L. Maas, A. Y. Hannun, A.Y. Ng, "Rectifier Nonlinearities Improve
+Neural Network Acoustic Models", Proc. 30th ICML $\small($ 2013
+$\small)$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
 
-*. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 from
-Lecture 6 Coursera notes,
-((2012)).](https://www.coursera.org/learn/neural-networks)
+9. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 from
+Lecture 6 Coursera notes, $\small($ 2012
+$\small)$.](https://www.coursera.org/learn/neural-networks)
