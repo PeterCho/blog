@@ -29,7 +29,7 @@ minimized.
 
 It is useful to draw a schematic picture that highlights similarities and
 differences between reinforcement and supervised learning.  Figure 1
-presents such a diagram adapted from refs [1] and [2].
+presents such a diagram adapted from references [1] and [2].
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/RL_vs_SL.png)
 *Fig. 1. Schematic comparison between reinforcement and supervised
@@ -210,7 +210,7 @@ actions.
 *Fig. 3.  Schematic diagram of the network which maps compressed Pong
 screen states into action probabilities.*
 
-The 35K+ networkm weights in figure 3 are initialized according to the
+The 35K+ network weights in figure 3 are initialized according to the
 gaussian distribution ${\cal N}(0,\sqrt{2 / n_{in}})$ [7].  In order to
 avoid weight death during training, we employ leaky ReLU rather than
 conventional ReLU nonlinearities in each hidden layer node [8].  We also
@@ -299,11 +299,11 @@ hyperparameter values, it is important to have multiple diagnostics to
 monitor learning progress.  One basic sanity check is to plot the values of
 random weights as the network evolves.  We can then see if learning stalls
 at any point.  For example, we observed weights dying in an earlier version
-of the neural network pictured in figure 3 which utilized ReLU
-nonlinearities.  After replacing ReLU nonlinearities by leaky ReLU
-functions, we never again saw weights totally cease to move.  Instead,
-random weights typically evolve like those displayed in figure 4 for one
-representative training session spanning 2000 epochs.
+of the neural network in figure 3 which utilized ReLU nonlinearities.
+After replacing the ReLUs by leaky ReLU functions, we never again witnessed
+weights totally ceasing to move.  Instead, random weights typically evolve
+like those displayed in figure 4 for one representative training session
+spanning 2000 epochs.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_weights.jpg)
 *Fig. 4. Training evolution of 10 random weights selected from the input,
@@ -320,14 +320,14 @@ appearing in the figure reassuringly exhibit downward trends.
 magnitudes on a logarithmic scale as functions of training epoch.*
 
 Since deep reinforcement learning starts with a policy network that is
-randomly initialized, we expect an agent to take many poor actions early on
-in training.  For example, our Pong player begins by losing almost every
-match to the built-in AI opponent.  Consequently, the agent's discounted
-reward at each time step is $-\gamma^n$ where $n$ denotes the number of ALE
-frames until it misses the ball.  But as training progresses, the agent
-should learn to favor good moves over bad ones.  So its discounted eventual
-reward averaged over all episode time steps should increase.  The
-temporally smoothed curves in figure 6 illustrate such learning behavior.
+randomly initialized, we expect an agent to take many poor actions early in
+training.  For example, our Pong player begins by losing almost every match
+to the built-in AI opponent.  Consequently, the agent's discounted reward
+at each time step is $-\gamma^n$ where $n$ denotes the number of ALE frames
+until it misses the ball.  But as training progresses, the agent should
+learn to favor good moves over bad ones.  So its discounted eventual reward
+averaged over all episode time steps should increase.  The temporally
+smoothed curves in figure 6 illustrate such learning behavior.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_erewards.jpg)
 *Fig. 6. Plots of "hyperactive" [LHS] and "lazy" [RHS] RL agent average
@@ -336,34 +336,33 @@ epoch.*
 
 As the RL agent gains skill, matches against the built-in AI grow longer as
 it more frequently returns Pong shots.  Game duration consequently goes up
-during early network training.  It is worth noting that the agent can win
+during early training epochs.  It is worth noting that the agent can win
 games against the AI opponent even if its averaged discounted eventual
 reward is slightly negative.  In particular, long volleys which the agent
 ultimately loses decrease its eventual reward score more than short winning
 volleys increase its averaged tally.  Of course, the agent's overall game
 score also increases as its playing ability improves.  After approximately
-800 training epochs, the number of ALE frames per game starts to dimish as
-the agent's expertise enables it to rapidly win.  Figures 7 and 8 exhibit
+800 epochs, the number of ALE frames per game starts to diminish as the
+agent's expertise enables it to more rapidly win.  Figures 7 and 8 exhibit
 all of these learning indications.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_rewards.jpg)
-*Fig. 7. Differences between final game scores for "hyperactive" and "lazy"
-RL agents and built-in AI plotted as functions of training epoch.  The
-maximum score which either player can obtain is 21.*
+*Fig. 7. Differences between final game scores for "hyperactive" [LHS] and
+"lazy" [RHS] RL agents and built-in AI plotted as functions of training
+epoch.  The maximum score which either player can obtain is 21.*
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_frames.jpg)
-*Fig. 8. Number of ALE frames per Pong episode for "hyperactive" and "lazy" RL
-agents plotted as functions of training epoch.*
+*Fig. 8. Number of ALE frames per Pong episode for "hyperactive" [LHS] and
+"lazy" [RHS] RL agents plotted as functions of training epoch.*
 
-Of course, the most compelling demonstration of Pong reinforcement learning
-is actual agent play against the built-in AI.  The movie excerpt in figure
-9 shows the endgame for episode 3600 which corresponds to epoch 854.87 in
-the LHS plots of figures 5 through 8.  Around this point in training, the
-agent starts playing Pong slightly better than its opponent.  Indeed, the
-agent beats the AI 21 to 20 at the end of the movie in figure 9.  With
-further training, the RL agent discovers a systematic defect in the AI's
-game playing.  By epoch 2000, it has learned to exploit this weakness and
-consistently crush its opponent.
+The most compelling demonstration of reinforcement learning is actual Pong
+play.  The movie in figure 9 excerpts the endgame for episode 3600 which
+corresponds to epoch 854.87 within the left-hand side plots of figures 5
+through 8.  Around this point in training, the agent starts playing Pong
+slightly better than its opponent.  Indeed, the agent beats the AI 21 to 20
+at the end of the movie in figure 9.  With further training, the RL agent
+discovers a systematic defect in the AI's game playing.  By epoch 2000, it
+has learned to exploit this weakness and consistently crush its opponent.
 
 <a
 href="http://www.youtube.com/watch?feature=player_embedded&v=xDoBMdJOYco"
@@ -395,13 +394,12 @@ Depending upon the policy network's random initialization, inclusion of the
 anti-jitter reward signal sometimes causes the RL agent to become trapped
 in state space regions where it never learns to play pong effectively.  But
 in other cases, the weak penalty modification nicely induces the RL agent
-to play pong more like the way a human does.  In particular, the agent
-frequently selects the "no operation" action when the pong ball is located
-far away from its paddle.  As the video clip in figure 10 illustrates, the
-agent expends much less paddle energy when following its new policy rather
-than its previous hyperactive counterpart.  We describe the more relaxed RL
-agent which avoids unnecessary paddle accelerations as a "lazy" Pong
-player.
+to play more like a human.  In particular, the agent frequently selects the
+"no operation" action when the pong ball is located far away from its
+paddle.  As the video clip in figure 10 illustrates, the agent expends much
+less paddle energy when following its new policy rather than its previous
+hyperactive counterpart.  We describe the more relaxed RL agent as a "lazy"
+Pong player.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=e1Xji8v7MK4"
 target="_blank"><img src="http://img.youtube.com/vi/e1Xji8v7MK4/0.jpg"
@@ -418,14 +416,14 @@ side of the court by the AI opponent.  This "ultimate lazy" agent can thus
 win 21 to 0 without ever moving after its first few steps in approximately
 50% of all Pong games!  The AI opponent does not always oblige the RL agent
 by shooting balls straight at its fixed location.  So this "ultimate lazy"
-learned policy is not as good as the one corresponding to the reward curve
-on the RHS of figure 7.  But it is amusing to watch the movie in figure 11
-of this randomly discovered strategy for playing Pong.
+learned policy is not as good as the "lazy" one corresponding to the reward
+curve on the RHS of figure 7.  But it is amusing to watch the movie in
+figure 11 of this randomly discovered strategy for playing Pong.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=PsVPIyWaWtU"
 target="_blank"><img src="http://img.youtube.com/vi/PsVPIyWaWtU/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
-*Fig. 11.  Movie excerpt of a "ultimate lazy" RL agent playing Pong against
+*Fig. 11.  Movie of an "ultimate lazy" RL agent playing Pong against
 the built-in AI.  Click on image above to start the YouTube video.*
 
 ## References
@@ -450,8 +448,8 @@ Learning" $\small{(2013)}$.](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
 Learning", Nature 518 $\small{(2015)}$
 529.](http://files.davidqiu.com/research/nature14236.pdf)
 
-6.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels",
-$\small{(2016)}$.]( http://karpathy.github.io/2016/05/31/rl/)
+6.  [A. Kaparthy, "Deep Reinforcement Learning: Pong from Pixels" blog
+posting, $\small{(2016)}$.]( http://karpathy.github.io/2016/05/31/rl/)
 
 7. [K. He, X. Zhang, S. Ren and J. Sun, "Delving Deep into Rectifiers:
 Surpassing Human-Level Performance on ImageNet Classification",
