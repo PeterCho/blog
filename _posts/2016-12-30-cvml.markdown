@@ -347,9 +347,9 @@ agent's expertise enables it to rapidly win.  Figures 7 and 8 exhibit all
 of these learning indications.
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_rewards.jpg)
-*Fig. 7. Differences between game scores for "hyperactive" and "lazy" RL
-agents and built-in AI plotted as functions of training epoch.  The maximum
-score which either player can obtain is 21.*
+*Fig. 7. Differences between final game scores for "hyperactive" and "lazy"
+RL agents and built-in AI plotted as functions of training epoch.  The
+maximum score which either player can obtain is 21.*
 
 ![PongRL]({{site.url}}/blog/images/pong_policy_learning/montage_frames.jpg)
 *Fig. 8. Number of ALE frames per Pong episode for "hyperactive" and "lazy" RL
@@ -362,8 +362,8 @@ the LHS plots of figures 5 through 8.  Around this point in training, the
 agent starts playing Pong slightly better than its opponent.  Indeed, the
 agent beats the AI 21 to 20 at the end of the movie in figure 9.  With more
 training, the RL agent discovers a systematic defect in the AI's game
-playing.  It learns to exploit this weakness and consistently crushes its
-opponent after 2000 training epochs.
+playing.  By 2000 training epochs, it learns to exploit this weakness and
+then consistently crushes its opponent.
 
 <a
 href="http://www.youtube.com/watch?feature=player_embedded&v=xDoBMdJOYco"
