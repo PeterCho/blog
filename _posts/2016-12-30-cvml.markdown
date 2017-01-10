@@ -272,7 +272,7 @@ gradient descent computation</td>
     <tr>
       <td style="text-align: left">Leaky ReLU slope</td>
       <td style="text-align: center">1E-2</td>
-      <td style="padding: 0 35px">Slope for negative inputs in Leaky
+      <td style="padding: 0 35px">Slope for negative domain of Leaky
 ReLU nonlinearities</td>
     </tr>
     <tr>
