@@ -8,6 +8,54 @@ use_math: true
 
 ## English word data
 
+We start with a text file containing 355K English words obtained from the
+github site in ref. [1].  We choose to ignore any words containing fewer
+than 4 or more than 20 letters.  Words containing non-letter characters are
+also discarded.  The resulting trimmed corpus is then split into training,
+validation and testing data sets which respectively contain 312K, 10K and
+26K words.  
+
+Many of the data sets' words such as "ladders", "raven" and "tacking" are
+relatively simple.  But others like those listed in Table 1 are unfamiliar
+$($at least to me$)$, and some originate from foreign languages that have
+presumably been absorbed into English:
+
+<table style="width:100%">
+  <thead>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><b>apteryxes</b></td>
+      <td style="text-align: center"><b>bijwoner</b></td>
+      <td style="text-align: center"><b>chalcotrichite</b></td>
+      <td style="text-align: center"><b>izvozchik</b></td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><b>komatiks</b></td>
+      <td style="text-align: center"><b>muzjiks</b></td>
+      <td style="text-align: center"><b>ootwith</b></td>
+      <td style="text-align: center"><b>pirojki</b></td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><b>rajbansi</b></td>
+      <td style="text-align: center"><b>sovkhoz</b></td>
+      <td style="text-align: center"><b>sulphonamide</b></td>
+      <td style="text-align: center"><b>sybow</b></td>
+    </tr>
+  </tbody>
+</table>
+
+*Table 1.  Examples of challenging entries contained within our trimmed
+"English" word corpus.*
+
+
+
+qaimaqam
+qeri
+iraqis
+qophs
+
+
 ![Hangman]({{site.url}}/blog/images/hangman/word_chars_dist.jpg)
 *Fig. *.  Distribution for numbers of letters in English words.  Words
 containing fewer than four or more than twenty letters are not included in
@@ -68,7 +116,7 @@ ReLU nonlinearities</td>
   </tbody>
 </table>
 
-*Table 1.  List of hyperparameter values used in the Hangman RL system.*
+*Table 2.  List of hyperparameter values used in the Hangman RL system.*
 
 
 ![Hangman]({{site.url}}/blog/images/hangman/avg_eventual_reward.jpg)
@@ -84,15 +132,17 @@ training epoch.
 
 ![Hangman]({{site.url}}/blog/images/hangman/RL_agent_vs_monogram_win_dist.jpg)
 *Fig. *.  Fraction of hangman games won plotted as a function of number of
-letters in words.  The red line in the left plot indicates a mean winning
-fraction of 0.401 for an agent following the RL policy.  The red line in
-the right plots indicates a mean winning fraction of 0.197 for an agent
-following the single letter distribution in figure XX.*
+letters in words.  The red line in the left histogram indicates a mean
+winning fraction of 0.401 for an agent following the RL policy.  The red
+line in the right histogram indicates a mean winning fraction of 0.197 for
+an agent following the single letter distribution in figure XX.*
 
 
 ## References
 
-1.  [J. Schulman, "Deep Reinforcement Learning, Lecture 1: Introduction" UC
+1.  [355K English words available at https://github.com/felixdae/english-words.](https://github.com/felixdae/english-words)
+
+2.  [J. Schulman, "Deep Reinforcement Learning, Lecture 1: Introduction" UC
 Berkeley course CS 294, $\small{(2015)}$](http://rll.berkeley.edu/deeprlcourse-fa15/docs/2015.08.26.Lecture01Intro.pdf)
 
 9. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
