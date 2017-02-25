@@ -6,14 +6,14 @@ categories: Deep Learning
 use_math: true
 ---
 
-## English word data
+## Game words and rules
 
-We start with a text file containing 355K English words obtained from the
-github site in ref. [1].  We choose to ignore any words containing fewer
-than 4 or more than 20 letters.  Words containing non-letter characters are
-also discarded.  The resulting trimmed corpus is then split into training,
+We start by downloading a text file containing 355K English words from the
+github site in ref. [1].  We choose to ignore any words with fewer than 5
+or more than 18 letters.  Words containing non-letter characters are also
+discarded.  The resulting trimmed corpus is then split into training,
 validation and testing data sets which respectively contain 312K, 10K and
-26K words.  
+26K words.
 
 Many of the data sets' words such as "ladders", "raven" and "tacking" are
 relatively simple.  But others like those listed in Table 1 are unfamiliar
@@ -45,24 +45,43 @@ presumably been absorbed into English:
   </tbody>
 </table>
 
-*Table 1.  Examples of challenging entries contained within our trimmed
-"English" word corpus.*
+*Table 1.  Examples of challenging entries within our game word corpus.*
 
+The presence of foreign language words introduces interesting
+counterexamples to conventional rules of English.  For example, the letter
+"q" is always followed by "u" in English words.  But our data sets include
+"qaimaqam, "seqed", "iraqis" and "qophs" which are transliterations of
+arabic and hebrew terms.  Our game word vocabulary is thus challenging.
 
+The basic rules of the hangman word game are simple.  A word is chosen at
+random, and its *a priori* unknown letters are represented by dashes.  The
+player guesses one letter at a time up to some maximum number of turns.  If
+the word does not contain the letter, it is added to a rejected list and
+the number of remaining turns is decremented.  But if the letter occurs in
+the word, its location is revealed among the dashes, and the player is
+allowed to choose another letter without losing a turn.  The player wins if
+he correctly guesses the word before exhausting all his turns.
 
-qaimaqam
-qeri
-iraqis
-qophs
-
+The one free parameter in this version of the hangman game is the maximum
+number of allowed turns $t_{max}$.  If it is too small $($big$)$, the
+player will always lose $($win$)$.  In order to set this parameter to a
+reasonable value, it is useful to construct the letter-count distribution
+for words in our corpus.  As figure 1 illustrates, the distribution peaks
+at 9 letters per word.  We consequently set $t_{max} = 9$.
 
 ![Hangman]({{site.url}}/blog/images/hangman/word_chars_dist.jpg)
-*Fig. *.  Distribution for numbers of letters in English words.  Words
-containing fewer than four or more than twenty letters are not included in
-this histogram.*
+*Fig. 1.  Distribution for numbers of letters within game vocabulary words.*
+
+It is also instructive to compute the frequency distribution for individual
+letters within our word corpus.  According to figure 2, the five most
+common letters are "e", "i", "a", "n" and "s".  One strategy for playing
+hangman is to guess letters following the single-letter distribution.  This
+simple approach consequently provides a baseline for comparison against
+learned game playing behaviors.
 
 ![Hangman]({{site.url}}/blog/images/hangman/monogram_freqs.jpg)
-*Fig. *.   Relative frequency of individual letters appearing in English words.*
+*Fig. 2.   Relative frequency of individual letters appearing within 
+game words.*
 
 ## Reinforcement learning via policy gradients
 
@@ -134,8 +153,8 @@ training epoch.
 *Fig. *.  Fraction of hangman games won plotted as a function of number of
 letters in words.  The red line in the left histogram indicates a mean
 winning fraction of 0.401 for an agent following the RL policy.  The red
-line in the right histogram indicates a mean winning fraction of 0.197 for
-an agent following the single letter distribution in figure XX.*
+line on the right indicates a mean winning fraction of 0.197 for
+an agent following the single letter distribution in figure 2.*
 
 
 ## References
@@ -147,3 +166,6 @@ Berkeley course CS 294, $\small{(2015)}$](http://rll.berkeley.edu/deeprlcourse-f
 
 9. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
 6 Coursera notes $\small{(2012)}$.](https://www.coursera.org/learn/neural-networks)
+
+*.  [P. Bachman, A. Sordoni and A. Trischler, "Towards Information-Seeking
+Agents", arXiv:1612.02705v1 $\small{(2016)}$.](https://arxiv.org/abs/1612.02605)
