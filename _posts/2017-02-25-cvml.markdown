@@ -83,7 +83,32 @@ learned game playing behaviors.
 *Fig. 2.   Relative frequency of individual letters appearing within 
 game words.*
 
-## Reinforcement learning via policy gradients
+## Game learning
+
+In order to teach a machine to play hangman via reinforcement learning, we
+first need to embed every vocabulary word into some vector space.  We could
+use "one-hot" sparse encoding to convert letters "a" - "z" into a
+26-dimensional basis.  But we prefer to instead employ a more compact
+representation which captures English language structure.  We consequently
+work with the language model of Jozefowicz et al [ref] which was trained on
+the One Billion Word Benchmark [ref].  In particular, we use these authors'
+python code to generate 16-dimensional descriptors for each character
+corresponding to ascii values 0 through 255 [Colin post].
+
+During a hangman game, a word with some known and unknown characters is
+represented by concatenating lower-case letter and underscore descriptors.
+Since the maximum letter count in our word corpus is 18, the word vector's
+dimension is $18 \times 16 = 288$.  Words with fewer than 18 letters have
+space character $($corresponding to ascii value = 32$)$ descriptors filling
+their empty slots.
+
+As the game proceeds, we need to keep track of incorrectly guessed letters.
+We consequently append 16-dimensional descriptors for each wrong letter
+after the word vector representation.  Since our game rules permit a
+maximum of 9 wrong letters, the state vector's total length is $(18+9)
+\times 16 = 432$.  Initially, state vector slots 289 through 432 are filled
+with 9 copies of the ascii space descriptor.  But the copies are replaced
+by genuine letter descriptors as wrong guesses are made.
 
 <table style="width:100%">
   <thead>
@@ -147,7 +172,7 @@ training epoch.
 *Fig. *.  Learning curves for training [red] and validation [blue] data sets.*
 
 
-## Hangman game play
+## Game play
 
 ![Hangman]({{site.url}}/blog/images/hangman/RL_agent_vs_monogram_win_dist.jpg)
 *Fig. *.  Fraction of hangman games won plotted as a function of number of
@@ -161,6 +186,19 @@ an agent following the single letter distribution in figure 2.*
 
 1.  [355K English words available at https://github.com/felixdae/english-words.](https://github.com/felixdae/english-words)
 
+*.  [R. Jozefowicz, O. Vinyals, M. Schuster, N. Shazeer and Y. Wu,
+"Exploring the Limits of Language Modeling", arXiv:1602.02410v2 $\small{(2016)}$.](https://arxiv.org/abs/1602.02410)
+
+*. [O. Vinyals and X. Pan, "Language Model on One Billion Word Benchmark" $\small{(2016)}$.](https://github.com/tensorflow/models/tree/master/lm_1b)
+
+*.  [C. Chelba, T. Mikolov, M. Schuster, Q. Ge, T. Brants, P. Koehn and
+T. Robinson, "One Billion Word Benchmark for Measuring Progress in
+Statistical Language Modeling", arXiv:1312.3005v3
+$\small{(2014)}$.](https://arxiv.org/pdf/1312.3005.pdf)
+
+*.  [C. Moris, "Dissecting Google's Billion Word Language Model Part 1:
+Character Embeddings", blog posting $\small{(2016)}$.](http://colinmorris.github.io/blog/1b-words-char-embeddings)
+
 2.  [J. Schulman, "Deep Reinforcement Learning, Lecture 1: Introduction" UC
 Berkeley course CS 294, $\small{(2015)}$](http://rll.berkeley.edu/deeprlcourse-fa15/docs/2015.08.26.Lecture01Intro.pdf)
 
@@ -169,3 +207,4 @@ Berkeley course CS 294, $\small{(2015)}$](http://rll.berkeley.edu/deeprlcourse-f
 
 *.  [P. Bachman, A. Sordoni and A. Trischler, "Towards Information-Seeking
 Agents", arXiv:1612.02705v1 $\small{(2016)}$.](https://arxiv.org/abs/1612.02605)
+
