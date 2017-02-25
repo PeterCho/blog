@@ -8,6 +8,13 @@ use_math: true
 
 ## English word data
 
+![Hangman]({{site.url}}/blog/images/hangman/word_chars_dist.jpg)
+*Fig. *.  Distribution for numbers of letters in English words.  Words
+containing fewer than four or more than twenty letters are not included in
+this histogram.*
+
+![Hangman]({{site.url}}/blog/images/hangman/monogram_freqs.jpg)
+*Fig. *.   Relative frequency of individual letters appearing in English words.*
 
 ## Reinforcement learning via policy gradients
 
@@ -63,17 +70,25 @@ ReLU nonlinearities</td>
 
 *Table 1.  List of hyperparameter values used in the Hangman RL system.*
 
-![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg)
-*Fig. *.  Learning curves for training [red] and validation [blue] data sets.*
 
 ![Hangman]({{site.url}}/blog/images/hangman/avg_eventual_reward.jpg)
 *Fig. *.  Plots of raw [red] and temporally smoothed [blue] RL agent
 average discounted eventual rewards per episode plotted as functions of
 training epoch.
 
+![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg)
+*Fig. *.  Learning curves for training [red] and validation [blue] data sets.*
 
 
 ## Hangman game play
+
+![Hangman]({{site.url}}/blog/images/hangman/RL_agent_vs_monogram_win_dist.jpg)
+*Fig. *.  Fraction of hangman games won plotted as a function of number of
+letters in words.  The red line in the left plot indicates a mean winning
+fraction of 0.401 for an agent following the RL policy.  The red line in
+the right plots indicates a mean winning fraction of 0.197 for an agent
+following the single letter distribution in figure XX.*
+
 
 ## References
 
