@@ -1,0 +1,89 @@
+---
+layout: post
+title:  "Deep Reinforcement Learning of the Hangman Word Game'
+date:   2017-02-25 12:00:00
+categories: Deep Learning
+use_math: true
+---
+
+## English word data
+
+
+## Reinforcement learning via policy gradients
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">Hyperparameter</th>
+      <th style="text-align: center">Value    </th>
+      <th style="text-align: center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Epoch frames</td>
+      <td style="text-align: center">5E4</td>
+      <td style="padding: 0 35px">Number of ALE frames per epoch</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Batch size</td>
+      <td style="text-align: center">2E4</td>
+      <td style="padding: 0 35px">  Number of training inputs per
+gradient descent computation</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Learning rate</td>
+      <td style="text-align: center">1E-3</td>
+      <td style="padding: 0 35px"> Learning rate for RMS propagation</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">RMSProp decay rate</td>
+      <td style="text-align: center">0.9</td>
+      <td style="padding: 0 35px">Decay rate for RMS propagation weights cache</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">RMSProp denom const</td>
+      <td style="text-align: center">1E-5</td>
+      <td style="padding: 0 35px">Constant preventing zero RMS propagation denominator</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Leaky ReLU slope</td>
+      <td style="text-align: center">1E-2</td>
+      <td style="padding: 0 35px">Slope for negative domain of Leaky
+ReLU nonlinearities</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> $\lambda$ </td>
+      <td style="text-align: center">1E-2</td>
+      <td style="padding: 0 35px">L2 regularization coefficient</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> $\gamma$ </td>
+      <td style="text-align: center">0.99</td>
+      <td style="padding: 0 35px">RL discount factor</td>
+    </tr>
+
+  </tbody>
+</table>
+
+*Table 1.  List of hyperparameter values used within the Hangman RL system.*
+
+![Hangman]({{site.url}}/blog/images/pong_policy_learning/RL_vs_SL.png)
+*Fig. *.  Learning curves for training (red) and validation (blue) data sets.*
+
+![Hangman]({{site.url}}/blog/images/pong_policy_learning/RL_vs_SL.png)
+*Fig. *.  Plots of raw (red) and temporally smoothed (blue) RL agent
+average discounted eventual rewards per episode plotted as functions of
+training epoch.
+
+
+
+## Hangman game play
+
+## References
+
+1.  [J. Schulman, "Deep Reinforcement Learning, Lecture 1: Introduction" UC
+Berkeley course CS 294, $\small{(2015)}$](http://rll.berkeley.edu/deeprlcourse-fa15/docs/2015.08.26.Lecture01Intro.pdf)
+
+9. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
+6 Coursera notes $\small{(2012)}$.](https://www.coursera.org/learn/neural-networks)
