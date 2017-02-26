@@ -6,7 +6,7 @@ categories: Deep Learning
 use_math: true
 ---
 
-## Game words and rules
+## Hangman game words and rules
 
 We start by downloading a text file containing 355K English words from the
 github site in ref. [1].  We choose to ignore any words with fewer than 5
@@ -45,7 +45,7 @@ presumably been absorbed into English:
   </tbody>
 </table>
 
-*Table 1.  Examples of challenging entries within our game word corpus.*
+*Table 1.  Examples of challenging game vocabulary words.*
 
 The presence of foreign language words introduces interesting
 counterexamples to conventional rules of English.  For example, the letter
@@ -67,7 +67,7 @@ number of allowed turns $t_{max}$.  If it is too small $($big$)$, the
 player will always lose $($win$)$.  In order to set this parameter to a
 reasonable value, it is useful to construct the letter-count distribution
 for words in our corpus.  As figure 1 illustrates, the distribution peaks
-at 9 letters per word.  We consequently set $t_{max} = 9$.
+at 9 letters per word.  We are thus motivated to set $t_{max} = 9$.
 
 ![Hangman]({{site.url}}/blog/images/hangman/word_chars_dist.jpg)
 *Fig. 1.  Distribution for numbers of letters within game vocabulary words.*
@@ -83,13 +83,13 @@ learned game playing behaviors.
 *Fig. 2.   Relative frequency of individual letters appearing within 
 game words.*
 
-## Game learning
+## Hangman game learning
 
 In order to teach a machine to play hangman via reinforcement learning, we
 first need to embed every vocabulary word into some vector space.  We could
 use "one-hot" sparse encoding to convert letters "a" - "z" into a
 26-dimensional basis.  But we prefer to instead employ a more compact
-representation which captures English language structure.  We consequently
+representation which captures English language structure.  We therefore
 work with the language model of Jozefowicz et al [ref] which was trained on
 the One Billion Word Benchmark [ref].  In particular, we use these authors'
 python code to generate 16-dimensional descriptors for each character
@@ -99,16 +99,36 @@ During a hangman game, a word with some known and unknown characters is
 represented by concatenating lower-case letter and underscore descriptors.
 Since the maximum letter count in our word corpus is 18, the word vector's
 dimension is $18 \times 16 = 288$.  Words with fewer than 18 letters have
-space character $($corresponding to ascii value = 32$)$ descriptors filling
+space character $($corresponding to ascii value 32$)$ descriptors filling
 their empty slots.
 
 As the game proceeds, we need to keep track of incorrectly guessed letters.
 We consequently append 16-dimensional descriptors for each wrong letter
-after the word vector representation.  Since our game rules permit a
-maximum of 9 wrong letters, the state vector's total length is $(18+9)
-\times 16 = 432$.  Initially, state vector slots 289 through 432 are filled
-with 9 copies of the ascii space descriptor.  But the copies are replaced
-by genuine letter descriptors as wrong guesses are made.
+after the word vector representation.  As our game rules permit a maximum
+of 9 wrong letters, the state vector's total length is $(18+9) \times 16 =
+432$.  Initially, state vector slots 289 through 432 are filled with 9
+copies of the ascii space descriptor.  But the copies are replaced by
+genuine letter descriptors as wrong guesses are made.
+
+The 432-dimensional state vector becomes input to a policy neural network.
+After experimenting with several different network architectures, we chose
+the configuration with two hidden layers pictured in figure XX.  The
+softmax action layer contains 26 nodes corresponding to letters 'a' through
+'z'.  The final action sampling node resets the probabilities of any
+already-chosen letters to zero, and it renormalizes the remaining unchosen
+letters' probabilities so that they sum to one.
+
+
+
+The neural network's 714 biases are initialized to 0, while its 75008
+weights are initialized according to the gaussian distribution ${\cal
+N}(0,\sqrt{2 / n_{in}})$.  Leaky ReLU rather than conventional ReLU
+nonlinearities are employed in each hidden layer node to avoid weight death
+during training [ref].  50% dropout is performed on the hidden layers
+during training to combat network overfitting [ref].  L2-regularization is
+also employed to discourage weight values from growing without bound.
+
+
 
 <table style="width:100%">
   <thead>
@@ -172,14 +192,14 @@ training epoch.
 *Fig. *.  Learning curves for training [red] and validation [blue] data sets.*
 
 
-## Game play
+## Hangman game play
 
 ![Hangman]({{site.url}}/blog/images/hangman/RL_agent_vs_monogram_win_dist.jpg)
 *Fig. *.  Fraction of hangman games won plotted as a function of number of
 letters in words.  The red line in the left histogram indicates a mean
 winning fraction of 0.401 for an agent following the RL policy.  The red
-line on the right indicates a mean winning fraction of 0.197 for
-an agent following the single letter distribution in figure 2.*
+line on the right indicates a mean winning fraction of 0.197 if 
+the agent simply follows the single letter distribution in figure 2.*
 
 
 ## References
@@ -198,6 +218,19 @@ $\small{(2014)}$.](https://arxiv.org/pdf/1312.3005.pdf)
 
 *.  [C. Moris, "Dissecting Google's Billion Word Language Model Part 1:
 Character Embeddings", blog posting $\small{(2016)}$.](http://colinmorris.github.io/blog/1b-words-char-embeddings)
+
+*. [K. He, X. Zhang, S. Ren and J. Sun, "Delving Deep into Rectifiers:
+Surpassing Human-Level Performance on ImageNet Classification",
+arXiv:1502.01852v1 $\small{(2015)}$.](https://arxiv.org/pdf/1502.01852.pdf)
+
+*. [A.L. Maas, A. Y. Hannun, A.Y. Ng, "Rectifier Nonlinearities Improve
+Neural Network Acoustic Models", Proc. 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
+
+*.  [N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
+R. Salakhutdinov, "Dropout: A Simple Way to Prevent Neural Networks from
+Overfitting" J. Machine Learning Research $\small{(2014)}$
+1929.](https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf)
+
 
 2.  [J. Schulman, "Deep Reinforcement Learning, Lecture 1: Introduction" UC
 Berkeley course CS 294, $\small{(2015)}$](http://rll.berkeley.edu/deeprlcourse-fa15/docs/2015.08.26.Lecture01Intro.pdf)
