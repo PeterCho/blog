@@ -11,23 +11,22 @@ use_math: true
 In this blog post, we continue our study of Reinforcement Learning $($RL$)$
 ideas and techniques using games as instructive and fun laboratories.  Here
 we focus upon the classic word game "hangman" which involves guessing the
-letter content of *a priori* unknown words.  Unlike the environments within
-our previous RL investigations of maze and Atari pong games, the world
-state is only partially observable in hangman.  So this word game involves
-some interesting differences from the image-based games of our two previous
-postings.
+letter content of *a priori* unknown words.  Unlike the maze and Atari Pong
+environments in our previous RL investigations, the hangman world state is
+only partially observable.  So this word game introduces some interesting
+differences from the image-based games of our past two postings.
 
 We start by downloading a text file containing 355K English words from the
-github site in ref. [1].  We choose to ignore any words with fewer than 5
-or more than 18 letters.  Words containing non-letter characters are also
-discarded.  The resulting trimmed corpus is then split into training,
+github site listed in ref. [1].  We choose to ignore any words with fewer
+than 5 or more than 18 letters.  Words containing non-letter characters are
+also discarded.  The resulting trimmed corpus is then split into training,
 validation and testing data sets which respectively contain 312K, 10K and
 26K words.
 
 Many of the data sets' words such as "ladders", "raven" and "tacking" are
-relatively simple.  But others like those listed in Table 1 are uncommon,
-and some words originate from foreign languages that have presumably been
-absorbed into English:
+relatively simple.  But others like those in Table 1 are uncommon, and some
+words originate from foreign languages that have presumably been absorbed
+into English:
 
 <table style="width:100%">
   <thead>
@@ -54,13 +53,13 @@ absorbed into English:
   </tbody>
 </table>
 
-*Table 1.  Examples of challenging game vocabulary words.*
+*Table 1.  Examples of difficult game vocabulary words.*
 
 The presence of foreign language words introduces interesting
 counterexamples to conventional rules of English.  For example, the letter
 "q" is always followed by "u" in English words.  But our data sets include
 "qaimaqam, "seqed", "iraqis" and "qophs" which are transliterations of
-arabic and hebrew terms.  Our game word vocabulary is thus challenging.
+arabic and hebrew terms.  The game word vocabulary is thus challenging.
 
 The basic rules of the hangman word game are simple.  A word is chosen at
 random, and its *a priori* unknown letters are represented by dashes.  The
@@ -99,10 +98,10 @@ first need to embed every vocabulary word into some vector space.  We could
 use "one-hot" sparse encoding to convert letters "a" - "z" into a
 26-dimensional basis.  But we prefer to instead employ a more compact
 representation which captures English language structure.  We therefore
-work with the language model of Jozefowicz et al [ref] which was trained on
-the One Billion Word Benchmark [ref].  In particular, we use these authors'
-python code to generate 16-dimensional descriptors for each character
-corresponding to ascii values 0 through 255 [Colin post].
+work with the language model of Jozefowicz et al [2] which was trained on
+the One Billion Word Benchmark [3].  In particular, we use these authors'
+python code [4] to generate 16-dimensional descriptors for each character
+corresponding to ascii values 0 through 255 [5].
 
 During a hangman game, a word with some known and unknown characters is
 represented by concatenating lower-case letter and underscore descriptors.
@@ -122,7 +121,7 @@ genuine letter descriptors as wrong guesses are made.
 The 432-dimensional state vector becomes input to a policy neural network.
 After experimenting with several different fully-connected network
 architectures, we chose the configuration with two hidden layers pictured
-in figure XX.  The softmax action layer contains 26 nodes corresponding to
+in figure 3.  The softmax action layer contains 26 nodes corresponding to
 letters 'a' through 'z'.  The final action sampling node resets the
 probabilities of any already-chosen letters to zero, and it renormalizes
 the remaining unchosen letters' probabilities so that they sum to one.
@@ -137,8 +136,8 @@ work with uniform rather than randomly sampled initial weight values to
 avoid English language structure among letters from being swamped by large
 fluctuations.  Leaky ReLU rather than conventional ReLU nonlinearities are
 employed in each hidden layer node to prevent weight death during training
-[ref].  50% dropout on the hidden layers is also performed during training
-to combat network overfitting [ref].  L2-regularization is further employed
+[6].  50% dropout on the hidden layers is also performed during training
+to combat network overfitting [7].  L2-regularization is further employed
 to discourage weight values from diverging.
 
 At the start of each episode, a word is randomly selected from the training
@@ -155,7 +154,7 @@ This reward ranges over the interval $[-1, 1]$, and it linearly decreases
 with the fraction of unfound word letters.  Terminal rewards along with
 state and action information are stored in tuples for 10K episodes batches.
 Network biases and weights are then updated via gradient descent performed
-with RMS propagation [ref].
+with RMS propagation [8].
 
 For pedagogical purposes, we implement the hangman game RL system from
 scratch in C++ rather than employ an existing deep learning software
@@ -224,38 +223,39 @@ during training: loss function, fraction of word letters correctly guessed,
 expected future discounted reward and fraction of games won.  In the end,
 we found training the policy network from scratch for a maximum of 11 turns
 yielded the best results as measured by expected discounted reward and
-fractions of games won.  As figure XX illustrates, expected discounted
+fractions of games won.  As figure 4 illustrates, expected discounted
 reward peaks around training epoch 0.7 and then decline with further
 training:
 
 ![Hangman]({{site.url}}/blog/images/hangman/avg_eventual_reward.jpg)
-*Fig. *.  Raw [red] and temporally smoothed [blue] expected discounted
+*Fig. 4.  Raw [red] and temporally smoothed [blue] expected discounted
 eventual reward per episode plotted as functions of training epoch.  These
 results are based upon limiting the maximum number of game turns
 to 11 during training.*
 
-The game winning fraction values displayed in figure XX rise and fall even
+The game winning fraction values displayed in figure 5 rise and fall even
 more rapidly.  The figure's training and validation curves also exhibit no
 signs of network overfitting.  So we need to perform early stopping on
 policy network training in order to maximize its game playing performance.
 
-![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg) *Fig. *.
-Fractions of games won for training [red] and validation [blue] data sets
-plotted as functions of training epoch.  These results are based upon
-limiting the maxinum number of game turns to 11 during training.*
+![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg)
+*Fig. 5. Fractions of games won by agent stochastically following learned
+policy for training [red] and validation [blue] data sets.  These results
+are based upon limiting the maxinum number of game turns to 11 during
+training.*
 
 ## Game play and results
 
 
-![Hangman]({{site.url}}/blog/images/hangman/montage_cropped_pi_probs.jpg)
-*Fig. *.  Learned letter policy distributions at different turns during a 
-hangman word game.  These plots correspond to training epoch 0.492. *
+![Hangman]({{site.url}}/blog/images/hangman/montage_cropped_p_actions.jpg)
+*Fig. 6.  RL agent letter selection distributions at different turns during a 
+hangman word game. *
 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=qCyQK7YPp1M"
 target="_blank"><img src="http://img.youtube.com/vi/qCyQK7YPp1M/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
-*Fig. *.  Movie of deep RL agent playing 5 episodes of the hangman word
+*Fig. 7.  Movie of deep RL agent playing 5 episodes of the hangman word
 game.  Click on image above to start the YouTube video.*
 
 
@@ -263,7 +263,7 @@ game.  Click on image above to start the YouTube video.*
 
 
 ![Hangman]({{site.url}}/blog/images/hangman/RL_agent_vs_monogram_win_dist.jpg)
-*Fig. *.  Fraction of hangman games won plotted as a function of number of
+*Fig. 8.  Fraction of hangman games won plotted as a function of number of
 letters in test dataset words.  The red line in the left histogram
 indicates a mean winning fraction of 0.401 for an agent following the RL
 policy.  The red line on the right indicates a 0.197 mean winning fraction
@@ -272,36 +272,32 @@ if the agent follows the single letter distribution in figure 2.*
 
 ## References
 
-1.  [355K English words available at https://github.com/felixdae/english-words.](https://github.com/felixdae/english-words)
+1.  [355K English words are available from https://github.com/felixdae/english-words.](https://github.com/felixdae/english-words)
 
-*.  [R. Jozefowicz, O. Vinyals, M. Schuster, N. Shazeer and Y. Wu,
+2.  [R. Jozefowicz, O. Vinyals, M. Schuster, N. Shazeer and Y. Wu,
 "Exploring the Limits of Language Modeling", arXiv:1602.02410v2 $\small{(2016)}$.](https://arxiv.org/abs/1602.02410)
 
-*. [O. Vinyals and X. Pan, "Language Model on One Billion Word Benchmark" $\small{(2016)}$.](https://github.com/tensorflow/models/tree/master/lm_1b)
+3. [O. Vinyals and X. Pan, "Language Model on One Billion Word Benchmark" $\small{(2016)}$.](https://github.com/tensorflow/models/tree/master/lm_1b)
 
-*.  [C. Chelba, T. Mikolov, M. Schuster, Q. Ge, T. Brants, P. Koehn and
+4.  [C. Chelba, T. Mikolov, M. Schuster, Q. Ge, T. Brants, P. Koehn and
 T. Robinson, "One Billion Word Benchmark for Measuring Progress in
 Statistical Language Modeling", arXiv:1312.3005v3
 $\small{(2014)}$.](https://arxiv.org/pdf/1312.3005.pdf)
 
-*.  [C. Moris, "Dissecting Google's Billion Word Language Model Part 1:
+5.  [C. Moris, "Dissecting Google's Billion Word Language Model Part 1:
 Character Embeddings", blog posting $\small{(2016)}$.](http://colinmorris.github.io/blog/1b-words-char-embeddings)
 
-*. [A.L. Maas, A. Y. Hannun, A.Y. Ng, "Rectifier Nonlinearities Improve
+6. [A.L. Maas, A. Y. Hannun, A.Y. Ng, "Rectifier Nonlinearities Improve
 Neural Network Acoustic Models", Proc. 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
 
-*.  [N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
+7.  [N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
 R. Salakhutdinov, "Dropout: A Simple Way to Prevent Neural Networks from
 Overfitting" J. Machine Learning Research $\small{(2014)}$
 1929.](https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf)
 
-
-2.  [J. Schulman, "Deep Reinforcement Learning, Lecture 1: Introduction" UC
-Berkeley course CS 294, $\small{(2015)}$](http://rll.berkeley.edu/deeprlcourse-fa15/docs/2015.08.26.Lecture01Intro.pdf)
-
-9. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
+8. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
 6 Coursera notes $\small{(2012)}$.](https://www.coursera.org/learn/neural-networks)
 
-*.  [P. Bachman, A. Sordoni and A. Trischler, "Towards Information-Seeking
+9.  [P. Bachman, A. Sordoni and A. Trischler, "Towards Information-Seeking
 Agents", arXiv:1612.02705v1 $\small{(2016)}$.](https://arxiv.org/abs/1612.02605)
 
