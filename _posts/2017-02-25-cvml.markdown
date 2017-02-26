@@ -6,7 +6,7 @@ categories: Deep Learning
 use_math: true
 ---
 
-## Hangman game words and rules
+## Game words and rules
 
 We start by downloading a text file containing 355K English words from the
 github site in ref. [1].  We choose to ignore any words with fewer than 5
@@ -83,7 +83,7 @@ learned game playing behaviors.
 *Fig. 2.   Relative frequency of individual letters appearing within 
 game words.*
 
-## Hangman game learning
+## Game reinforcement learning
 
 In order to teach a machine to play hangman via reinforcement learning, we
 first need to embed every vocabulary word into some vector space.  We could
@@ -118,17 +118,40 @@ softmax action layer contains 26 nodes corresponding to letters 'a' through
 already-chosen letters to zero, and it renormalizes the remaining unchosen
 letters' probabilities so that they sum to one.
 
-
+![Hangman]({{site.url}}/blog/images//hangman/hangman_network.jpg)
+*Fig. 3.   Schematic diagram of policy network which maps input word
+states into output letter guesses.*
 
 The neural network's 714 biases are initialized to 0, while its 75008
 weights are initialized according to the gaussian distribution ${\cal
 N}(0,\sqrt{2 / n_{in}})$.  Leaky ReLU rather than conventional ReLU
 nonlinearities are employed in each hidden layer node to avoid weight death
-during training [ref].  50% dropout is performed on the hidden layers
+during training [ref].  50% dropout on the hidden layers is also performed
 during training to combat network overfitting [ref].  L2-regularization is
-also employed to discourage weight values from growing without bound.
+further employed to discourage weight values from diverging.
 
+At the start of each episode, a word is randomly selected from the training
+data set.  The input state vector is forward propagated through the policy
+network, and the RL agent stochastically picks its next letter to guess.
+The episode terminates if all letters in the word are correctly found or if
+the agent runs out of turns.  After a game finishes, the environment emits
+the reward signal 
 
+$$ r = 1 - 2 \times n_{\rm unfound \> letters} / n_{\rm letters \> in \> word}.
+$$
+
+This reward ranges over the interval $[-1, 1]$, and it linearly decreases
+with the fraction of unfound word letters.  Terminal rewards along with
+state and action information are stored in tuples for 10K episodes batches.
+Network biases and weights are then updated via gradient descent performed
+with RMS propagation [ref].
+
+For pedagogical purposes, we implement the hangman game RL system from
+scratch in C++ rather than employ an existing deep learning software
+package.  As it is fairly simple, RL training finishes on a modern CPU in a
+few hours.  We consequently ran several hundred experiments to search for
+reasonable system hyperparameter values.  Table 2 lists our final set of
+empirically-derived hyperparameters.
 
 <table style="width:100%">
   <thead>
@@ -180,7 +203,11 @@ ReLU nonlinearities</td>
   </tbody>
 </table>
 
-*Table 2.  List of hyperparameter values used in the Hangman RL system.*
+*Table 2.  Hyperparameter values used in the Hangman RL system.*
+
+
+
+
 
 
 ![Hangman]({{site.url}}/blog/images/hangman/avg_eventual_reward.jpg)
@@ -192,7 +219,7 @@ training epoch.
 *Fig. *.  Learning curves for training [red] and validation [blue] data sets.*
 
 
-## Hangman game play
+## Game play
 
 ![Hangman]({{site.url}}/blog/images/hangman/RL_agent_vs_monogram_win_dist.jpg)
 *Fig. *.  Fraction of hangman games won plotted as a function of number of
