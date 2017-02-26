@@ -246,9 +246,19 @@ to 11 during training.*
 
 ## Game play and results
 
+
 ![Hangman]({{site.url}}/blog/images/hangman/montage_cropped_pi_probs.jpg)
 *Fig. *.  Learned letter policy distributions at different turns during a 
 hangman word game.  These plots correspond to training epoch 0.492. *
+
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=qCyQK7YPp1M"
+target="_blank"><img src="http://img.youtube.com/vi/qCyQK7YPp1M/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+*Fig. *.  Movie of deep RL agent playing 5 episodes of the hangman word
+game.  Click on image above to start the YouTube video.*
+
+
 
 
 
