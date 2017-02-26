@@ -8,6 +8,15 @@ use_math: true
 
 ## Game words and rules
 
+In this blog post, we continue our study of Reinforcement Learning $($RL$)$
+ideas and techniques using games as instructive and fun laboratories.  Here
+we focus upon the classic word game "hangman" which involves guessing the
+letter content of *a priori* unknown words.  Unlike the environments within
+our previous RL investigations of maze and Atari pong games, the world
+state is only partially observable in hangman.  So this word game has some
+interesting differences from the image-based games in our two previous
+postings.
+
 We start by downloading a text file containing 355K English words from the
 github site in ref. [1].  We choose to ignore any words with fewer than 5
 or more than 18 letters.  Words containing non-letter characters are also
@@ -16,9 +25,9 @@ validation and testing data sets which respectively contain 312K, 10K and
 26K words.
 
 Many of the data sets' words such as "ladders", "raven" and "tacking" are
-relatively simple.  But others like those listed in Table 1 are unfamiliar
-$($at least to me$)$, and some originate from foreign languages that have
-presumably been absorbed into English:
+relatively simple.  But others like those listed in Table 1 are uncommon,
+and some words originate from foreign languages that have presumably been
+absorbed into English:
 
 <table style="width:100%">
   <thead>
@@ -211,38 +220,29 @@ We experimented with different approaches to training the policy network.
 These included training from scratch for entire games, training from
 scratch for partial games, and training from previous partial-game
 networks.  We also explored several metrics to monitor learning progress
-during training.  They included the loss function, the fraction of word
-letters correctly guessed, the fraction of games won, and the expected
-discounted reward
-
-$$ \eta(\pi) = E_{s_0, a_0, \cdots} \Bigl[ \sum_{t = 0}^{\infty} \gamma^t
-r(s_t) \Bigr] $$
-
-where 
-
-$$a_t  \, \tilde \, \pi(a_t | s_t)  \quad {\rm and} \quad 
-s_{t+1} \, \tilde \, P(s_{t+1} | s_t, a_t ). $$
-
-In the end, we found training the policy network from scratch for a maximum
-of 11 turns yielded the best results as measured by fractions of games won
-and expected discounted reward.  As figure XX illustrates, the game winning
-fraction rapidly rises and then declines as training continues.  The
-training and validation curves in this figure also exhibit no signs of
-network overfitting.  Expected discounted reward values displayed in figure
-XX similarly peak before one training epoch is completed and then fall with
-further training.  So we perform early training stopping in order to
-maximize the policy network's game playing performance.
-
-![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg) *Fig. *.
-Fractions of games won for training [red] and validation [blue] data sets
-plotted as functions of training epoch.  These results are based upon
-limiting the maxinum number of game turns to 11 during training.*
+during training: loss function, fraction of word letters correctly guessed,
+expected future discounted reward and fraction of games won.  In the end,
+we found training the policy network from scratch for a maximum of 11 turns
+yielded the best results as measured by expected discounted reward and
+fractions of games won.  As figure XX illustrates, expected discounted
+reward peaks around training epoch 0.7 and then decline with further
+training:
 
 ![Hangman]({{site.url}}/blog/images/hangman/avg_eventual_reward.jpg)
 *Fig. *.  Raw [red] and temporally smoothed [blue] expected discounted
 eventual reward per episode plotted as functions of training epoch.  These
 results are based upon limiting the maximum number of game turns
 to 11 during training.*
+
+The game winning fraction values displayed in figure XX rise and fall even
+more rapidly.  The figure's training and validation curves also exhibit no
+signs of network overfitting.  So we need to perform early stopping on
+policy network training in order to maximize its game playing performance.
+
+![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg) *Fig. *.
+Fractions of games won for training [red] and validation [blue] data sets
+plotted as functions of training epoch.  These results are based upon
+limiting the maxinum number of game turns to 11 during training.*
 
 ## Game play and results
 
