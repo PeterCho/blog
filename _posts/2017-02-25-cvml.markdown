@@ -111,12 +111,12 @@ copies of the ascii space descriptor.  But the copies are replaced by
 genuine letter descriptors as wrong guesses are made.
 
 The 432-dimensional state vector becomes input to a policy neural network.
-After experimenting with several different network architectures, we chose
-the configuration with two hidden layers pictured in figure XX.  The
-softmax action layer contains 26 nodes corresponding to letters 'a' through
-'z'.  The final action sampling node resets the probabilities of any
-already-chosen letters to zero, and it renormalizes the remaining unchosen
-letters' probabilities so that they sum to one.
+After experimenting with several different fully-connected network
+architectures, we chose the configuration with two hidden layers pictured
+in figure XX.  The softmax action layer contains 26 nodes corresponding to
+letters 'a' through 'z'.  The final action sampling node resets the
+probabilities of any already-chosen letters to zero, and it renormalizes
+the remaining unchosen letters' probabilities so that they sum to one.
 
 ![Hangman]({{site.url}}/blog/images//hangman/hangman_network.jpg)
 *Fig. 3.   Schematic diagram of policy network which maps input word
