@@ -123,12 +123,14 @@ letters' probabilities so that they sum to one.
 states into output letter guesses.*
 
 The neural network's 714 biases are initialized to 0, while its 75008
-weights are initialized according to the gaussian distribution ${\cal
-N}(0,\sqrt{2 / n_{in}})$.  Leaky ReLU rather than conventional ReLU
-nonlinearities are employed in each hidden layer node to avoid weight death
-during training [ref].  50% dropout on the hidden layers is also performed
-during training to combat network overfitting [ref].  L2-regularization is
-further employed to discourage weight values from diverging.
+weights are initialized to $\sqrt{2 / n_{in}}$ per layer.  We choose to
+work with uniform rather than randomly sampled initial weight values to
+avoid English language structure among letters from being swamped by large
+fluctuations.  Leaky ReLU rather than conventional ReLU nonlinearities are
+employed in each hidden layer node to prevent weight death during training
+[ref].  50% dropout on the hidden layers is also performed during training
+to combat network overfitting [ref].  L2-regularization is further employed
+to discourage weight values from diverging.
 
 At the start of each episode, a word is randomly selected from the training
 data set.  The input state vector is forward propagated through the policy
@@ -205,28 +207,57 @@ ReLU nonlinearities</td>
 
 *Table 2.  Hyperparameter values used in the Hangman RL system.*
 
+We experimented with different approaches to training the policy network.
+These included training from scratch for entire games, training from
+scratch for partial games, and training from previous partial-game
+networks.  We also explored several metrics to monitor learning progress
+during training.  They included the loss function, the fraction of word
+letters correctly guessed, the fraction of games won, and the expected
+discounted reward
 
+$$ \eta(\pi) = E_{s_0, a_0, \cdots} \Bigl[ \sum_{t = 0}^{\infty} \gamma^t
+r(s_t) \Bigr] $$
 
+where 
 
+$$a_t  \, \tilde \, \pi(a_t | s_t)  \quad {\rm and} \quad 
+s_{t+1} \, \tilde \, P(s_{t+1} | s_t, a_t ). $$
 
+In the end, we found training the policy network from scratch for a maximum
+of 11 turns yielded the best results as measured by fractions of games won
+and expected discounted reward.  As figure XX illustrates, the game winning
+fraction rapidly rises and then declines as training continues.  The
+training and validation curves in this figure also exhibit no signs of
+network overfitting.  Expected discounted reward values displayed in figure
+XX similarly peak before one training epoch is completed and then fall with
+further training.  So we perform early training stopping in order to
+maximize the policy network's game playing performance.
+
+![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg) *Fig. *.
+Fractions of games won for training [red] and validation [blue] data sets
+plotted as functions of training epoch.  These results are based upon
+limiting the maxinum number of game turns to 11 during training.*
 
 ![Hangman]({{site.url}}/blog/images/hangman/avg_eventual_reward.jpg)
-*Fig. *.  Plots of raw [red] and temporally smoothed [blue] RL agent
-average discounted eventual rewards per episode plotted as functions of
-training epoch.
+*Fig. *.  Raw [red] and temporally smoothed [blue] expected discounted
+eventual reward per episode plotted as functions of training epoch.  These
+results are based upon limiting the maximum number of game turns
+to 11 during training.*
 
-![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg)
-*Fig. *.  Learning curves for training [red] and validation [blue] data sets.*
+## Game play and results
+
+![Hangman]({{site.url}}/blog/images/hangman/montage_cropped_pi_probs.jpg)
+*Fig. *.  Learned letter policy distributions at different turns during a 
+hangman word game.  These plots correspond to training epoch 0.492. *
 
 
-## Game play
 
 ![Hangman]({{site.url}}/blog/images/hangman/RL_agent_vs_monogram_win_dist.jpg)
 *Fig. *.  Fraction of hangman games won plotted as a function of number of
-letters in words.  The red line in the left histogram indicates a mean
-winning fraction of 0.401 for an agent following the RL policy.  The red
-line on the right indicates a mean winning fraction of 0.197 if 
-the agent simply follows the single letter distribution in figure 2.*
+letters in test dataset words.  The red line in the left histogram
+indicates a mean winning fraction of 0.401 for an agent following the RL
+policy.  The red line on the right indicates a 0.197 mean winning fraction
+if the agent follows the single letter distribution in figure 2.*
 
 
 ## References
@@ -245,10 +276,6 @@ $\small{(2014)}$.](https://arxiv.org/pdf/1312.3005.pdf)
 
 *.  [C. Moris, "Dissecting Google's Billion Word Language Model Part 1:
 Character Embeddings", blog posting $\small{(2016)}$.](http://colinmorris.github.io/blog/1b-words-char-embeddings)
-
-*. [K. He, X. Zhang, S. Ren and J. Sun, "Delving Deep into Rectifiers:
-Surpassing Human-Level Performance on ImageNet Classification",
-arXiv:1502.01852v1 $\small{(2015)}$.](https://arxiv.org/pdf/1502.01852.pdf)
 
 *. [A.L. Maas, A. Y. Hannun, A.Y. Ng, "Rectifier Nonlinearities Improve
 Neural Network Acoustic Models", Proc. 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
