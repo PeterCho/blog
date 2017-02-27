@@ -241,15 +241,38 @@ policy network training in order to maximize its game playing performance.
 ![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg)
 *Fig. 5. Fractions of games won by agent stochastically following learned
 policy for training [red] and validation [blue] data sets.  These results
-are based upon limiting the maxinum number of game turns to 11 during
+are based upon limiting the maximum number of game turns to 11 during
 training.*
+
+In addition to experimenting with training the neural network and
+monitoring its progress, we also investigated different options for
+exploiting the learned policy.  The validation results pictured in figure 5
+are based upon stochastically sampling $\pi(a)$ to yield the RL agent's
+next guessed letter.  From the figure, we see an optimal validation win
+fraction around 24% occuring near training epoch 0.3.  But we empirically
+found that the game win fraction for the validation data set significantly
+improves to 40% around training epoch 0.49 if we instead always select the
+most probable letter at each turn.  So we adopt this quasi-deterministic
+approach for having the trained RL agent play the hangman word game.
 
 ## Game play and results
 
+Once the RL agent had finished learning, we evaluated its game playing
+performance on the held-out set of 26K testing word data set.  It is
+instructive to first look at the trained agent's decision making as a
+function of game turn.  Figure 6 presents its letter selection
+distributions for game turns 1, 4, 7, 10, 13 and 16:
 
 ![Hangman]({{site.url}}/blog/images/hangman/montage_cropped_p_actions.jpg)
 *Fig. 6.  RL agent letter selection distributions at different turns during a 
-hangman word game. *
+hangman word game.*
+
+The distributions for the first ten turns in each hangman game are almost
+delta functions.  In particular, the RL agent nearly always guesses its
+first ten letters according to the sequence "e", "o", "n", "s", "r", "g",
+"a", "l", "t" and "i".  This subset of letters and their ordering differ
+nontrivially from that which would be derived from the relative frequency
+of individual letters appearing in corpus words plotted in figure 2.
 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=qCyQK7YPp1M"
@@ -292,7 +315,7 @@ Neural Network Acoustic Models", Proc. 30th ICML $\small{(2013)}$.](https://web.
 
 7.  [N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
 R. Salakhutdinov, "Dropout: A Simple Way to Prevent Neural Networks from
-Overfitting" J. Machine Learning Research $\small{(2014)}$
+Overfitting", J. Machine Learning Research $\small{(2014)}$
 1929.](https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf)
 
 8. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
