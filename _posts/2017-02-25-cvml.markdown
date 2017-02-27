@@ -255,11 +255,11 @@ improves to 40% around training epoch 0.49 if we instead always select the
 most probable letter at each turn.  So we adopt this quasi-deterministic
 approach for having the trained RL agent play the hangman word game.
 
-## Game play and results
+## Game play and performance
 
-Once the RL agent had finished learning, we evaluated its game playing
-performance on the held-out set of 26K testing word data set.  It is
-instructive to first look at the trained agent's decision making as a
+Once the RL agent had finished learning, we evaluated its performance
+playing full hangman games on the held-out set of 26K testing words.  It is
+instructive to first examine the trained agent's decision making as a
 function of game turn.  Figure 6 presents its letter selection
 distributions for game turns 1, 4, 7, 10, 13 and 16:
 
@@ -274,6 +274,15 @@ first ten letters according to the sequence "e", "o", "n", "s", "r", "g",
 nontrivially from that which would be derived from the relative frequency
 of individual letters appearing in corpus words plotted in figure 2.
 
+This pattern of letter choices is exhibited within the YouTube movie of the
+RL agent playing 5 representative episodes in figure 7.  As the video
+plays, we see the unknown word initially represented by a set of underscore
+characters.  As the game proceeds, correctly guessed letters colored green
+appear inside the word.  Green letters are also added to the list of
+previously sleected characters along with incorrect guesses colored red.
+Near the bottom of the game window, the top five probabilities for the next
+letter coming from policy $\pi$ are displayed.  The letter with the highest
+probability is colored purple and represents the agent's next guess.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=qCyQK7YPp1M"
 target="_blank"><img src="http://img.youtube.com/vi/qCyQK7YPp1M/0.jpg"
@@ -281,9 +290,13 @@ alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
 *Fig. 7.  Movie of deep RL agent playing 5 episodes of the hangman word
 game.  Click on image above to start the YouTube video.*
 
-
-
-
+By the end of the movie, the RL agent successfully guesses the letter
+contents of three out of the first five random test words.  When the
+agent's performance is measured on the 26K test word data set, its average
+winning game fraction equals 0.401.  Test words containing mroe letters are
+generally easier for the agent to solve, for they usually lead to more
+chances to guess.  The agent's performance as a function of test word
+letter count is plotted within the histogram on the left side of figure 8.
 
 ![Hangman]({{site.url}}/blog/images/hangman/RL_agent_vs_monogram_win_dist.jpg)
 *Fig. 8.  Fraction of hangman games won plotted as a function of number of
@@ -292,6 +305,25 @@ indicates a mean winning fraction of 0.401 for an agent following the RL
 policy.  The red line on the right indicates a 0.197 mean winning fraction
 if the agent follows the single letter distribution in figure 2.*
 
+For comparison, the histogram on the right side of the figure illustrates
+the fraction of games won if the agent simply follows the single letter
+distribution in figure 2.  For all word sizes, the learned policy is
+superior to the baseline strategy.  And the mean performance of the former
+is two times better than that of the latter.  So the RL agent has learned
+something nontrivial about how to play the hangman word game.
+
+Nevertheless, there is certainly much room for reinforcement learning
+improvement.  In particular, we would like to see more intelligent
+dependence of policy letter selection upon input state.  Recent work by
+Bachman et al outlines a more sophisticated approach to solving guessing
+games than the relatively simple one we have presented here [9].  Among the
+applications considered by these authors is the hangman word game.
+Unfortunately, it is difficult to quantitatively compare their system's
+performance with ours given their qualitatively different word corpus and
+game parameters.  
+
+We leave exploration of more advanced deep RL techniques to word games like
+hangman to fugure work.
 
 ## References
 
