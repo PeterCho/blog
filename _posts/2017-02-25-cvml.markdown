@@ -9,24 +9,25 @@ use_math: true
 ## Game words and rules
 
 In this blog post, we continue our study of Reinforcement Learning $($RL$)$
-ideas and techniques using games as instructive and fun laboratories.  Here
-we focus upon the classic word game "hangman" which involves guessing the
-letter content of *a priori* unknown words.  Unlike the maze and Atari Pong
+techniques using games as instructive and fun laboratories.  Here we focus
+upon the classic word game "hangman" which involves guessing the letter
+content of *a priori* unknown words.  Unlike the maze and Atari Pong
 environments in our previous RL investigations, the hangman world state is
-only partially observable.  So this word game introduces some interesting
-differences from the image-based games of our past two postings.
+only partially observable.  So this word game introduces some new
+complications which differ from those of the image-based games in our past
+two postings.
 
 We start by downloading a text file containing 355K English words from the
-github site listed in ref. [1].  We choose to ignore any words with fewer
-than 5 or more than 18 letters.  Words containing non-letter characters are
-also discarded.  The resulting trimmed corpus is then split into training,
-validation and testing data sets which respectively contain 312K, 10K and
-26K words.
+github site in ref. [1].  We choose to ignore any words in the file with
+fewer than 5 or more than 18 letters.  Words containing non-letter
+characters are also discarded.  The resulting trimmed corpus is then split
+into training, validation and testing data sets which respectively contain
+312K, 10K and 26K words.
 
 Many of the data sets' words such as "ladders", "raven" and "tacking" are
-relatively simple.  But others like those in Table 1 are uncommon, and some
-words originate from foreign languages that have presumably been absorbed
-into English:
+relatively simple.  But others like the examples listed in Table 1 are
+uncommon, and some words originate from foreign languages that have
+presumably been absorbed into English:
 
 <table style="width:100%">
   <thead>
@@ -56,19 +57,19 @@ into English:
 *Table 1.  Examples of difficult game vocabulary words.*
 
 The presence of foreign language words introduces interesting
-counterexamples to conventional rules of English.  For example, the letter
-"q" is always followed by "u" in English words.  But our data sets include
+counterexamples to conventional rules of English.  For instance, the letter
+"q" is always followed by "u" in English words.  But our data set includes
 "qaimaqam, "seqed", "iraqis" and "qophs" which are transliterations of
-arabic and hebrew terms.  The game word vocabulary is thus challenging.
+Arabic and Hebrew terms.  The game word vocabulary is thus challenging.
 
-The basic rules of the hangman word game are simple.  A word is chosen at
-random, and its *a priori* unknown letters are represented by dashes.  The
-player guesses one letter at a time up to some maximum number of turns.  If
-the word does not contain the letter, it is added to a rejected list and
-the number of remaining turns is decremented.  But if the letter occurs in
-the word, its location is revealed among the dashes, and the player is
-allowed to choose another letter without losing a turn.  The player wins if
-he correctly guesses the word before exhausting all his turns.
+The basic rules of the hangman game are simple.  A word is chosen at
+random, and its unknown letters are represented by dashes.  The player
+guesses one letter at a time up to some maximum number of turns.  The
+letter is added to a rejected list if the word does not contain it, and the
+number of remaining turns is decremented.  But if the letter occurs in the
+word, its location is revealed among the dashes, and the player is allowed
+to choose another letter without losing a turn.  The player wins if he
+correctly guesses the word before exhausting all his turns.
 
 The one free parameter in this version of the hangman game is the maximum
 number of allowed turns $t_{max}$.  If it is too small $($big$)$, the
@@ -81,11 +82,12 @@ at 9 letters per word.  We are thus motivated to set $t_{max} = 9$.
 *Fig. 1.  Distribution for numbers of letters within game vocabulary words.*
 
 It is also instructive to compute the frequency distribution for individual
-letters within our word corpus.  According to figure 2, the five most
-common letters are "e", "i", "a", "n" and "s".  One strategy for playing
-hangman is to guess letters following the single-letter distribution.  This
-simple approach consequently provides a baseline for comparison against
-learned game playing behaviors.
+letters within our word corpus.  According to figure 2, the ten most common
+letters listed in descending order are "e", "i", "a", "n", "s", "o", "r",
+"t", "l" and "c".  One strategy for playing hangman is to guess letters
+following the single-letter distribution.  This simple approach
+consequently provides a baseline for comparison against learned game
+playing behaviors.
 
 ![Hangman]({{site.url}}/blog/images/hangman/monogram_freqs.jpg)
 *Fig. 2.   Relative frequency of individual letters appearing within 
@@ -94,37 +96,39 @@ game words.*
 ## Game reinforcement learning
 
 In order to teach a machine to play hangman via reinforcement learning, we
-first need to embed every vocabulary word into some vector space.  We could
-use "one-hot" sparse encoding to convert letters "a" - "z" into a
-26-dimensional basis.  But we prefer to instead employ a more compact
-representation which captures English language structure.  We therefore
-work with the language model of Jozefowicz et al [2] which was trained on
-the One Billion Word Benchmark [3].  In particular, we use these authors'
-python code [4] to generate 16-dimensional descriptors for each character
-corresponding to ascii values 0 through 255 [5].
+first need to embed its vocabulary words into some vector space.  We could
+use "one-hot" encoding to convert letters "a" - "z" into a 26-dimensional
+basis.  All letters are then evenly separated in this sparse vector space.
+But we prefer to instead employ a more compact representation which
+captures English language structure.
 
-During a hangman game, a word with some known and unknown characters is
-represented by concatenating lower-case letter and underscore descriptors.
-Since the maximum letter count in our word corpus is 18, the word vector's
-dimension is $18 \times 16 = 288$.  Words with fewer than 18 letters have
-space character $($corresponding to ascii value 32$)$ descriptors filling
-their empty slots.
+We therefore work with the language model of Jozefowicz et al [2] which was
+trained on the One Billion Word Benchmark [3].  These authors' python code
+[4] generates 16-dimensional descriptors for each character corresponding
+to ascii values 0 through 255 [5].  During a hangman game, a word with some
+known and unknown characters is represented by concatenating lower-case
+letter and underscore descriptors.  Since the maximum letter count in our
+word corpus is 18, the word vector's dimension is 288 = 18$\times$16.
+Words with fewer than 18 letters have space character descriptors
+$($corresponding to ascii value 32$)$ filling their empty slots.
 
-As the game proceeds, we need to keep track of incorrectly guessed letters.
-We consequently append 16-dimensional descriptors for each wrong letter
-after the word vector representation.  As our game rules permit a maximum
-of 9 wrong letters, the state vector's total length is $(18+9) \times 16 =
-432$.  Initially, state vector slots 289 through 432 are filled with 9
-copies of the ascii space descriptor.  But the copies are replaced by
-genuine letter descriptors as wrong guesses are made.
+As the game proceeds, we also need to keep track of incorrectly guessed
+letters.  We consequently append 16-dimensional descriptors for each wrong
+letter onto the word vector representation.  As our game rules permit a
+maximum of 9 wrong letters, the state vector's total length is 432 =
+$($18+9$)$$\times$16.  Initially, state vector slots 289 through 432 are
+filled with 9 copies of the 16-dimensional ascii space descriptor.  But the
+copies are replaced by letter descriptors as wrong guesses are made.
 
 The 432-dimensional state vector becomes input to a policy neural network.
 After experimenting with several different fully-connected network
-architectures, we chose the configuration with two hidden layers pictured
-in figure 3.  The softmax action layer contains 26 nodes corresponding to
-letters 'a' through 'z'.  The final action sampling node resets the
-probabilities of any already-chosen letters to zero, and it renormalizes
-the remaining unchosen letters' probabilities so that they sum to one.
+architectures, we chose the configuration with two hidden layers
+schematically pictured in figure 3.  The softmax action layer contains 26
+nodes corresponding to letters 'a' through 'z'.  The final action sampling
+node resets the probabilities of any already-chosen letters to zero, and it
+renormalizes the remaining unchosen letters' probabilities so that they sum
+to one.  Selected letter output may then either be randomly sampled from
+the renormalized distributions or taken to be the most likely choice.
 
 ![Hangman]({{site.url}}/blog/images//hangman/hangman_network.jpg)
 *Fig. 3.   Schematic diagram of policy network which maps input word
@@ -132,13 +136,13 @@ states onto output letter guesses.*
 
 The neural network's 714 biases are initialized to 0, while its 75008
 weights are initialized to $\sqrt{2 / n_{in}}$ per layer.  We choose to
-work with uniform rather than randomly sampled initial weight values to
-avoid English language structure among letters from being swamped by large
-fluctuations.  Leaky ReLU rather than conventional ReLU nonlinearities are
-employed in each hidden layer node to prevent weight death during training
-[6].  50% dropout on the hidden layers is also performed during training
-to combat network overfitting [7].  L2-regularization is further employed
-to discourage weight values from diverging.
+work with uniform rather than random initial weight values to prevent large
+fluctuations from swamping English letter structure.  Leaky ReLU rather
+than conventional ReLU nonlinearities are employed in each hidden layer
+node to avoid weight death during training [6].  50% dropout on the hidden
+layers is performed during training to combat network overfitting [7].
+L2-regularization is further employed to discourage weight values from
+diverging.
 
 At the start of each episode, a word is randomly selected from the training
 data set.  The input state vector is forward propagated through the policy
@@ -160,8 +164,8 @@ For pedagogical purposes, we implement the hangman game RL system from
 scratch in C++ rather than employ an existing deep learning software
 package.  As it is fairly simple, RL training finishes on a modern CPU in a
 few hours.  We consequently ran several hundred experiments to search for
-reasonable system hyperparameter values.  Table 2 lists our final set of
-empirically-derived hyperparameters.
+reasonable system hyperparameters.  Table 2 lists our set of
+empirically-derived hyperparameter values.
 
 <table style="width:100%">
   <thead>
@@ -213,18 +217,18 @@ ReLU nonlinearities</td>
   </tbody>
 </table>
 
-*Table 2.  Hyperparameter values used in the Hangman RL system.*
+*Table 2.  Hyperparameter values used in the hangman game RL system.*
 
 We experimented with different approaches to training the policy network.
 These included training from scratch for entire games, training from
-scratch for partial games, and training from previous partial-game
-networks.  We also explored several metrics to monitor learning progress
-during training: loss function, fraction of word letters correctly guessed,
-expected future discounted reward and fraction of games won.  In the end,
-we found training the policy network from scratch for a maximum of 11 turns
-yielded the best results as measured by expected discounted reward and
-fractions of games won.  As figure 4 illustrates, expected discounted
-reward peaks around training epoch 0.7 and then decline with further
+scratch for partial games, and iteratively training from previous
+partial-game networks.  We also explored various metrics to monitor
+training progress: loss function, fraction of word letters correctly
+guessed, expected future discounted reward and fraction of games won.  In
+the end, we found training the policy network from scratch for a maximum of
+11 turns yielded the best results as measured by expected discounted reward
+and fractions of games won.  As figure 4 illustrates, expected discounted
+reward peaks around training epoch 0.7 and then declines with further
 training:
 
 ![Hangman]({{site.url}}/blog/images/hangman/avg_eventual_reward.jpg)
@@ -236,7 +240,8 @@ to 11 during training.*
 The game winning fraction values displayed in figure 5 rise and fall even
 more rapidly.  The figure's training and validation curves also exhibit no
 signs of network overfitting.  So we need to perform early stopping on
-policy network training in order to maximize its game playing performance.
+policy network training in order to maximize RL agent game playing
+performance.
 
 ![Hangman]({{site.url}}/blog/images/hangman/learning_curves.jpg)
 *Fig. 5. Fractions of games won by agent stochastically following learned
@@ -244,45 +249,46 @@ policy for training [red] and validation [blue] data sets.  These results
 are based upon limiting the maximum number of game turns to 11 during
 training.*
 
-In addition to experimenting with training the neural network and
-monitoring its progress, we also investigated different options for
-exploiting the learned policy.  The validation results pictured in figure 5
-are based upon stochastically sampling $\pi(a)$ to yield the RL agent's
-next guessed letter.  From the figure, we see an optimal validation win
-fraction around 24% occuring near training epoch 0.3.  But we empirically
-found that the game win fraction for the validation data set significantly
-improves to 40% around training epoch 0.49 if we instead always select the
-most probable letter at each turn.  So we adopt this quasi-deterministic
-approach for having the trained RL agent play the hangman word game.
+In addition to experimenting with network training and progress monitoring,
+we also investigated different options for exploiting the learned policy
+$\pi(a)$.  The validation results in figure 5 are based upon stochastically
+sampling $\pi$ to yield the RL agent's next guessed letter.  From the
+figure, we see an optimal validation win fraction around 24% occuring near
+training epoch 0.3.  But we empirically found that the game win fraction
+for the validation data set increases to 40% around training epoch 0.49 if
+we instead always select the most probable letter at each turn.  So we
+adopt this quasi-deterministic letter selection rule for the trained RL
+agent.
 
 ## Game play and performance
 
-Once the RL agent had finished learning, we evaluated its performance
-playing full hangman games on the held-out set of 26K testing words.  It is
-instructive to first examine the trained agent's decision making as a
-function of game turn.  Figure 6 presents its letter selection
-distributions for game turns 1, 4, 7, 10, 13 and 16:
+Once the RL agent finished learning, we evaluated its performance playing
+full hangman games on the held-out set of 26K testing words.  It is
+instructive to first examine the agent's decision making as a function of
+game turn.  Figure 6 presents letter selection distributions for testing
+game turns 1, 4, 7, 10, 13 and 16:
 
 ![Hangman]({{site.url}}/blog/images/hangman/montage_cropped_p_actions.jpg)
 *Fig. 6.  RL agent letter selection distributions at different turns during a 
 hangman word game.*
 
-The distributions for the first ten turns in each hangman game are almost
-delta functions.  In particular, the RL agent nearly always guesses its
-first ten letters according to the sequence "e", "o", "n", "s", "r", "g",
-"a", "l", "t" and "i".  This subset of letters and their ordering differ
-nontrivially from that which would be derived from the relative frequency
-of individual letters appearing in corpus words plotted in figure 2.
+The distributions for the first ten turns in each hangman game are
+essentially delta functions.  In particular, the RL agent nearly always
+guesses according to the sequence "e", "o", "n", "s", "r", "g", "a", "l",
+"t" and "i".  This ordering of the top ten letters differs significantly
+from that derived from the relative frequency of individual letters
+appearing in figure 2.  After the first ten turns, the agent's letter
+selection distributions start exhibiting multi-modal behavior.
 
-This pattern of letter choices is exhibited within the YouTube movie of the
-RL agent playing 5 representative episodes in figure 7.  As the video
-plays, we see the unknown word initially represented by a set of underscore
-characters.  As the game proceeds, correctly guessed letters colored green
-appear inside the word.  Green letters are also added to the list of
-previously sleected characters along with incorrect guesses colored red.
-Near the bottom of the game window, the top five probabilities for the next
-letter coming from policy $\pi$ are displayed.  The letter with the highest
-probability is colored purple and represents the agent's next guess.
+The RL agent's pattern of letter choices can be seen in the YouTube video
+in figure 7 as it plays five representative episodes.  In the movie, we see
+the unknown word initially represented by a set of underscore characters.
+As the game proceeds, correctly guessed letters colored green appear inside
+the word.  Green letters are also added to the list of previously sleected
+characters along with incorrect guesses colored red.  Near the bottom of
+the game window, the top five probabilities for the next letter coming from
+policy $\pi$ are displayed.  The letter with the highest probability is
+colored purple and represents the agent's next guess.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=qCyQK7YPp1M"
 target="_blank"><img src="http://img.youtube.com/vi/qCyQK7YPp1M/0.jpg"
@@ -291,12 +297,12 @@ alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
 game.  Click on image above to start the YouTube video.*
 
 By the end of the movie, the RL agent successfully guesses the letter
-contents of three out of the first five random test words.  When the
-agent's performance is measured on the 26K test word data set, its average
-winning game fraction equals 0.401.  Test words containing mroe letters are
-generally easier for the agent to solve, for they usually lead to more
-chances to guess.  The agent's performance as a function of test word
-letter count is plotted within the histogram on the left side of figure 8.
+contents of three out of five random test words.  When the agent's
+performance is measured on 26K testing words, its average winning game
+fraction equals 0.401.  Words with more letters are generally easier for
+the agent to solve, for they usually lead to more chances to guess.  The
+agent's performance as a function of test word letter count is presented in
+the histogram on the left side of figure 8.
 
 ![Hangman]({{site.url}}/blog/images/hangman/RL_agent_vs_monogram_win_dist.jpg)
 *Fig. 8.  Fraction of hangman games won plotted as a function of number of
@@ -313,16 +319,16 @@ is two times better than that of the latter.  So the RL agent has clearly
 learned something nontrivial about how to play the hangman word game.
 
 Nevertheless, there is much room for reinforcement learning improvement.
-In particular, we would like to see more intelligent dependence of policy
-letter selection upon input state.  Recent work by Bachman et al outlines a
-more sophisticated approach to solving guessing games than the relatively
-simple one we have presented here [9].  Among the applications considered
-by these authors is the hangman word game.  Unfortunately, it is difficult
-to quantitatively compare their system's performance with ours given their
+In particular, we would like to see more intelligent dependence of letter
+selection upon input state.  Recent work by Bachman et al outlines a more
+sophisticated approach to solving guessing games than the relatively simple
+one we have presented here [9].  Among the applications considered by these
+authors is the hangman word game.  Unfortunately, it is difficult to
+quantitatively compare their system's performance with ours given their
 qualitatively different word corpus and game parameters.
 
 We leave exploration of more advanced deep RL techniques to word games like
-hangman to future work.
+hangman for future work.
 
 ## References
 
