@@ -76,7 +76,7 @@ number of allowed turns $t_{max}$.  If it is too small $($big$)$, the
 player will always lose $($win$)$.  In order to set this parameter to a
 reasonable value, it is helpful to construct the letter-count distribution
 for corpus words.  As figure 1 illustrates, the distribution peaks at 9
-letters per word.  We are thus motivated to set $t_{max} = 9$.
+letters per word.  We are thus motivated to set $t_{max}$ = 9.
 
 ![Hangman]({{site.url}}/blog/images/hangman/word_chars_dist.jpg)
 *Fig. 1.  Distribution for numbers of letters in game vocabulary words.*
