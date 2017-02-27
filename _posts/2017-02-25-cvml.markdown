@@ -309,21 +309,20 @@ For comparison, the histogram on the right side of the figure illustrates
 the fraction of games won if the agent simply follows the single letter
 distribution in figure 2.  For all word sizes, the learned policy is
 superior to the baseline strategy.  And the mean performance of the former
-is two times better than that of the latter.  So the RL agent has learned
-something nontrivial about how to play the hangman word game.
+is two times better than that of the latter.  So the RL agent has clearly
+learned something nontrivial about how to play the hangman word game.
 
-Nevertheless, there is certainly much room for reinforcement learning
-improvement.  In particular, we would like to see more intelligent
-dependence of policy letter selection upon input state.  Recent work by
-Bachman et al outlines a more sophisticated approach to solving guessing
-games than the relatively simple one we have presented here [9].  Among the
-applications considered by these authors is the hangman word game.
-Unfortunately, it is difficult to quantitatively compare their system's
-performance with ours given their qualitatively different word corpus and
-game parameters.  
+Nevertheless, there is much room for reinforcement learning improvement.
+In particular, we would like to see more intelligent dependence of policy
+letter selection upon input state.  Recent work by Bachman et al outlines a
+more sophisticated approach to solving guessing games than the relatively
+simple one we have presented here [9].  Among the applications considered
+by these authors is the hangman word game.  Unfortunately, it is difficult
+to quantitatively compare their system's performance with ours given their
+qualitatively different word corpus and game parameters.
 
 We leave exploration of more advanced deep RL techniques to word games like
-hangman to fugure work.
+hangman to future work.
 
 ## References
 
