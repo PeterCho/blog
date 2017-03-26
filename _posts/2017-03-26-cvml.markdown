@@ -1,0 +1,94 @@
+---
+layout: post
+title:  "Teaching an RL agent to play Atari Breakout via Deep Imitation"
+date:   2017-03-26 12:00:00
+categories: Deep Learning
+use_math: true
+---
+
+## Suboptimal minima trap
+
+![Breakout]({{site.url}}/blog/images/hangman/word_chars_dist.jpg)
+*Fig. *.  Distribution for numbers of letters in game vocabulary words.*
+
+## Deep imitation learning
+
+For pedagogical purposes, we implement the hangman game RL system from
+scratch in C++ rather than employ an existing deep learning software
+package.  As it is fairly simple, RL training finishes on a modern CPU in a
+few hours.  We consequently ran several hundred experiments to search for
+reasonable system hyperparameters.  Table 2 lists our set of
+empirically-derived hyperparameter values.
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">Hyperparameter</th>
+      <th style="text-align: center">Value    </th>
+      <th style="text-align: center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Batch size</td>
+      <td style="text-align: center">1E4</td>
+      <td style="padding: 0 35px">  Number of training inputs per
+gradient descent computation</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Learning rate</td>
+      <td style="text-align: center">3E-4</td>
+      <td style="padding: 0 35px"> Learning rate for RMS propagation</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">RMSProp decay rate</td>
+      <td style="text-align: center">0.9</td>
+      <td style="padding: 0 35px">Decay rate for RMS propagation weights cache</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">RMSProp denom const</td>
+      <td style="text-align: center">1E-5</td>
+      <td style="padding: 0 35px">Constant preventing zero RMS propagation denominator</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Leaky ReLU slope</td>
+      <td style="text-align: center">1E-2</td>
+      <td style="padding: 0 35px">Slope for negative domain of Leaky
+ReLU nonlinearities</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> $\lambda$ </td>
+      <td style="text-align: center">1E-4</td>
+      <td style="padding: 0 35px">L2 regularization coefficient</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> $\gamma$ </td>
+      <td style="text-align: center">0.9</td>
+      <td style="padding: 0 35px">RL discount factor</td>
+    </tr>
+
+  </tbody>
+</table>
+
+*Table 2.  Hyperparameter values used in the hangman game RL system.*
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=r7llzBLIfGI"
+target="_blank"><img src="https://youtu.be/r7llzBLIfGI/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+
+*Fig. *.  Movie of the RL agent playing Breakout after having learned to
+imitate the teacher algorithm.  Click on image above to start the YouTube
+video.*
+
+
+## Reinforcement learning refinement
+
+
+## References
+
+8. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
+6 Coursera notes $\small{(2012)}$.](https://www.coursera.org/learn/neural-networks)
+
+9.  [P. Bachman, A. Sordoni and A. Trischler, "Towards Information-Seeking
+Agents", arXiv:1612.02705v1 $\small{(2016)}$.](https://arxiv.org/abs/1612.02605)
+
