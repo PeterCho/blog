@@ -1,5 +1,5 @@
 # Site settings
-title: Fun with Machine Learning, Computer Vision and Graphics
+title: Fun with Machine Learning and Computer Vision
 email: peter.leslie.cho@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
 baseurl: "/blog/" # the subpath of your site, e.g. /blog/

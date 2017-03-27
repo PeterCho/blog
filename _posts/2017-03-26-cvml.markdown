@@ -1,28 +1,25 @@
 ---
 layout: post
-title:  "Teaching an RL agent to play Atari Breakout via Deep Imitation"
+title:  "Teaching an Agent to Play Atari Breakout via Imitative
+Reinforcement Learning"
 date:   2017-03-26 12:00:00
 categories: Deep Learning
 use_math: true
 ---
 
-## Suboptimal minima trap
-
-![Breakout]({{site.url}}/blog/images/hangman/word_chars_dist.jpg)
-*Fig. *.  Distribution for numbers of letters in game vocabulary words.*
-
+## Local minimum trapping
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=rEzXFA_58vw"
 target="_blank"><img src="http://img.youtube.com/vi/rEzXFA_58vw/0.jpg"
-alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+width="600" height="400" /></a>
 
-*Fig. *.  Movie of an RL agent trained via conventional Deep Reinforcement
-Learning becoming trapped within suboptimal minimum.  Paddle quickly learns
-to rush to left wall and remain there.  Click on image above to start the
-YouTube video.*
+*Fig. XX.  Movie of an RL agent playing Atari Breakout after being trained
+via conventional Deep Reinforcement Learning.  Agent rapidly learns to
+score a few points by pinning its paddle on the game window's left wall.
+Click on image above to start the YouTube video.*
 
 
-## Deep imitation learning
+## Imitation learning
 
 For pedagogical purposes, we implement the hangman game RL system from
 scratch in C++ rather than employ an existing deep learning software
@@ -87,21 +84,26 @@ ReLU nonlinearities</td>
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=GkygRAtxcss"
 target="_blank"><img src="http://img.youtube.com/vi/GkygRAtxcss/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
-*Fig. *.  Movie of teacher algorithm playing Breakout.  Click on image
-above to start the YouTube video.*
-
-
+*Fig. XX.  Movie of a "teacher" AI's approach to playing Breakout.  Click
+on image above to start the YouTube video.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=r7llzBLIfGI"
 target="_blank"><img src="http://img.youtube.com/vi/r7llzBLIfGI/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+*Fig. XX.  Movie of a deep RL agent playing Breakout after having learned to
+imitate the "teacher" AI.  Click on image above to start the YouTube video.*
 
-*Fig. *.  Movie of the RL agent playing Breakout after having learned to
-imitate the teacher algorithm.  Click on image above to start the YouTube
-video.*
+## RL refinement
 
+*Fig. XX.  Movie of an imitative agent playing Breakout after its neural
+network is refined by conventional deep reinforcement learning.  Click on
+image above to start the YouTube video.*
 
-## Reinforcement learning refinement
+![Breakout]({{site.url}}/blog/images/breakout/montage_frames_scores.jpg)
+*Fig. XX.  Total number of ALE frames and episode scores plotted for 50 test
+Atari breakout games.  Solid green, blue and red curves correspond to
+naive, imitating and refined RL agents.  Dashed horizontal lines illustrate
+median values for total frame numbers and game scores.*
 
 
 ## References
