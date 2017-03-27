@@ -11,6 +11,17 @@ use_math: true
 ![Breakout]({{site.url}}/blog/images/hangman/word_chars_dist.jpg)
 *Fig. *.  Distribution for numbers of letters in game vocabulary words.*
 
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=rEzXFA_58vw"
+target="_blank"><img src="http://img.youtube.com/vi/rEzXFA_58vw/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+
+*Fig. *.  Movie of an RL agent trained via conventional Deep Reinforcement
+Learning becoming trapped within suboptimal minimum.  Paddle quickly learns
+to rush to left wall and remain there.  Click on image above to start the
+YouTube video.*
+
+
 ## Deep imitation learning
 
 For pedagogical purposes, we implement the hangman game RL system from
@@ -72,8 +83,17 @@ ReLU nonlinearities</td>
 
 *Table 2.  Hyperparameter values used in the hangman game RL system.*
 
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=GkygRAtxcss"
+target="_blank"><img src="http://img.youtube.com/vi/GkygRAtxcss/0.jpg"
+alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+*Fig. *.  Movie of teacher algorithm playing Breakout.  Click on image
+above to start the YouTube video.*
+
+
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=r7llzBLIfGI"
-target="_blank"><img src="https://youtu.be/r7llzBLIfGI/0.jpg"
+target="_blank"><img src="http://img.youtube.com/vi/r7llzBLIfGI/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
 
 *Fig. *.  Movie of the RL agent playing Breakout after having learned to
