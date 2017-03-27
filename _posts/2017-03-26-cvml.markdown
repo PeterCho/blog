@@ -10,8 +10,7 @@ use_math: true
 ## Local minimum trapping
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=rEzXFA_58vw"
-target="_blank"><img src="http://img.youtube.com/vi/rEzXFA_58vw/0.jpg"
-width="600" height="400" /></a>
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/rEzXFA_58vw/0.jpg" width="600" height="400" /></center></a>
 
 *Fig. XX.  Movie of an RL agent playing Atari Breakout after being trained
 via conventional Deep Reinforcement Learning.  Agent rapidly learns to
@@ -82,14 +81,14 @@ ReLU nonlinearities</td>
 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=GkygRAtxcss"
-target="_blank"><img src="http://img.youtube.com/vi/GkygRAtxcss/0.jpg"
-alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+target="_blank"><center><img src="http://img.youtube.com/vi/GkygRAtxcss/0.jpg"
+width="600" height="400" /></center></a>
 *Fig. XX.  Movie of a "teacher" AI's approach to playing Breakout.  Click
 on image above to start the YouTube video.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=r7llzBLIfGI"
-target="_blank"><img src="http://img.youtube.com/vi/r7llzBLIfGI/0.jpg"
-alt="IMAGE ALT TEXT HERE" width="700" height="466" border="10" /></a>
+target="_blank"><center><img src="http://img.youtube.com/vi/r7llzBLIfGI/0.jpg"
+width="600" height="400" /></center></a>
 *Fig. XX.  Movie of a deep RL agent playing Breakout after having learned to
 imitate the "teacher" AI.  Click on image above to start the YouTube video.*
 
