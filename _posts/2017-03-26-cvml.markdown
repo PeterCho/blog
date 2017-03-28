@@ -87,10 +87,12 @@ width="600" height="400" /></center></a>
 on image above to start the YouTube video.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=r7llzBLIfGI"
-target="_blank"><center><img src="http://img.youtube.com/vi/r7llzBLIfGI/0.jpg"
-width="600" height="400" /></center></a>
-*Fig. XX.  Movie of a deep RL agent playing Breakout after having learned to
-imitate the "teacher" AI.  Click on image above to start the YouTube video.*
+target="_blank"><center><img
+src="http://img.youtube.com/vi/r7llzBLIfGI/0.jpg" width="600"
+height="400"/></center></a> 
+*Fig. XX.  Movie of a "student" RL agent playing Breakout after having
+learned to imitate its AI "teacher".  Click on image above to start the
+YouTube video.*
 
 ## RL refinement
 
