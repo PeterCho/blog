@@ -7,16 +7,75 @@ categories: Deep Learning
 use_math: true
 ---
 
-## Local minimum trapping
+## Conventional RL trapping
+
+In this blog posting, we return to Atari games which provide interesting
+and fun laboratories for studying deep Reinforcement Learning $($RL$)$.
+Here we focus upon the game "Breakout" which seems like a minor variant of
+"Pong".  Both are one-player games which involve hitting a moving ball with
+a paddle.  Points are earned in Breakout each time the ball strikes a brick
+within a colored horizontal array appearing near the top of the game
+window.  The Breakout player's goal is simply to strike as many colored
+bricks as possible with the ball in order to maximize the total game score.
+
+In our previous Pong blog writeup [], we found that RL methods based upon
+policy gradient methods worked well.  So it is natural to hypothesize the
+same should be true for Breakout.  But deep RL training via policy
+gradients rapidly leads to the agent becoming trapped in highly-suboptimal
+local maxima within state space.  One of the worst strategies learned by
+the agent is exhibited in the movie of figure 1:
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=rEzXFA_58vw"
 target="_blank"><center><img align="center" src="http://img.youtube.com/vi/rEzXFA_58vw/0.jpg" width="600" height="400" /></center></a>
 
-*Fig. XX.  Movie of an RL agent playing Atari Breakout after being trained
-via conventional Deep Reinforcement Learning.  Agent rapidly learns to
+*Fig. 1.  Movie of an RL agent playing Atari Breakout after being trained
+via conventional Deep Reinforcement Learning.  The agent rapidly learns to
 score a few points by pinning its paddle on the game window's left wall.
 Click on image above to start the YouTube video.*
 
+Since Breakout always starts with the first ball being fired towards the
+lower left corner of the game window, the agent learns it can score a few
+points by sliding its paddle all the way to the left wall and reamining
+fixed there.  But the agent fails to realize that its total score would be
+improved if it were to chase the ball after the first return and not remain
+pinned against the left wall.
+
+The movie in figure 1 vividly demonstrates the general RL problem
+exploration vs exploitation.  An agent needs to be encouraged to search
+unfamiliar regions of state space to avoid entrapment in locally maximal
+but globally suboptimal performance regions.  Other authors have noted this
+wall-pinning malady for Reinforcement Learning of Breakout [].  Total
+scores reported in prior policy gradient [] and evolution strategy []
+studies of multiple Atari games also exhibit striking dips for the
+particular case of Breakout.  The low Breakout scores among otherwise
+impressive results for many other Atari games are a clear sign of local
+maxima trapping.
+
+To prod the RL agent to explore more of the Breakout state space, we first
+incorporated a penalty into the reward function each time the paddle misses
+the ball.  We also tried adding a bonus into the reward proportional to the
+total number of episode frames in order to encourage long game play.  We
+even experimented with rewarding paddle movement with the hope of
+preventing the agent from becoming pinned against a game window wall.  But
+none of these simple adjustments to the reward function had much positive
+effect upon the agent's learned behavior.
+
+We next conducted several reward shaping experiments.  Following Ng et al
+[1999], we supplemented the reward function with a bonus potential which
+peaked at the game window's horizontal center and fell to zero at the side
+walls.  Depending upon the potential's magnitude, the agent did learn to
+avoid wall pinning.  But it then tended to confine its movements near the
+game window's center region.  So the agent again failed to learn to chase
+the ball whenever it approached the bottom of the screen.
+
+After witnessing disappointing agent behavior from several hundred
+experiments, we concluded that policy gradient RL methods for Atari
+Breakout require much more aggressive encouragement of state-space
+exploration.  We consequently investigated deep imitation learning in which
+a "student" agent is rewarded for learning to mimic the behavior of some
+"teacher".  As we demonstrate in the next section, this quasi-supervised
+approach can successfully train a policy neural network to reasonably play
+Atari Breakout.
 
 ## Imitation learning
 
@@ -94,7 +153,7 @@ height="400"/></center></a>
 learned to imitate its AI "teacher".  Click on image above to start the
 YouTube video.*
 
-## RL refinement
+## Conventional RL refining 
 
 *Fig. XX.  Movie of an imitative agent playing Breakout after its neural
 network is refined by conventional deep reinforcement learning.  Click on
@@ -108,6 +167,16 @@ median values for total frame numbers and game scores.*
 
 
 ## References
+
+*.  Our Pong post 
+
+*.  John Schulman lecture notes about breakout wall pinning
+
+*.  TRPO plot for breakout  - single monte carlo simulations
+
+*.  Evolutionary strategies paper - 10 score for Breakout in final table
+
+*.  Ng et al potential reward shaping paper
 
 8. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
 6 Coursera notes $\small{(2012)}$.](https://www.coursera.org/learn/neural-networks)
