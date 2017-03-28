@@ -86,6 +86,18 @@ few hours.  We consequently ran several hundred experiments to search for
 reasonable system hyperparameters.  Table 2 lists our set of
 empirically-derived hyperparameter values.
 
+
+![Breakout]({{site.url}}/blog/images/breakout/preprocessing.jpg)
+*Fig. XX. Raw ALE frames are reduced to 5760-dimensional binary vectors
+after cropping, downsampling and temporal differencing.*
+
+
+ Total number of ALE frames and episode scores plotted for 50 test
+Atari breakout games.  Solid green, blue and red curves correspond to
+naive, imitating and refined RL agents.  Dashed horizontal lines illustrate
+median values for total frame numbers and game scores.*
+
+
 <table style="width:100%">
   <thead>
     <tr>
