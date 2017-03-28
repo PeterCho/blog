@@ -29,9 +29,9 @@ the agent is exhibited in the movie of figure 1:
 target="_blank"><center><img align="center" src="http://img.youtube.com/vi/rEzXFA_58vw/0.jpg" width="600" height="400" /></center></a>
 
 *Fig. 1.  Movie of an RL agent playing Atari Breakout after being trained
-via conventional Deep Reinforcement Learning.  The agent rapidly learns to
-score a few points by pinning its paddle on the game window's left wall.
-Click on image above to start the YouTube video.*
+via conventional Deep Reinforcement Learning.  The agent unsatisfactorily
+learns to score a few points by pinning its paddle to the game window's
+left wall.  Click on image above to start the YouTube video.*
 
 Since Breakout always starts with the first ball being fired towards the
 lower left corner of the game window, the agent learns it can score a few
@@ -91,13 +91,6 @@ empirically-derived hyperparameter values.
 *Fig. XX. Raw ALE frames are reduced to 5760-dimensional binary vectors
 after cropping, downsampling and temporal differencing.*
 
-
- Total number of ALE frames and episode scores plotted for 50 test
-Atari breakout games.  Solid green, blue and red curves correspond to
-naive, imitating and refined RL agents.  Dashed horizontal lines illustrate
-median values for total frame numbers and game scores.*
-
-
 <table style="width:100%">
   <thead>
     <tr>
@@ -108,14 +101,19 @@ median values for total frame numbers and game scores.*
   </thead>
   <tbody>
     <tr>
+      <td style="text-align: left">Epoch frames</td>
+      <td style="text-align: center">5E4</td>
+      <td style="padding: 0 35px">Number of ALE frames per epoch</td>
+    </tr>
+    <tr>
       <td style="text-align: left">Batch size</td>
-      <td style="text-align: center">1E4</td>
+      <td style="text-align: center">2E4</td>
       <td style="padding: 0 35px">  Number of training inputs per
 gradient descent computation</td>
     </tr>
     <tr>
-      <td style="text-align: left">Learning rate</td>
-      <td style="text-align: center">3E-4</td>
+      <td style="text-align: left">Base learning rate</td>
+      <td style="text-align: center">3E-3</td>
       <td style="padding: 0 35px"> Learning rate for RMS propagation</td>
     </tr>
     <tr>
@@ -129,26 +127,26 @@ gradient descent computation</td>
       <td style="padding: 0 35px">Constant preventing zero RMS propagation denominator</td>
     </tr>
     <tr>
-      <td style="text-align: left">Leaky ReLU slope</td>
-      <td style="text-align: center">1E-2</td>
-      <td style="padding: 0 35px">Slope for negative domain of Leaky
-ReLU nonlinearities</td>
+      <td style="text-align: left">$p_{\rm dropout}$</td>
+      <td style="text-align: center">0.5</td>
+      <td style="padding: 0 35px">Hidden layer dropout probability</td>
     </tr>
     <tr>
       <td style="text-align: left"> $\lambda$ </td>
-      <td style="text-align: center">1E-4</td>
+      <td style="text-align: center">1E-3</td>
       <td style="padding: 0 35px">L2 regularization coefficient</td>
     </tr>
     <tr>
       <td style="text-align: left"> $\gamma$ </td>
-      <td style="text-align: center">0.9</td>
+      <td style="text-align: center">0</td>
       <td style="padding: 0 35px">RL discount factor</td>
     </tr>
 
   </tbody>
 </table>
 
-*Table 2.  Hyperparameter values used in the hangman game RL system.*
+*Table 1.  List of hyperparameter values used to train a "student" agent to
+mimic a "teacher" AI.*
 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=GkygRAtxcss"
@@ -167,6 +165,14 @@ YouTube video.*
 
 ## Conventional RL refining 
 
+
+![Breakout]({{site.url}}/blog/images/breakout/zeroth_layer_weights.png)
+*Fig. XX.  Trained values for 4 of the 128 weights within the first hidden
+layer of the policy network.  Bright warm [cool] colors correspond to
+positive [negative] weight values.  Dark colors indicate weight
+coefficients close to zero.*
+
+
 *Fig. XX.  Movie of an imitative agent playing Breakout after its neural
 network is refined by conventional deep reinforcement learning.  Click on
 image above to start the YouTube video.*
@@ -178,21 +184,29 @@ naive, imitating and refined RL agents.  Dashed horizontal lines illustrate
 median values for total frame numbers and game scores.*
 
 
+
 ## References
 
-*.  Our Pong post 
+*.  [See "Teaching a Deep RL Agent to Lazily Win at Atari Pong" post in this
+blog series,  $\small{(2016)}$.](http://petercho.github.io/blog/)
 
-*.  John Schulman lecture notes about breakout wall pinning
+*.  [J. Schulman, "Exploration" lecture notes $\small{(2015)}$.](
+http://rll.berkeley.edu/deeprlcourse-fa15/docs/2015.10.07.Exploration.pdf)
 
-*.  TRPO plot for breakout  - single monte carlo simulations
+*.  [J. Schulman, S. Levine, P. Moritz, M. Jordan and P. Abbeel, "Trust
+Region Policy Optimization," Proceedings of the 31st International
+Conference on Machine Learning
+$\small{(2015)}$.](https://arxiv.org/pdf/1502.05477.pdf)
 
-*.  Evolutionary strategies paper - 10 score for Breakout in final table
+*.  [T. Salimans, J. Ho, X. Chen and I. Sutskever, "Evolution Strategies as
+a Scalable Alternative to Reinforcement Learning," arXiv:1703.03864
+$\small{(2017)}$.](https://arxiv.org/pdf/1703.03864.pdf)
 
-*.  Ng et al potential reward shaping paper
+*.  [A.Y. Ng, D. Harada and S. Russell, "Policy Invariance Under Reward
+Transformations: Theory and Application to Reward Shaping," Proceedings of
+the 16th international Conference on Machine Learning
+$\small{(1999)}$.](http://ai.stanford.edu/~ang/papers/shaping-icml99.pdf)
 
-8. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
+*. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
 6 Coursera notes $\small{(2012)}$.](https://www.coursera.org/learn/neural-networks)
-
-9.  [P. Bachman, A. Sordoni and A. Trischler, "Towards Information-Seeking
-Agents", arXiv:1612.02705v1 $\small{(2016)}$.](https://arxiv.org/abs/1612.02605)
 
