@@ -128,8 +128,8 @@ learning to develop a map from input states to output student actions.  In
 order to reduce the size of the student's policy network, raw ALE frames
 are reduced to sparse vectors following the image cropping, downsampling
 and temporal differencing steps pictured in figure 3.  After trying a few
-different quantization schemes, we settled upon resetting all non-zero
-vector coefficients to unit values.
+different vector quantization schemes, we settled upon resetting all
+non-zero coefficients to unit values.
 
 ![Breakout]({{site.url}}/blog/images/breakout/preprocessing.jpg)
 *Fig. 3. Raw ALE frames are cropped to remove irrelevant pixel content and
@@ -138,19 +138,31 @@ Consecutive pairs of subsampled frames are then temporally differenced to
 produce $72 \times 80=5760$ binary state vectors.*
 
 The binary state vectors become inputs to a fully-connected network whose
-architecture is schematically illustrated in figure 4.  After experimenting
-with various node activation functions, we found to our surprise that
-piecewise-linear approximations to tanh functions work best.  These hybrid
-activations yield better game play performance than ReLU or leaky ReLU
-thresholding, and they run at the same speed.  The neural network's 6109
-biases are initialized to zero, and its 754,048 weights are Xavier
-initialized.  During training, 50% dropout is performed on the hidden
-layers to prevent network overfitting [ref].  L2-regularization is also
-employed to discourage weights from diverging.
+architecture is schematically illustrated in figure 4.  To our surprise, we
+empirically found that employing piecewise-linear approximations to tahn
+functions work well for node activations.  Such hybrid nonlinearities run
+at the same speed as ReLU or leaky ReLU thresholding, yet they lead to
+better game play performance.  The neural network's 6109 biases in the
+initialized to zero, and its 754,048 weights are Xavier initialized.
+During training, 50% dropout is performed on hidden layer nodes to prevent
+overfitting [ref].  L2-regularization is also employed to discourage
+weight values from diverging.
 
 *Fig. 4. Schematic diagram of student policy network which maps reduced ALE
 breakout frames onto output paddle actions.*
 
+Different supervised learning approaches could be implemented in order for
+the student to mimic its teacher.  Since student imitation will never be
+perfect, it will encounter input states not observed by its expert mentor.
+So we avoided training the student network to classify input states and
+output actions corresponding to just the teacher's policy.  Instead, the
+student must follow its own policy and receive teacher feedback at each
+timestep as to how it should have responded.
+
+
+
+We experimented with many different reward functions before finding one
+which led to effective student learning from its teacher.
 
 The RL agent plays against a built-in computer AI during each episode of
 Pong. The agent receives a +1 reward whenever the AI fails to hit the ball
@@ -159,8 +171,6 @@ reaches a score of 21. We compute and store state, action and reward tuples
 for 20K ALE frames. Gradient descent is then performed via RMS propagation
 [9], and network weights are updated. The batch of training samples is
 subsequently discarded, and the next set of 20K tuples is collected.
-
-
 
 For pedagogical purposes, we implement the hangman game RL system from
 scratch in C++ rather than employ an existing deep learning software
@@ -260,7 +270,9 @@ median values for total frame numbers and game scores.*
 
 ## References
 
-*.  ALE
+*.  [M. G. Bellemare, Y. Naddaf, J. Veness and M. Bowling, "The Arcade
+Learning Environment: An Evaluation Platform for General Agents", J. AI
+Research 47 $\small{(2013)}$ 253.](http://www.arcadelearningenvironment.org)
 
 *.  [See "Teaching a Deep RL Agent to Lazily Win at Atari Pong" post in this
 blog series,  $\small{(2016)}$.](http://petercho.github.io/blog/)
@@ -282,7 +294,9 @@ Transformations: Theory and Application to Reward Shaping," Proceedings of
 the 16th international Conference on Machine Learning
 $\small{(1999)}$.](http://ai.stanford.edu/~ang/papers/shaping-icml99.pdf)
 
-*.  Abbeers and Ng
+*.  [P. Abbeel and A.Y. Ng, "Apprenticeship Learning via Inverse
+Reinforcement Learning," Proceedings of the 21st International Conference on
+Machine Learning $\small{(2004)}$.](http://ai.stanford.edu/~ang/papers/icml04-apprentice.pdf)
 
 *. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
 6 Coursera notes $\small{(2012)}$.](https://www.coursera.org/learn/neural-networks)
