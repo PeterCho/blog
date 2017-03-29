@@ -68,16 +68,29 @@ avoid wall pinning.  But it then tended to confine its movements near the
 game window's center region.  So the agent again failed to learn to chase
 the ball whenever it approached the bottom of the screen.
 
-After witnessing disappointing agent behavior from several hundred
-experiments, we concluded that policy gradient RL methods for Atari
-Breakout require much more aggressive encouragement of state-space
-exploration.  We consequently investigated deep imitation learning in which
-a "student" agent is rewarded for learning to mimic the behavior of some
-"teacher".  As we demonstrate in the next section, this quasi-supervised
-approach can successfully train a policy neural network to reasonably play
-Atari Breakout.
+After witnessing disappointing agent behavior from hundreds of experiments,
+we concluded that policy gradient RL methods for Atari Breakout require
+much more aggressive encouragement of state-space exploration.  We
+consequently investigated deep imitation learning in which a "student"
+agent is rewarded for learning to mimic the behavior of some "teacher".  As
+we demonstrate in the next section, this quasi-supervised approach can
+successfully train a policy neural network to reasonably play Atari
+Breakout.
 
 ## Imitation learning
+
+The basic goal of Imitation Learning is to estimate the policy of some
+expert based upon samples of its behavior.  Imitation Learning (IL) has
+been studied by researchers for years, and it is also called Apprenticeship
+Learning, Learning from Demonstration and Learning by Watching in the RL
+literature.  For highly complex problems such as autonomous vehicle driving
+or robot arm operation, IL offers a practical means for beginning to learn
+policies whose reward functions may be difficult to even formulate [Abbeel
+& Ng].  Keeping in mind such potentially important real-world applications,
+we are motivated to study Imitation Learning within the much simpler
+context of Atari Breakout
+
+
 
 For pedagogical purposes, we implement the hangman game RL system from
 scratch in C++ rather than employ an existing deep learning software
