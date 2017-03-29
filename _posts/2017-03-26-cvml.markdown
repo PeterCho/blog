@@ -122,9 +122,43 @@ width="600" height="400" /></center></a>
 *Fig. 2.  Movie of the "teacher AI" playing Breakout.  Click
 on image above to start the YouTube video.*
 
+With a decent teacher demonstrator in hand, we next investigate how well a
+"student" agent can learn to mimic its behavior.  We employ deep supervised
+learning to develop a map from input states to output student actions.  In
+order to reduce the size of the student's policy network, raw ALE frames
+are reduced to sparse vectors following the image cropping, downsampling
+and temporal differencing steps pictured in figure 3.  After trying a few
+different quantization schemes, we settled upon resetting all non-zero
+vector coefficients to unit values.
+
+![Breakout]({{site.url}}/blog/images/breakout/preprocessing.jpg)
+*Fig. 3. Raw ALE frames are cropped to remove irrelevant pixel content and
+downsampled by a factor of two in both horizontal and vertical directions.
+Consecutive pairs of subsampled frames are then temporally differenced to
+produce $72 \times 80=5760$ binary state vectors.*
+
+The binary state vectors become inputs to a fully-connected network whose
+architecture is schematically illustrated in figure 4.  After experimenting
+with various node activation functions, we found to our surprise that
+piecewise-linear approximations to tanh functions work best.  These hybrid
+activations yield better game play performance than ReLU or leaky ReLU
+thresholding, and they run at the same speed.  The neural network's 6109
+biases are initialized to zero, and its 754,048 weights are Xavier
+initialized.  During training, 50% dropout is performed on the hidden
+layers to prevent network overfitting [ref].  L2-regularization is also
+employed to discourage weights from diverging.
+
+*Fig. 4. Schematic diagram of student policy network which maps reduced ALE
+breakout frames onto output paddle actions.*
 
 
-
+The RL agent plays against a built-in computer AI during each episode of
+Pong. The agent receives a +1 reward whenever the AI fails to hit the ball
+and a -1 penalty if it misses. Episodes terminate when either player
+reaches a score of 21. We compute and store state, action and reward tuples
+for 20K ALE frames. Gradient descent is then performed via RMS propagation
+[9], and network weights are updated. The batch of training samples is
+subsequently discarded, and the next set of 20K tuples is collected.
 
 
 
@@ -135,10 +169,6 @@ few hours.  We consequently ran several hundred experiments to search for
 reasonable system hyperparameters.  Table 2 lists our set of
 empirically-derived hyperparameter values.
 
-
-![Breakout]({{site.url}}/blog/images/breakout/preprocessing.jpg)
-*Fig. XX. Raw ALE frames are reduced to 5760-dimensional binary vectors
-after cropping, downsampling and temporal differencing.*
 
 <table style="width:100%">
   <thead>
