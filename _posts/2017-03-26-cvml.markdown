@@ -9,21 +9,22 @@ use_math: true
 
 ## Conventional RL trapping
 
-In this blog posting, we return to Atari games which provide interesting
-and fun laboratories for studying deep Reinforcement Learning $($RL$)$.
-Here we focus upon the game "Breakout" which seems like a minor variant of
-"Pong".  Both are one-player games which involve hitting a moving ball with
-a paddle.  Points are earned in Breakout each time the ball strikes a brick
-within a colored horizontal array appearing near the top of the game
-window.  The Breakout player's goal is simply to strike as many colored
-bricks as possible with the ball in order to maximize the total game score.
+In this blog posting, we return to Atari games in the Arcade Learning
+Environment $($ALE$)$ [ref] which provide interesting and fun laboratories
+for studying deep Reinforcement Learning.  Here we focus upon the game
+"Breakout" which seems like a minor variant of "Pong".  Both are one-player
+games which involve hitting a moving ball with a paddle.  Points are earned
+in Breakout each time the ball strikes a brick within a colored horizontal
+array appearing near the top of the game window.  The Breakout player's
+goal is simply to strike as many colored bricks as possible with the ball
+in order to maximize the total game score.
 
-In our previous Pong blog writeup [], we found that RL methods based upon
-policy gradient methods worked well.  So it is natural to hypothesize the
-same should be true for Breakout.  But deep RL training via policy
-gradients rapidly leads to the agent becoming trapped in highly-suboptimal
-local maxima within state space.  One of the worst strategies learned by
-the agent is exhibited in the movie of figure 1:
+In our previous Pong blog writeup [], we found that Reinforcement Learning
+$($RL$)$ methods based upon policy gradient methods worked well.  So it is
+natural to hypothesize the same should be true for Breakout.  But deep RL
+training via policy gradients rapidly leads to the agent becoming trapped
+in highly-suboptimal local maxima within state space.  One of the worst
+strategies learned by the agent is exhibited in the movie of figure 1:
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=rEzXFA_58vw"
 target="_blank"><center><img align="center" src="http://img.youtube.com/vi/rEzXFA_58vw/0.jpg" width="600" height="400" /></center></a>
@@ -80,15 +81,50 @@ Breakout.
 ## Imitation learning
 
 The basic goal of Imitation Learning is to estimate the policy of some
-expert based upon samples of its behavior.  Imitation Learning (IL) has
+expert based upon samples of its behavior.  Imitation Learning $($IL$)$ has
 been studied by researchers for years, and it is also called Apprenticeship
 Learning, Learning from Demonstration and Learning by Watching in the RL
-literature.  For highly complex problems such as autonomous vehicle driving
-or robot arm operation, IL offers a practical means for beginning to learn
-policies whose reward functions may be difficult to even formulate [Abbeel
-& Ng].  Keeping in mind such potentially important real-world applications,
-we are motivated to study Imitation Learning within the much simpler
-context of Atari Breakout
+literature.  For highly complex problems such as robot arm grappling or
+autonomous vehicle driving, IL offers a practical means for beginning to
+learn policies whose reward functions may be difficult to even formulate
+[Abbeel & Ng].  Keeping in mind such potentially important real-world
+applications, we are motivated to study Imitation Learning within the much
+simpler context of Atari Breakout
+
+We begin by constructing a reasonably proficient Breakout player that we
+refer to as a "teacher AI".  The teacher first needs to know the kinematics
+of the paddle and ball in each ALE frame.  The paddle's instantaneous
+location ${\bf p}(t)$ is readily extracted from the center-of-mass of
+non-wall pixels in the last row of the Breakout game window.  The ball's
+position ${\bf b}(t)$ may similarly be recovered by calculating the
+centroid of the difference between two consecutive frames.  We take the
+ball's velocity to equal ${\bf v}(t-1) = 0.5 \bigl[ {\bf b}(t) - {\bf
+b}(t-2) \bigr]$.  Though this expression is delayed in time, it typically
+conveys the ball's instantaneous two-dimensional velocity since it moves in
+straight lines between occasional bounces.
+
+When the ball travels vertically upwards in the game window, we choose to
+keep the teacher's paddle stationary.  When the ball heads downwards, it is
+straightforward to predict the ball's future last-row location ${\bf
+b}(t_{\rm last \, row})$ even if it bounces off a wall on the way down.
+The difference $\Delta(t) = {\bf b}(t_{\rm last \, row}) - {\bf p}(t)$
+between the ball's predicted and the paddle's current positions in the last
+row then guides the teacher's stochastic policy.  The AI responds to large
+positive $($negative$)$ values for $\Delta$ by moving its paddle to the
+right $($left$)$, while it executes no operation if the magnitude of
+$\Delta$ is close to zero.  As the movie in figure 2 illustrates, this
+simple strategy enables the teacher AI to sustain long ralleys, break
+through the wall of colored bricks and rack up a large score.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=GkygRAtxcss"
+target="_blank"><center><img src="http://img.youtube.com/vi/GkygRAtxcss/0.jpg"
+width="600" height="400" /></center></a>
+*Fig. 2.  Movie of the "teacher AI" playing Breakout.  Click
+on image above to start the YouTube video.*
+
+
+
+
 
 
 
@@ -162,12 +198,6 @@ gradient descent computation</td>
 mimic a "teacher" AI.*
 
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=GkygRAtxcss"
-target="_blank"><center><img src="http://img.youtube.com/vi/GkygRAtxcss/0.jpg"
-width="600" height="400" /></center></a>
-*Fig. XX.  Movie of a "teacher" AI's approach to playing Breakout.  Click
-on image above to start the YouTube video.*
-
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=r7llzBLIfGI"
 target="_blank"><center><img
 src="http://img.youtube.com/vi/r7llzBLIfGI/0.jpg" width="600"
@@ -200,6 +230,8 @@ median values for total frame numbers and game scores.*
 
 ## References
 
+*.  ALE
+
 *.  [See "Teaching a Deep RL Agent to Lazily Win at Atari Pong" post in this
 blog series,  $\small{(2016)}$.](http://petercho.github.io/blog/)
 
@@ -219,6 +251,8 @@ $\small{(2017)}$.](https://arxiv.org/pdf/1703.03864.pdf)
 Transformations: Theory and Application to Reward Shaping," Proceedings of
 the 16th international Conference on Machine Learning
 $\small{(1999)}$.](http://ai.stanford.edu/~ang/papers/shaping-icml99.pdf)
+
+*.  Abbeers and Ng
 
 *. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
 6 Coursera notes $\small{(2012)}$.](https://www.coursera.org/learn/neural-networks)
