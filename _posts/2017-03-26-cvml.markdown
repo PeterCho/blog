@@ -85,11 +85,12 @@ expert based upon samples of its behavior.  Imitation Learning $($IL$)$ has
 been studied by researchers for years, and it is also called Apprenticeship
 Learning, Learning from Demonstration and Learning by Watching in the RL
 literature.  For highly complex problems such as robot arm grappling or
-autonomous vehicle driving, IL offers a practical means for beginning to
-learn policies whose reward functions may be difficult to even formulate
-[Abbeel & Ng].  Keeping in mind such potentially important real-world
-applications, we are motivated to study Imitation Learning within the much
-simpler context of Atari Breakout
+autonomous vehicle driving where humans could generate expert training
+data, IL offers a practical means for beginning to learn policies whose
+reward functions may be difficult to even formulate [Abbeel & Ng].  Keeping
+in mind such potentially important real-world applications, we are
+motivated to study Imitation Learning within the much simpler context of
+Atari Breakout
 
 We begin by constructing a reasonably proficient Breakout player that we
 refer to as a "teacher AI".  The teacher first needs to know the kinematics
@@ -100,20 +101,20 @@ position ${\bf b}(t)$ may similarly be recovered by calculating the
 centroid of the difference between two consecutive frames.  We take the
 ball's velocity to equal ${\bf v}(t-1) = 0.5 \bigl[ {\bf b}(t) - {\bf
 b}(t-2) \bigr]$.  Though this expression is delayed in time, it typically
-conveys the ball's instantaneous two-dimensional velocity since it moves in
-straight lines between occasional bounces.
+encodes the correct instantaneous two-dimensional velocity since the ball
+moves in straight lines between occasional bounces.
 
 When the ball travels vertically upwards in the game window, we choose to
 keep the teacher's paddle stationary.  When the ball heads downwards, it is
 straightforward to predict the ball's future last-row location ${\bf
 b}(t_{\rm last \, row})$ even if it bounces off a wall on the way down.
 The difference $\Delta(t) = {\bf b}(t_{\rm last \, row}) - {\bf p}(t)$
-between the ball's predicted and the paddle's current positions in the last
-row then guides the teacher's stochastic policy.  The AI responds to large
-positive $($negative$)$ values for $\Delta$ by moving its paddle to the
-right $($left$)$, while it executes no operation if the magnitude of
+between the ball's predicted and the paddle's current pixel positions in
+the last row then guides the teacher's stochastic policy.  The AI responds
+to large positive $($negative$)$ values for $\Delta$ by moving its paddle
+to the right $($left$)$, while it executes no operation if the magnitude of
 $\Delta$ is close to zero.  As the movie in figure 2 illustrates, this
-simple strategy enables the teacher AI to sustain long ralleys, break
+simple strategy enables the teacher AI to sustain long rallies, break
 through the wall of colored bricks and rack up a large score.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=GkygRAtxcss"
@@ -122,14 +123,14 @@ width="600" height="400" /></center></a>
 *Fig. 2.  Movie of the "teacher AI" playing Breakout.  Click
 on image above to start the YouTube video.*
 
-With a decent teacher demonstrator in hand, we next investigate how well a
-"student" agent can learn to mimic its behavior.  We employ deep supervised
+With a decent teacher demonstrator in hand, we can investigate how well a
+"student" agent learns to mimic its behavior.  We employ deep supervised
 learning to develop a map from input states to output student actions.  In
 order to reduce the size of the student's policy network, raw ALE frames
 are reduced to sparse vectors following the image cropping, downsampling
 and temporal differencing steps pictured in figure 3.  After trying a few
-different vector quantization schemes, we settled upon resetting all
-non-zero coefficients to unit values.
+different vector quantization schemes, we choose to reset all non-zero
+coefficients to unit values.
 
 ![Breakout]({{site.url}}/blog/images/breakout/preprocessing.jpg)
 *Fig. 3. Raw ALE frames are cropped to remove irrelevant pixel content and
@@ -139,38 +140,42 @@ produce $72 \times 80=5760$ binary state vectors.*
 
 The binary state vectors become inputs to a fully-connected network whose
 architecture is schematically illustrated in figure 4.  To our surprise, we
-empirically found that employing piecewise-linear approximations to tahn
-functions work well for node activations.  Such hybrid nonlinearities run
-at the same speed as ReLU or leaky ReLU thresholding, yet they lead to
-better game play performance.  The neural network's 6109 biases in the
-initialized to zero, and its 754,048 weights are Xavier initialized.
-During training, 50% dropout is performed on hidden layer nodes to prevent
-overfitting [ref].  L2-regularization is also employed to discourage
-weight values from diverging.
+empirically found that piecewise-linear approximations to tahn functions
+work well for node activations.  Such hybrid nonlinearities run at the same
+speed as ReLU or leaky ReLU thresholding, yet they lead to better game
+play.  The neural network's 6109 biases are initialized to zero, and its
+754,048 weights are Xavier initialized.  During training, 50% dropout is
+performed on hidden layer nodes to prevent overfitting [ref].
+L2-regularization is also employed to discourage weight values from
+diverging.
 
 *Fig. 4. Schematic diagram of student policy network which maps reduced ALE
 breakout frames onto output paddle actions.*
 
-Different supervised learning approaches could be implemented in order for
-the student to mimic its teacher.  Since student imitation will never be
+Different supervised learning approaches may be implemented to train the
+student to mimic its teacher.  Since student imitation will never be
 perfect, it will encounter input states not observed by its expert mentor.
-So we avoided training the student network to classify input states and
-output actions corresponding to just the teacher's policy.  Instead, the
-student must follow its own policy and receive teacher feedback at each
-timestep as to how it should have responded.
+So it is prudent to avoid training the student network to classify input
+states and output actions coming from just the teacher's policy.  Instead,
+the student must follow its own policy and receive teacher feedback at each
+timestep as to how well it responded.
+
+We experimented with several different reward functions in order to find
+feedback schemes that encourage student imitation.  For each ALE frame
+input, the student agent earns a $+1$ reward if its policy action matches
+that of the teacher AI.  Otherwise, it receives a penalty whose magnitude
+grows as the difference $\Delta(t) = {\bf b}(t_{\rm last \, row}) - {\bf
+p}(t)$ between the predicted future law-row ball and the paddle's current
+pixel positions increases.  We took the penalty growth to be approximately
+linear for $0 <= |\Delta| <= 12$ and then capped the penalty for $|\Delta|
+> 12$.
+
+We compute and store state, action and reward tuples for 20K ALE
+frames. Gradient descent is then performed via RMS propagation [9], and
+network weights are updated. The batch of training samples is subsequently
+discarded, and the next set of 20K tuples is collected.
 
 
-
-We experimented with many different reward functions before finding one
-which led to effective student learning from its teacher.
-
-The RL agent plays against a built-in computer AI during each episode of
-Pong. The agent receives a +1 reward whenever the AI fails to hit the ball
-and a -1 penalty if it misses. Episodes terminate when either player
-reaches a score of 21. We compute and store state, action and reward tuples
-for 20K ALE frames. Gradient descent is then performed via RMS propagation
-[9], and network weights are updated. The batch of training samples is
-subsequently discarded, and the next set of 20K tuples is collected.
 
 For pedagogical purposes, we implement the hangman game RL system from
 scratch in C++ rather than employ an existing deep learning software
