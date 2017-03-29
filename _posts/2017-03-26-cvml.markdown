@@ -1,13 +1,13 @@
 ---
 layout: post
-title:  "Teaching an Agent to Play Atari Breakout via Imitative
+title:  "Teaching an Agent to Play Atari Breakout via Imitation and 
 Reinforcement Learning"
 date:   2017-03-26 12:00:00
 categories: Deep Learning
 use_math: true
 ---
 
-## Conventional RL trapping
+## An RL trap
 
 In this blog posting, we return to Atari games in the Arcade Learning
 Environment $($ALE$)$ [ref] which provide interesting and fun laboratories
@@ -78,17 +78,17 @@ we demonstrate in the next section, this quasi-supervised approach can
 successfully train a policy neural network to reasonably play Atari
 Breakout.
 
-## Imitation learning
+## Imitation Learning
 
-The basic goal of Imitation Learning is to estimate the policy of some
-expert based upon samples of its behavior.  Imitation Learning $($IL$)$ has
-been studied by researchers for years, and it is also called Apprenticeship
-Learning, Learning from Demonstration and Learning by Watching in the RL
-literature.  For highly complex problems such as robot arm grappling or
-autonomous vehicle driving where humans could generate expert training
-data, IL offers a practical means for beginning to learn policies whose
-reward functions may be difficult to even formulate [Abbeel & Ng].  Keeping
-in mind such potentially important real-world applications, we are
+The basic goal of Imitation Learning $($IL$)$ is to estimate the policy of
+some expert based upon samples of its behavior.  Imitation Learning has
+been studied by researchers for years, and it is also known in the
+literature as Apprenticeship Learning, Learning from Demonstration and
+Learning by Watching.  For highly complex problems such as robot arm
+grappling or autonomous vehicle driving where humans can supply expert
+training data, IL offers a practical means for beginning to learn policies
+whose reward functions may be difficult to even formulate [Abbeel & Ng].
+Keeping in mind such potentially important real-world applications, we are
 motivated to study Imitation Learning within the much simpler context of
 Atari Breakout
 
@@ -106,16 +106,17 @@ moves in straight lines between occasional bounces.
 
 When the ball travels vertically upwards in the game window, we choose to
 keep the teacher's paddle stationary.  When the ball heads downwards, it is
-straightforward to predict the ball's future last-row location ${\bf
-b}(t_{\rm last \, row})$ even if it bounces off a wall on the way down.
-The difference $\Delta(t) = {\bf b}(t_{\rm last \, row}) - {\bf p}(t)$
-between the ball's predicted and the paddle's current pixel positions in
-the last row then guides the teacher's stochastic policy.  The AI responds
-to large positive $($negative$)$ values for $\Delta$ by moving its paddle
-to the right $($left$)$, while it executes no operation if the magnitude of
-$\Delta$ is close to zero.  As the movie in figure 2 illustrates, this
-simple strategy enables the teacher AI to sustain long rallies, break
-through the wall of colored bricks and rack up a large score.
+straightforward to predict the ball's future location ${\bf b}(t_{\rm last
+\, row})$ when it will reach the last row even if it bounces off a wall on
+the way down.  The difference $\Delta(t) = {\bf b}(t_{\rm last \, row}) -
+{\bf p}(t)$ between the ball's predicted and the paddle's current pixel
+positions in the last row then guides the teacher's stochastic policy.  The
+AI responds to large positive $($negative$)$ values for $\Delta$ by moving
+the paddle to the right $($left$)$, while it executes no operation if the
+magnitude of $\Delta$ is close to zero.  As the movie in figure 2
+illustrates, this simple strategy enables the teacher AI to sustain long
+rallies, break through the wall of colored bricks and rack up a large
+score.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=GkygRAtxcss"
 target="_blank"><center><img src="http://img.youtube.com/vi/GkygRAtxcss/0.jpg"
@@ -129,8 +130,8 @@ learning to develop a map from input states to output student actions.  In
 order to reduce the size of the student's policy network, raw ALE frames
 are reduced to sparse vectors following the image cropping, downsampling
 and temporal differencing steps pictured in figure 3.  After trying a few
-different vector quantization schemes, we choose to reset all non-zero
-coefficients to unit values.
+different vector quantization schemes, we further simplify the state vector
+by resetting all its non-zero values to unity.
 
 ![Breakout]({{site.url}}/blog/images/breakout/preprocessing.jpg)
 *Fig. 3. Raw ALE frames are cropped to remove irrelevant pixel content and
@@ -140,40 +141,53 @@ produce $72 \times 80=5760$ binary state vectors.*
 
 The binary state vectors become inputs to a fully-connected network whose
 architecture is schematically illustrated in figure 4.  To our surprise, we
-empirically found that piecewise-linear approximations to tahn functions
-work well for node activations.  Such hybrid nonlinearities run at the same
-speed as ReLU or leaky ReLU thresholding, yet they lead to better game
-play.  The neural network's 6109 biases are initialized to zero, and its
-754,048 weights are Xavier initialized.  During training, 50% dropout is
-performed on hidden layer nodes to prevent overfitting [ref].
-L2-regularization is also employed to discourage weight values from
-diverging.
+found piecewise-linear approximations to tahn functions work well as node
+activations.  Such hybrid nonlinearities run at the same speed as ReLU or
+leaky ReLU thresholding, yet they lead to better game play.  We initialize
+the neural network's 6109 biases to zero, and we Xavier initialize its
+754,048 weights.  During training, 50% dropout is performed on hidden layer
+nodes to prevent overfitting [ref].  L2-regularization is also employed to
+discourage weight values from diverging.
 
-*Fig. 4. Schematic diagram of student policy network which maps reduced ALE
-breakout frames onto output paddle actions.*
+![Breakout]({{site.url}}/blog/images/breakout/BreakoutNetwork.jpg)
+*Fig. 4. Schematic diagram of student policy network which maps input
+Breakout states onto output paddle actions.*
 
-Different supervised learning approaches may be implemented to train the
-student to mimic its teacher.  Since student imitation will never be
-perfect, it will encounter input states not observed by its expert mentor.
-So it is prudent to avoid training the student network to classify input
-states and output actions coming from just the teacher's policy.  Instead,
-the student must follow its own policy and receive teacher feedback at each
+Various supervised learning approaches may be considered for training the
+student agent to mimic its teacher AI.  Since imitation will never be
+perfect, the student will encounter input states not observed by its expert
+mentor.  So we avoid training the student network to classify input states
+and output actions coming from just the teacher's policy.  Instead, the
+student must follow its own policy and receive teacher feedback at each
 timestep as to how well it responded.
 
-We experimented with several different reward functions in order to find
-feedback schemes that encourage student imitation.  For each ALE frame
-input, the student agent earns a $+1$ reward if its policy action matches
-that of the teacher AI.  Otherwise, it receives a penalty whose magnitude
-grows as the difference $\Delta(t) = {\bf b}(t_{\rm last \, row}) - {\bf
-p}(t)$ between the predicted future law-row ball and the paddle's current
-pixel positions increases.  We took the penalty growth to be approximately
-linear for $0 <= |\Delta| <= 12$ and then capped the penalty for $|\Delta|
-> 12$.
+We experimented with several different reward schemes that encourage
+Imitation Learning.  We settled upon the student agent earning a $+1$
+reward whenever its policy action for a particular ALE frame matches that
+of the teacher AI.  Otherwise, it receives a penalty whose magnitude grows
+with the difference $\Delta(t) = {\bf b}(t_{\rm last \, row}) - {\bf p}(t)$
+between the predicted future law-row ball and the paddle's current pixel
+positions.  We took the penalty growth to be approximately linear for $0
+\le |\Delta| \le 12$ and afterwards flat for $|\Delta| > 12$.  Since the
+student receives supervised feedback at each time step, we set the RL
+discount factor $\gamma = 0$.
 
-We compute and store state, action and reward tuples for 20K ALE
-frames. Gradient descent is then performed via RMS propagation [9], and
-network weights are updated. The batch of training samples is subsequently
-discarded, and the next set of 20K tuples is collected.
+State, action and reward tuples are computed and stored within a replay
+memory for batches of 20K ALE frames.  Inspired by the priority queue ideas
+of ref [], we also calculated replay probabilities for each stored sample.
+Inputs states for which the ball is located near the bottom of the game
+window are more important than those for which it is located near the top.
+Similarly, states wherein the ball moves upwards in the game window are
+require less agent attention than those for which the ball moves downwards.
+Heuristically assigned replay probabilities encode the stored states'
+relative importance.
+
+Once the replay memory is filled, the saved tuples are sampled in random
+order according to their replay probabilities which typically selected
+O(8K) from the 20K batch members.  Gradient descent is subsequently
+performed via RMS propagation [Hinton ref], and student policy network
+weights are updated. The batch of training samples is discarded, and the
+next set of 20K tuples is collected.
 
 
 
@@ -251,7 +265,7 @@ height="400"/></center></a>
 learned to imitate its AI "teacher".  Click on image above to start the
 YouTube video.*
 
-## Conventional RL refining 
+## RL refinement of imitative game play
 
 
 ![Breakout]({{site.url}}/blog/images/breakout/zeroth_layer_weights.png)
@@ -302,6 +316,15 @@ $\small{(1999)}$.](http://ai.stanford.edu/~ang/papers/shaping-icml99.pdf)
 *.  [P. Abbeel and A.Y. Ng, "Apprenticeship Learning via Inverse
 Reinforcement Learning," Proceedings of the 21st International Conference on
 Machine Learning $\small{(2004)}$.](http://ai.stanford.edu/~ang/papers/icml04-apprentice.pdf)
+
+*.  [N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
+R. Salakhutdinov, "Dropout: A Simple Way to Prevent Neural Networks from
+Overfitting", J. Machine Learning Research $\small{(2014)}$
+1929.](https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf)
+
+*. [T. Schaul, J. Quan, I. Antonoglou and D. Silver, "Prioritized
+Experience Replay," International Conference on Learning Representations
+$\small(2016)$.](https://arxiv.org/pdf/1511.05952.pdf)
 
 *. [G. Hinton, "Neural Networks for Machine Learning", Slide 29 of Lecture
 6 Coursera notes $\small{(2012)}$.](https://www.coursera.org/learn/neural-networks)
