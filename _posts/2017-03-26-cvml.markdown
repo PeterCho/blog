@@ -189,15 +189,12 @@ performed via RMS propagation [Hinton ref], and student policy network
 weights are updated. The batch of training samples is discarded, and the
 next set of 20K tuples is collected.
 
-
-
-For pedagogical purposes, we implement the hangman game RL system from
-scratch in C++ rather than employ an existing deep learning software
-package.  As it is fairly simple, RL training finishes on a modern CPU in a
-few hours.  We consequently ran several hundred experiments to search for
-reasonable system hyperparameters.  Table 2 lists our set of
-empirically-derived hyperparameter values.
-
+Our IL system for teaching the student agent to play Breakout depends upon
+a set of hyperparameters whose empirically determined values are summarized
+in Table 1.  As for our previous RL investigations, we choose to implement
+the system's neural network in own C++ code rather than utilize an existing
+deep learning software package.  The neural network is sufficiently compact
+that it finishes training overnight when run on a modern CPU.
 
 <table style="width:100%">
   <thead>
@@ -253,8 +250,11 @@ gradient descent computation</td>
   </tbody>
 </table>
 
-*Table 1.  List of hyperparameter values used to train a "student" agent to
-mimic a "teacher" AI.*
+*Table 1.  List of hyperparameter values used within IL system to train a
+"student" agent to mimic a "teacher" AI.*
+
+
+
 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=r7llzBLIfGI"
