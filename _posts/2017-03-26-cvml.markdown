@@ -254,6 +254,29 @@ gradient descent computation</td>
 "student" agent to mimic a "teacher" AI.*
 
 
+![Breakout]({{site.url}}/blog/images/breakout/IL_training_results.jpg)
+*Fig. XX. Imitation Learning training results for student agent.  LHS:
+Fraction of student agent's actions which match those of its teacher AI.
+RHS: Difference $|\Delta|$ between the ball's predicted and the paddle's
+current pixel positions in the last row of the game window.  
+
+
+Two snapshots of the probability densities for paddle's
+horizontal position measured in pixels.  The green curve illustrates a
+conventional RL agent falls being trapped by a local maximum with its
+paddle pinned to the left wall.  The blue curve indicates the IL agent
+learns to move everywhere as it anticipates the ball's bottom row
+position.*
+
+
+![Breakout]({{site.url}}/blog/images/breakout/padded_lhspin_vs_imit.jpg)
+*Fig. XX. Two snapshots of the probability densities for paddle's
+horizontal position measured in pixels.  The green curve illustrates a
+conventional RL agent falls being trapped by a local maximum with its
+paddle pinned to the left wall.  The blue curve indicates the IL agent
+learns to move everywhere as it anticipates the ball's bottom row
+position.*
+
 ## RL refinement of imitative game play
 
 
