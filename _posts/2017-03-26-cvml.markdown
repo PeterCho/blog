@@ -12,12 +12,12 @@ use_math: true
 In this blog posting, we return to Atari games in the Arcade Learning
 Environment $($ALE$)$ [ref] which provide interesting and fun laboratories
 for studying deep Reinforcement Learning.  Here we focus upon the game
-"Breakout" which seems like a minor variant of "Pong".  Both are one-player
-games which involve hitting a moving ball with a paddle.  Points are earned
-in Breakout each time the ball strikes a brick within a colored horizontal
-array appearing near the top of the game window.  The Breakout player's
-goal is simply to strike as many colored bricks as possible with the ball
-in order to maximize the total game score.
+"Breakout" which seems like a minor variant of "Pong".  Both are
+single-player games which involve hitting a moving ball with a paddle.
+Points are earned in Breakout each time the ball strikes a brick within a
+colored horizontal array appearing near the top of the game window.  The
+Breakout player's goal is simply to strike as many colored bricks as
+possible with the ball in order to maximize the total game score.
 
 In our previous Pong blog writeup [], we found that Reinforcement Learning
 $($RL$)$ methods based upon policy gradient methods worked well.  So it is
@@ -183,18 +183,19 @@ Heuristically assigned replay probabilities encode the stored states'
 relative importance.
 
 Once the replay memory is filled, the saved tuples are sampled in random
-order according to their replay probabilities which typically selected
-O(8K) from the 20K batch members.  Gradient descent is subsequently
-performed via RMS propagation [Hinton ref], and student policy network
-weights are updated. The batch of training samples is discarded, and the
-next set of 20K tuples is collected.
+order according to their replay probabilities.  Gradient descent is
+subsequently performed via RMS propagation [Hinton ref] on the O(8K)
+samples that are typically selected from the 20K batch members.  The
+student policy network's weights and biases are updated, and the current
+batch of training samples is discarded.  A new set of 20K tuples is
+subsequently collected.
 
 Our IL system for teaching the student agent to play Breakout depends upon
-a set of hyperparameters whose empirically determined values are summarized
-in Table 1.  As for our previous RL investigations, we choose to implement
-the system's neural network in own C++ code rather than utilize an existing
-deep learning software package.  The neural network is sufficiently compact
-that it finishes training overnight when run on a modern CPU.
+multiple hyperparameters whose manually optimized values are summarized in
+Table 1.  As for our previous RL investigations, we implement the system's
+neural network in own C++ code rather than utilize an existing deep
+learning software package.  The neural network is sufficiently compact that
+it finishes training overnight when run on a modern CPU.
 
 <table style="width:100%">
   <thead>
@@ -253,38 +254,81 @@ gradient descent computation</td>
 *Table 1.  List of hyperparameter values used within IL system to train a
 "student" agent to mimic a "teacher" AI.*
 
+As the student agent learns to mimic the teacher AI, we expect the
+frequency for which its actions match those of the expert player to
+increase over time.  Similarly, the difference $|\Delta|$ between the
+student's and teacher's positioning of the paddle ought to diminish.  The
+two training curves in figure 5 exhibit both trends.  The matching action
+fraction slowly rises with training epoch, while the $|\Delta|$ curve
+slowly falls.  After 200 epochs, 55% of the student's actions match on
+average those of its teacher, while the mean difference between their
+paddle locations equals 13 pixels.  The student learns to mimic its
+teacher's gross movements.  But as we previously saw for policy networks
+trained to play Atari Pong [Cho], the student's actions exhibit
+high-frequency jitter while the expert's do not.
 
 ![Breakout]({{site.url}}/blog/images/breakout/IL_training_results.jpg)
-*Fig. XX. Imitation Learning training results for student agent.  LHS:
+*Fig. 5. Imitation Learning training results for the student agent.  LHS:
 Fraction of student agent's actions which match those of its teacher AI.
-RHS: Difference $|\Delta|$ between the ball's predicted and the paddle's
-current pixel positions in the last row of the game window.  
+RHS: Difference $|\Delta|$ measured in pixels between the ball's predicted
+and the paddle's current pixel positions in the last row of the game
+window.*
 
-
-Two snapshots of the probability densities for paddle's
-horizontal position measured in pixels.  The green curve illustrates a
-conventional RL agent falls being trapped by a local maximum with its
-paddle pinned to the left wall.  The blue curve indicates the IL agent
-learns to move everywhere as it anticipates the ball's bottom row
-position.*
-
+Given that a conventional RL agent trained to play Breakout nearly always
+falls into a local maximum trap, it is reassuring to observe that the IL
+student does not suffer this same fate.  Probability density distributions
+for the paddle's horizontal position are plotted in figure 6 for the
+conventional RL and student IL agents at two representative epoch
+snapshots.  The density for the former is strongly peaked near the origin
+indicating that its paddle is pinned against the game window's left wall.
+In contrast, the distribution for the latter is spread out over the
+paddle's entire range of motion.  So training an agent via Imitation
+Learning enables it to start reasonably playing Atari Breakout.
 
 ![Breakout]({{site.url}}/blog/images/breakout/padded_lhspin_vs_imit.jpg)
-*Fig. XX. Two snapshots of the probability densities for paddle's
-horizontal position measured in pixels.  The green curve illustrates a
-conventional RL agent falls being trapped by a local maximum with its
-paddle pinned to the left wall.  The blue curve indicates the IL agent
-learns to move everywhere as it anticipates the ball's bottom row
-position.*
+*Fig. 6. Two probability density snapshots for paddle's horizontal position
+measured in pixels.  The green curve illustrates a conventional RL agent
+falls being trapped by a local maximum with its paddle pinned to the left
+wall.  The blue curve indicates the IL agent learns to move everywhere as
+it anticipates the ball's bottom row position.*
 
 ## RL refinement of imitative game play
 
+The exploration vs exploitation problem represents a significant challenge
+in many Reinforcement Learning settings.  Starting from a policy network
+initialized with noise, a deep RL system can become stuck in some
+poor-performance region of state space from which it never escapes.  But if
+the initial policy network already exhibits reasonable behavior, subsequent
+Reinforcement Learning can improve its performance.  Such refinement is
+similar in spirit to network finetuning which is commonly performed for
+supervised image classification.
 
-![Breakout]({{site.url}}/blog/images/breakout/zeroth_layer_weights.png)
-*Fig. XX.  Trained values for 4 of the 128 weights within the first hidden
-layer of the policy network.  Bright warm [cool] colors correspond to
-positive [negative] weight values.  Dark colors indicate weight
-coefficients close to zero.*
+We consequently start with the policy learned by the student agent.  We set
+the RL reward for each ALE frame to be Breakout score which is nonzero only
+immediately after the ball hits a colored brick.  We adopt an RL discount
+factor of $\gamma = 0.95$ which spreads positive environmental feedback to
+approximately $1/(1-\gamma) = 20$ frames prior to the brick striking event.
+We further introduce a $-50$ penalty into the RL reward function whenever
+the paddle misses the ball.  But we take this penalty to be a singular
+event which is not discounted backwards in time by $\gamma$.
+
+Taking all other hyperparameter values in the RL system to the same values
+as those for the initial IL system, we retrain the agent's policy network.
+We then test several different snapshots of the refined policy on an
+independently randomized set of Breakout games.  On the left side of figure
+7, total durations of 50 test episodes measured in ALE frames are plotted
+for initial IL and RL refined policies.  Total game scores for the same 50
+test episodes are plotted on the figure's right side.  Though the total
+game durations and scores exhibit significant random fluctuations, their
+median values depicted by dashed horizontal lines in the graphs
+quantitatively demonstrate that RL finetuning improves game performance.
+
+![Breakout]({{site.url}}/blog/images/breakout/montage_frames_scores.jpg)
+*Fig. 7.  Total number of ALE frames and episode scores plotted for 50
+test Atari breakout games.  Solid green, blue and red curves correspond to
+conventional, imitative and refined RL agents.  Dashed horizontal lines
+illustrate median values for total frame numbers and game scores.*
+
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=uBwWALDdSCA"
 target="_blank"><center><img src="http://img.youtube.com/vi/uBwWALDdSCA/0.jpg" width="600" height="400"/></center></a> 
@@ -292,12 +336,12 @@ target="_blank"><center><img src="http://img.youtube.com/vi/uBwWALDdSCA/0.jpg" w
 is refined by conventional deep Reinforcement Learning.  Click on image
 above to start the YouTube video.*
 
-![Breakout]({{site.url}}/blog/images/breakout/montage_frames_scores.jpg)
-*Fig. XX.  Total number of ALE frames and episode scores plotted for 50 test
-Atari breakout games.  Solid green, blue and red curves correspond to
-naive, imitating and refined RL agents.  Dashed horizontal lines illustrate
-median values for total frame numbers and game scores.*
 
+![Breakout]({{site.url}}/blog/images/breakout/zeroth_layer_weights.png)
+*Fig. XX.  Trained values for 4 of the 128 weights within the first hidden
+layer of the policy network.  Bright warm [cool] colors correspond to
+positive [negative] weight values.  Dark colors indicate weight
+coefficients close to zero.*
 
 
 ## References
