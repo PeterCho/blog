@@ -254,17 +254,6 @@ gradient descent computation</td>
 "student" agent to mimic a "teacher" AI.*
 
 
-
-
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=r7llzBLIfGI"
-target="_blank"><center><img
-src="http://img.youtube.com/vi/r7llzBLIfGI/0.jpg" width="600"
-height="400"/></center></a> 
-*Fig. XX.  Movie of a "student" RL agent playing Breakout after having
-learned to imitate its AI "teacher".  Click on image above to start the
-YouTube video.*
-
 ## RL refinement of imitative game play
 
 
@@ -274,10 +263,11 @@ layer of the policy network.  Bright warm [cool] colors correspond to
 positive [negative] weight values.  Dark colors indicate weight
 coefficients close to zero.*
 
-
-*Fig. XX.  Movie of an imitative agent playing Breakout after its neural
-network is refined by conventional deep reinforcement learning.  Click on
-image above to start the YouTube video.*
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=uBwWALDdSCA"
+target="_blank"><center><img src="http://img.youtube.com/vi/uBwWALDdSCA/0.jpg" width="600" height="400"/></center></a> 
+*Fig. XX.  Movie of student agent playing Breakout after its policy network
+is refined by conventional deep Reinforcement Learning.  Click on image
+above to start the YouTube video.*
 
 ![Breakout]({{site.url}}/blog/images/breakout/montage_frames_scores.jpg)
 *Fig. XX.  Total number of ALE frames and episode scores plotted for 50 test
