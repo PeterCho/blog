@@ -299,29 +299,32 @@ in many Reinforcement Learning settings.  Starting from a policy network
 initialized with noise, a deep RL system can become stuck in some
 poor-performance region of state space from which it never escapes.  But if
 the initial policy network already exhibits reasonable behavior, subsequent
-Reinforcement Learning can improve its performance.  Such refinement is
+Reinforcement Learning may improve its performance.  Such refinement is
 similar in spirit to network finetuning which is commonly performed for
-supervised image classification.
+supervised image classification.  So we investigate here whether further
+training via Reinforcement Learning can improve the student agent's game
+play.
 
-We consequently start with the policy learned by the student agent.  We set
-the RL reward for each ALE frame to be Breakout score which is nonzero only
-immediately after the ball hits a colored brick.  We adopt an RL discount
-factor of $\gamma = 0.95$ which spreads positive environmental feedback to
-approximately $1/(1-\gamma) = 20$ frames prior to the brick striking event.
-We further introduce a $-50$ penalty into the RL reward function whenever
-the paddle misses the ball.  But we take this penalty to be a singular
-event which is not discounted backwards in time by $\gamma$.
+We set the RL reward for each Breakout frame equal to that returned by the
+Arcade Learning Environment which is nonzero only immediately after the
+ball hits a colored brick.  Adopting an RL discount factor of $\gamma =
+0.95$ propagates positive environmental feedback to approximately
+$1/(1-\gamma) = 20$ frames before a brick striking event.  We also
+introduce a $-50$ penalty into the RL reward function whenever the paddle
+misses the ball.  But the ball-missing penalty is regarded as a singular
+temporal event not discounted backwards in time by $\gamma$.
 
-Taking all other hyperparameter values in the RL system to the same values
-as those for the initial IL system, we retrain the agent's policy network.
-We then test several different snapshots of the refined policy on an
-independently randomized set of Breakout games.  On the left side of figure
-7, total durations of 50 test episodes measured in ALE frames are plotted
-for initial IL and RL refined policies.  Total game scores for the same 50
-test episodes are plotted on the figure's right side.  Though the total
-game durations and scores exhibit significant random fluctuations, their
-median values depicted by dashed horizontal lines in the graphs
-quantitatively demonstrate that RL finetuning improves game performance.
+Taking all other hyperparameter values in the RL system to equal those for
+the initial IL system, we retrain the agent's policy network.  We then test
+several different snapshots of the refined policy on an independently
+randomized set of Breakout games.  On the left side of figure 7, total
+durations of 50 test episodes measured in ALE frames are plotted for the
+agent's initial IL and optimally refined RL policies.  Total game scores
+for the same 50 test episodes are displayed on the figure's right side.
+Though the total game durations and scores exhibit significant random
+fluctuations, their median values depicted by dashed horizontal lines in
+the graphs quantitatively demonstrate that RL finetuning improves the
+agent's performance.
 
 ![Breakout]({{site.url}}/blog/images/breakout/montage_frames_scores.jpg)
 *Fig. 7.  Total number of ALE frames and episode scores plotted for 50
@@ -329,20 +332,29 @@ test Atari breakout games.  Solid green, blue and red curves correspond to
 conventional, imitative and refined RL agents.  Dashed horizontal lines
 illustrate median values for total frame numbers and game scores.*
 
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=uBwWALDdSCA"
-target="_blank"><center><img src="http://img.youtube.com/vi/uBwWALDdSCA/0.jpg" width="600" height="400"/></center></a> 
-*Fig. XX.  Movie of student agent playing Breakout after its policy network
-is refined by conventional deep Reinforcement Learning.  Click on image
-above to start the YouTube video.*
-
-
 ![Breakout]({{site.url}}/blog/images/breakout/zeroth_layer_weights.png)
 *Fig. XX.  Trained values for 4 of the 128 weights within the first hidden
 layer of the policy network.  Bright warm [cool] colors correspond to
 positive [negative] weight values.  Dark colors indicate weight
 coefficients close to zero.*
 
+The agent's qualitative game playing abilities are illustrated within the
+movie in figure 8.  It generally anticipates the gross location of the ball
+within the game window's last row.  The agent also sustains rallies
+involving multiple bounces at glancing angles.  But its paddle exhibits
+unfortunate high frequency jitter which sometimes causes it to miss a
+passing ball.  And we have not observed the agent following the particular
+policy used to generate the movie break through all five layers of colored
+bricks.  So although the refined agent's performance is quantitatively and
+qualitatively much superior to that of the first agent which got trapped in
+a bad region of state space, there is still much room left for future
+learning.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=uBwWALDdSCA"
+target="_blank"><center><img src="http://img.youtube.com/vi/uBwWALDdSCA/0.jpg" width="600" height="400"/></center></a> 
+*Fig. XX.  Movie of student agent playing Breakout after its policy network
+is refined by conventional deep Reinforcement Learning.  Click on image
+above to start the YouTube video.*
 
 ## References
 
