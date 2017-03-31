@@ -50,16 +50,16 @@ For the particular case of Breakout, other authors have previously noted
 the wall-pinning malady [3].  Total scores reported in prior policy
 gradient [4] and evolution strategy [5] studies of multiple Atari games
 also exhibit striking dips for Breakout.  Low scores for Breakout among
-otherwise impressive Atari game results are a strong sign of local maxima
-trapping.
+otherwise impressive Atari game results are a strong indication of local
+maxima trapping.
 
 To prod the RL agent to explore more of the Breakout state space, we first
 incorporated a penalty into the reward function each time the paddle missed
 the ball.  We also tried adding a bonus proportional to the total number of
 episode frames in order to encourage long game play.  We even experimented
 with rewarding non-zero paddle movement in the hopes of preventing paddle
-pinning against a game wall.  But none of these simple adjustments to the
-reward function had much positive impact upon the agent's learned behavior.
+pinning.  But none of these simple adjustments to the reward function had
+much positive impact upon the agent's learned behavior.
 
 We next conducted several reward shaping experiments.  Following Ng et al
 [6], we supplemented the reward function with a potential that peaked at
@@ -67,7 +67,7 @@ the game window's center and fell to zero at the side walls.  Depending
 upon the potential function's magnitude, the agent did learn to avoid wall
 pinning.  But it then tended to confine its movements near the game
 window's center region.  So the agent again failed to realize that chasing
-the ball whenever it approaches the bottom of the game window is basically
+the ball whereever it approaches the bottom of the game window is basically
 a good idea.
 
 After observing lousy agent behavior in hundreds of experiments, we were
@@ -114,7 +114,7 @@ responds to large positive $($negative$)$ values for $\Delta$ by moving the
 paddle to the right $($left$)$, while it executes no operation when
 $|\Delta| \simeq 0$.  As the movie in figure 2 illustrates, this simple
 strategy enables the teacher AI to sustain long rallies, break through the
-wall of colored bricks and rack up a large score.
+wall of colored bricks and rack up a large game score.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=GkygRAtxcss"
 target="_blank"><center><img src="http://img.youtube.com/vi/GkygRAtxcss/0.jpg"
@@ -125,11 +125,11 @@ on image above to start the YouTube video.*
 With a decent demonstrator in hand, we can investigate how well a "student"
 agent learns to mimic its behavior.  We employ deep supervised learning to
 develop a map from input states to output paddle actions.  In order to
-reduce the size of the student's policy network, raw ALE frames are reduced
-to sparse vectors following the image cropping, downsampling and temporal
-differencing steps pictured in figure 3.  After trying a few different
-vector quantization schemes, we further simplify the state vector by
-resetting all its non-zero values to unity.
+reduce the size of the student's policy network, raw ALE frames are
+transformed into sparse vectors following the image cropping, downsampling
+and temporal differencing steps pictured in figure 3.  After trying a few
+different vector quantization schemes, we further simplify the state vector
+by resetting all its non-zero values to unity.
 
 ![Breakout]({{site.url}}/blog/images/breakout/preprocessing.jpg)
 *Fig. 3. Raw ALE frames are cropped to remove irrelevant pixel content and
@@ -161,8 +161,8 @@ how well it performed.
 
 We experimented with several different reward schemes that promote
 Imitation Learning.  We settled upon granting a $+1$ reward whenever the
-student agent's policy action for a particular ALE frame matches that of
-the teacher AI.  Otherwise, the student receives a penalty whose magnitude
+student's policy action for a particular ALE frame matches that of the
+teacher.  Otherwise, the student agent receives a penalty whose magnitude
 grows with the difference $\Delta(t) = {\bf b}(t_{\rm last \, row}) - {\bf
 p}(t)$ between the predicted future last-row ball and the paddle's current
 pixel positions.  We took the penalty growth to be approximately linear for
@@ -172,15 +172,14 @@ $\gamma$ is set to zero.
 
 State, action and reward tuples are stored within a replay memory for
 batches of 20K ALE frames.  Inspired by the priority experience ideas of
-[9], we also calculated replay probabilities for each stored sample.  Input
+[9], we also assigned replay probabilities to each stored sample.  Input
 states for which the ball is located near the bottom of the game window are
 more important than those for which it is located near the top.  Similarly,
 states where the ball moves upwards in the game window require less agent
-attention than those for where the ball moves downwards.  Replay
-probabilities are heuristically assigned to encode the stored states'
-relative importance.
+attention than those for where the ball moves downwards.  The replay
+probabilities heuristically encode stored states' relative importance.
 
-When the replay memory is filled, the saved tuples are sampled in random
+When the replay memory is filled, the saved tuples are selected in random
 order according to their replay probabilities.  Gradient descent is
 performed via RMS propagation [10] on the $O($8K$)$ tuples typically
 sampled from the 20K batch members.  Once the student policy network's
@@ -267,11 +266,11 @@ the matching fraction from nearly approaching unity and $|\Delta|$ from
 closely approaching zero.
 
 ![Breakout]({{site.url}}/blog/images/breakout/IL_training_results.jpg)
-*Fig. 5. Imitation Learning training results for the student agent.  LHS:
-Fraction of student agent's actions which match those of the teacher AI.
-RHS: Difference $|\Delta|$ measured in pixels between the ball's predicted
-and the paddle's current pixel positions within the last row of the game
-window.*
+*Fig. 5. Instantaneous $($red$)$ and smoothed $($blue$)$ Imitation Learning
+training results for the student agent.  LHS: Fraction of student agent's
+actions which match those of the teacher AI.  RHS: Difference $|\Delta|$
+measured in pixels between the ball's predicted and the paddle's current
+pixel positions within the last row of the game window.*
 
 Given that a conventional RL agent trained to play Breakout almost always
 falls into a local maximum trap, it is reassuring to observe the IL student
@@ -310,7 +309,7 @@ ball hits a colored brick.  Adopting an RL discount factor of $\gamma =
 0.95$ propagates positive environmental feedback to approximately
 $1/(1-\gamma) = 20$ frames before a brick striking event.  We also
 introduce a $-50$ penalty into the RL reward function whenever the paddle
-misses the ball.  But the ball-missing penalty is regarded as a singular
+misses the ball.  But the missed-ball penalty is regarded as a singular
 temporal event and therefore not discounted backwards in time by $\gamma$.
 
 Taking all other hyperparameter values in the RL system to equal those for
