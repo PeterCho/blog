@@ -16,7 +16,7 @@ laboratories for studying deep Reinforcement Learning.  Here we focus upon
 are single-player games involving a paddle hitting a moving ball.  Points
 are earned in Breakout each time the ball strikes a colored brick within 6
 rows near the top of the game window.  The player's goal is to strike as
-many colored bricks as possible with the ball in order to maximize his
+many colored bricks as possible with the ball in order to maximize the
 total game score.
 
 In our previous Pong blog writeup [2], we found that Reinforcement Learning
@@ -46,18 +46,18 @@ The movie in figure 1 vividly demonstrates the general problem of
 exploration vs exploitation in Reinforcement Learning.  An agent usually
 needs encouragement to search unfamiliar regions of state space and avoid
 entrapment in locally maximal but globally suboptimal performance zones.
-Other authors have previously noted this wall-pinning malady for the
-Breakout game [3].  Total scores reported in prior policy gradient [4] and
-evolution strategy [5] studies of multiple Atari games also exhibit
-striking dips for the particular case of Breakout.  Low scores for Breakout
-among otherwise impressive Atari game results are a strong sign of local
-maxima trapping.
+For the particular case of Breakout, other authors have previously noted
+the wall-pinning malady [3].  Total scores reported in prior policy
+gradient [4] and evolution strategy [5] studies of multiple Atari games
+also exhibit striking dips for Breakout.  Low scores for Breakout among
+otherwise impressive Atari game results are a strong sign of local maxima
+trapping.
 
 To prod the RL agent to explore more of the Breakout state space, we first
 incorporated a penalty into the reward function each time the paddle missed
 the ball.  We also tried adding a bonus proportional to the total number of
 episode frames in order to encourage long game play.  We even experimented
-with rewarding non-zero paddle movement with the hope of preventing paddle
+with rewarding non-zero paddle movement in the hopes of preventing paddle
 pinning against a game wall.  But none of these simple adjustments to the
 reward function had much positive impact upon the agent's learned behavior.
 
@@ -73,11 +73,10 @@ a good idea.
 After observing lousy agent behavior in hundreds of experiments, we were
 forced to conclude that policy gradient methods for Atari Breakout require
 much more aggressive encouragement of state-space exploration.  We
-consequently investigated deep imitation learning in which a "student"
-agent is rewarded for learning to mimic the behavior of some "teacher".  As
-we shall see in the next section, this quasi-supervised approach can
-successfully train a policy neural network to reasonably play Atari
-Breakout.
+consequently turned to deep Imitation Learning in which a "student" agent
+is rewarded for mimicing the behavior of some "teacher".  As we shall see
+in the next section, this quasi-supervised approach can successfully train
+a policy neural network to reasonably play Atari Breakout.
 
 ## Imitation Learning
 
@@ -165,7 +164,7 @@ Imitation Learning.  We settled upon granting a $+1$ reward whenever the
 student agent's policy action for a particular ALE frame matches that of
 the teacher AI.  Otherwise, the student receives a penalty whose magnitude
 grows with the difference $\Delta(t) = {\bf b}(t_{\rm last \, row}) - {\bf
-p}(t)$ between the predicted future law-row ball and the paddle's current
+p}(t)$ between the predicted future last-row ball and the paddle's current
 pixel positions.  We took the penalty growth to be approximately linear for
 $0 \le |\Delta| \le 12$ and flat for $|\Delta| > 12$.  Since the student
 receives supervised feedback at each time step, the RL discount factor
@@ -183,10 +182,10 @@ relative importance.
 
 When the replay memory is filled, the saved tuples are sampled in random
 order according to their replay probabilities.  Gradient descent is
-subsequently performed via RMS propagation [10] on the $O($8K$)$ tuples
-typically sampled from the 20K batch members.  Once the student policy
-network's weights and biases are updated, the current batch of training
-samples is discarded.  A new set of 20K tuples is subsequently collected.
+performed via RMS propagation [10] on the $O($8K$)$ tuples typically
+sampled from the 20K batch members.  Once the student policy network's
+weights and biases are updated, the current batch of training samples is
+discarded.  A new set of 20K tuples is subsequently collected.
 
 Our IL system for teaching the student agent to play Breakout depends upon
 multiple hyperparameters whose manually optimized values are summarized in
@@ -276,7 +275,7 @@ window.*
 
 Given that a conventional RL agent trained to play Breakout almost always
 falls into a local maximum trap, it is reassuring to observe the IL student
-not suffering this same fate.  Probability density distributions for the
+does not suffer this same fate.  Probability density distributions for the
 paddle's horizontal position are plotted in figure 6 for the conventional
 RL and student IL agents at two representative epoch snapshots.  The
 density for the former is strongly peaked near the origin indicating that
@@ -312,7 +311,7 @@ ball hits a colored brick.  Adopting an RL discount factor of $\gamma =
 $1/(1-\gamma) = 20$ frames before a brick striking event.  We also
 introduce a $-50$ penalty into the RL reward function whenever the paddle
 misses the ball.  But the ball-missing penalty is regarded as a singular
-temporal event and is not discounted backwards in time by $\gamma$.
+temporal event and therefore not discounted backwards in time by $\gamma$.
 
 Taking all other hyperparameter values in the RL system to equal those for
 the IL system, we retrain the agent's policy network.  We then test several
@@ -327,20 +326,21 @@ demonstrate that RL finetuning improves the agent's performance.
 
 ![Breakout]({{site.url}}/blog/images/breakout/montage_frames_scores.jpg)
 *Fig. 7.  Total number of ALE frames and episode scores for 50 test Atari
-breakout games.  Solid green, blue and red curves correspond to initial,
-imitative and refined RL agents.  Dashed horizontal lines illustrate median
-values for total frame numbers and game scores.*
+breakout games.  Solid green, blue and red curves correspond to
+conventional, imitative and refined RL agents.  Dashed horizontal lines
+illustrate median values for total frame numbers and game scores.*
 
 The agent's qualitative game playing abilities and limitations are apparent
-within the movie of figure 8.  It generally anticipates the gross location
-of the ball in the game window's last row.  The agent also sustains rallies
-involving multiple bounces at low glancing angles.  But its paddle still
-exhibits high frequency jitter which sometimes causes it to miss a passing
-ball.  And we have not observed the agent following the particular policy
-used to generate the movie break through all six layers of colored bricks.
-So although the refined agent's performance is quantitatively and
-qualitatively much superior to that of the first agent which got trapped in
-a bad state space region, it still has much room left for future learning.
+within the final movie of figure 8.  It generally anticipates the gross
+location of the ball in the game window's last row.  The agent also
+sustains rallies involving multiple bounces at low glancing angles.  But
+its paddle still exhibits high frequency jitter which sometimes causes it
+to miss a passing ball.  And we have not observed the agent following the
+particular policy used to generate the movie break through all six layers
+of colored bricks.  So although the refined agent's performance is
+quantitatively and qualitatively much superior to that of the first
+conventional RL agent which got trapped in a bad state space region, it
+still has much room left for future improvement.
 
 <a
 href="http://www.youtube.com/watch?feature=player_embedded&v=uBwWALDdSCA"
