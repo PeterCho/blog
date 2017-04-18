@@ -1,0 +1,100 @@
+---
+layout: post
+title:  "3D Exploitation of 2D Imagery"
+date:   2013-06-10 12:00:0
+categories: Computer vision
+---
+
+Several years ago, I developed an image graph visualization tool in
+collaboration with Michael Yee [1].  We initially intended the tool to
+enable intuitive search of large corpera of photos and/or video frames.
+But as its capabilities increased over time, I wondered how our tool could
+be applied to other domains beyond computer vision.  In particular, I
+thought it could be helpful for text document organization which shares
+several similarities with image search.
+
+Figure 6
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=jTv_8OvPw6g"
+target="_blank"><center><img align="center"
+src="http://img.youtube.com/vi/jTv_8OvPw6g/0.jpg" width="800" height="533" /></center></a>
+
+Figure 7
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=zYi3QWdHyg8"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/zYi3QWdHyg8/0.jpg" width="800" height="533" /></center></a>
+
+Figure 10-11
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=Brsbyb3pBrk"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/Brsbyb3pBrk/0.jpg" width="800" height="533" /></center></a>
+
+Figure 13a
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=8F3xKuz4Cn8"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/8F3xKuz4Cn8/0.jpg" width="800" height="533" /></center></a>
+
+Figure 13b
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=Pzbic4mw1d4"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/Pzbic4mw1d4/0.jpg" width="800" height="533" /></center></a>
+
+Figure 15
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=LLiSzhJrEPc"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/LLiSzhJrEPc/0.jpg" width="800" height="533" /></center></a>
+
+Figure 18-19
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=VbQlDt1KrzQ"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/VbQIDt1KrzQ/0.jpg" width="800" height="533" /></center></a>
+
+Figure 21
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=aX7Zs1hAOHI"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/aX7Zs1hAOHI/0.jpg" width="800" height="533" /></center></a>
+
+Figure 24
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=DxpOcZKoIyo"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/DxpOcZKoIyo/0.jpg" width="800" height="533" /></center></a>
+
+Figure 25
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=v3N_mZ8cTZA"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/v3N_mZ8cTZA/0.jpg" width="800" height="533" /></center></a>
+
+Figure 28-29
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=7zKH6kv2R8E"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/7zKH6kv2R8E/0.jpg" width="800" height="533" /></center></a>
+
+Figure 35
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=1hAA84CwHSU"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/1hAA84CwHSU/0.jpg" width="800" height="533" /></center></a>
+
+Figure 38
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=g2tBoDZ0deI"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/g2tBoDZ0deI/0.jpg" width="800" height="533" /></center></a>
+
+Figure 39-40-41
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=GggQ2A8OUBM"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/
+GggQ2A8OUBM/0.jpg" width="800" height="533" /></center></a>
+
+
+Figure 43-44
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=o_KKFrCIpWQ"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/o_KKFrCIpWQ/0.jpg" width="800" height="533" /></center></a>
+
+
+## References
+
+1.  P. Cho and M. Yee, *Image Search System*, 41st AIPR workshop, 2012.
+
+2.  See www.arxiv.org/archive/astro-ph.
+
