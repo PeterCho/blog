@@ -34,14 +34,12 @@ Figure 13a
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=8F3xKuz4Cn8"
 target="_blank"><center><img align="center" src="http://img.youtube.com/vi/8F3xKuz4Cn8/maxresdefault.jpg" width="800" height="533" /></center></a>
 
-
-
 Figure 13b
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=Pzbic4mw1d4"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/Pzbic4mw1d4/maxresdefault.jpg" width="800" height="533" /></center></a>
-
-
+target="_blank"><center><img align="center"
+src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_13b.jpg"
+width="800" height="533" /></center></a>
 
 
 Figure 15
@@ -50,18 +48,20 @@ Figure 15
 target="_blank"><center><img align="center" src="http://img.youtube.com/vi/LLiSzhJrEPc/maxresdefault.jpg" width="800" height="533" /></center></a>
 
 
-
-
 Figure 18-19
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=VbQlDt1KrzQ"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/VbQlDt1KrzQ/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" 
+src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_18_19.jpg"
+width="800" height="533" /></center></a>
 
 
 Figure 21
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=aX7Zs1hAOHI"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/aX7Zs1hAOHI/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" 
+src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_21.jpg"
+width="800" height="533" /></center></a>
 
 Figure 24
 
@@ -71,12 +71,16 @@ target="_blank"><center><img align="center" src="http://img.youtube.com/vi/DxpOc
 Figure 25
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=v3N_mZ8cTZA"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/v3N_mZ8cTZA/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" 
+src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_25.jpg"
+width="800" height="533" /></center></a>
 
 Figure 28-29
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=7zKH6kv2R8E"
-target="_blank"><center><img align="center" src=" https://i.ytimg.com/vi/v3N_mZ8cTZA/sddefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" 
+src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_28_29.jpg"
+width="800" height="533" /></center></a>
 
 Figure 35
 
@@ -86,13 +90,16 @@ target="_blank"><center><img align="center" src="http://img.youtube.com/vi/1hAA8
 Figure 38
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=g2tBoDZ0deI"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/g2tBoDZ0deI/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" 
+src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_38.jpg"
+width="800" height="533" /></center></a>
 
 Figure 39-40-41
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=GggQ2A8OUBM"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/
-GggQ2A8OUBM/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" 
+src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_39_40_41.jpg"
+width="800" height="533" /></center></a>
 
 
 Figure 43-44
