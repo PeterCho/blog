@@ -5,65 +5,90 @@ date:   2013-06-10 12:00:0
 categories: Computer vision
 ---
 
-Several years ago, I developed an image graph visualization tool in
-collaboration with Michael Yee [1].  We initially intended the tool to
-enable intuitive search of large corpera of photos and/or video frames.
-But as its capabilities increased over time, I wondered how our tool could
-be applied to other domains beyond computer vision.  In particular, I
-thought it could be helpful for text document organization which shares
-several similarities with image search.
+This blog entry presents a set of movies which accompany the review article
+["3D Exploitation of 2D
+Imagery"](https://www.ll.mit.edu/publications/journal/pdf/vol20_no1/20_1_8_Cho.pdf)
+which I published with Noah Snavely in ref [1].  Many of the figures in the
+paper are snapshots from these movies.  So figure numbers and captions from
+[1] are used to label the movies below.  The dynamic movies more vividly
+demonstrate the concepts and capabilities of geometry-based imagery
+exploitation than the static figures in the paper.
+
+An interested reader can check out the paper via the link above.  In order
+to provide some context for the movies, we repeat its abstract here:
+
+> Recent advances in computer vision have enabled the automatic recovery of
+> camera and scene geometry from large collections of photographs and
+> videos. Such three-dimensional imagery reconstructions may be georegistered
+> with maps based upon ladar, geographic information system, and/or GPS
+> data. Once 3D frameworks for analyzing two-dimensional digital pictures are
+> established, high-level knowledge readily propagates among data products
+> collected at different times, places, and perspectives.
+
+> We demonstrate geometry-based exploitation for several imagery applications
+> of importance to the defense and intelligence communities: perimeter
+> surveillance via a single stationary camera, rural reconnaissance via a
+> mobile aerial camera, urban mapping via several semicooperative ground
+> cameras, and social media mining via many uncooperative cameras. Though a
+> priori camera uncertainty grows in this series and requires progressively
+> more computational power to resolve, a geometrical framework renders all
+> these applications tractable.
+
+Click on the starting-frame images below to play the corresponding YouTube
+videos.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=jTv_8OvPw6g"
 target="_blank"><center><img align="center"
-src="http://img.youtube.com/vi/jTv_8OvPw6g/maxresdefault.jpg" width="800" height="533" /></center></a>
+src="http://img.youtube.com/vi/jTv_8OvPw6g/maxresdefault.jpg" width="600" height="400" /></center></a>
 
-*Fig. 6.  A 3D mosaic of 21 tripod photos shot from the rooftop of MIT's
+*Figure 6.  A 3D mosaic of 21 tripod photos shot from the rooftop of MIT's
 Green building.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=zYi3QWdHyg8"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/zYi3QWdHyg8/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/zYi3QWdHyg8/maxresdefault.jpg" width="600" height="400" /></center></a>
 
-*Fig. 7.  Dynamic video versus static mosaic.  The instantaneous angular
-location of one video frame relative to the background mosaic is indicated
-by its yellow frustum.  The colored video frame is aligned with the
-gray-scale panorama viewed from the rooftop tripod's perspective.*
+*Figure 7.  Dynamic video versus static mosaic.  The instantaneous angular
+location of the current video frame relative to the background mosaic is
+indicated by its yellow frustum.  The colored video frame aligns with the
+gray-scale panorama when viewed from the rooftop tripod's perspective.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=Brsbyb3pBrk"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/Brsbyb3pBrk/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/Brsbyb3pBrk/maxresdefault.jpg" width="600" height="400" /></center></a>
 
-*Fig. 10 & 11.  Street-level panorama georegistered with the 3D MIT map.
-Panorama photos occlude camera's view from street-level tripod of ladar
-popint cloud.  Ladar points corresponding to summertime tree leaves appear
-to grow on nude wintertime branches as the range from the camera tripod to
-the image planes is increased.*
+*Figures 10 & 11.  A 3D mosaic of street-level photos georegistered with a
+3D map of MIT.  When the range from the camera tripod to the image planes
+is relatively small, the panorama photos occlude the camera's view of the
+ladar point cloud.  But ladar points corresponding to summertime tree
+leaves appear to grow on nude wintertime branches as the range from the
+camera's tripod to image planes is increased.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=8F3xKuz4Cn8"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/8F3xKuz4Cn8/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/8F3xKuz4Cn8/maxresdefault.jpg" width="600" height="400" /></center></a>
 
-*Fig 13a.  One frame from a video sequence automatically aligned with
+*Figure 13a.  One frame from a video sequence automatically aligned with
 the georegistered mosaic.  The dynamic and static imagery were both shot
 from the same street-level tripod.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=Pzbic4mw1d4"
 target="_blank"><center><img align="center"
 src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_13b.jpg"
-width="800" height="533" /></center></a>
+width="600" height="400" /></center></a>
 
-*Fig. 13b.  Annotation labels track stationary buildings and streets (and
+*Figure 13b.  Annotation labels track stationary buildings and streets (and
 ignore moving vehicles) within a panning video camera clip.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=LLiSzhJrEPc"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/LLiSzhJrEPc/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/LLiSzhJrEPc/maxresdefault.jpg" width="600" height="400" /></center></a>
 
-*Fig. 15.  Video collected by the digital camera onboard the UAV which flew
-up to 430 meters above ground.*
+*Figure 15.  Video collected by a digital camera onboard a hand-launched
+glider plane which flew up to 430 meters above ground.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=VbQlDt1KrzQ"
 target="_blank"><center><img align="center" 
 src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_18_19.jpg"
-width="800" height="533" /></center></a>
+width="600" height="400" /></center></a>
 
-*Fig. 18.  Movie fly-through of the 3D rural scene densely
+*Figure 18.  Movie fly-through of the 3D rural scene densely
 reconstructed from aerial video frames.  Only 74 of approximately 1500
 recovered camera frusta are displayed.  The curved colored according to
 height depicts the glider's GPS track.*
@@ -71,15 +96,15 @@ height depicts the glider's GPS track.*
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=aX7Zs1hAOHI"
 target="_blank"><center><img align="center" 
 src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_21.jpg"
-width="800" height="533" /></center></a>
+width="600" height="400" /></center></a>
 
-*Fig. 21.  Aerial video frames backprojected onto a ground Z-plane and
+*Figure 21.  Aerial video frames backprojected onto a ground Z-plane and
 displayed against an orthorectified background image.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=DxpOcZKoIyo"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/DxpOcZKoIyo/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/DxpOcZKoIyo/maxresdefault.jpg" width="600" height="400" /></center></a>
 
-*Fig. 24.  SIFT graph for MIT ground photos.  Nodes within the graph
+*Figure 24.  SIFT graph for MIT ground photos.  Nodes within the graph
 representing images are hierarchically clustered and colored to reveal
 communities of similar-looking photos.  Nodes automatically turn into image
 thumbnails when the graph viewer is zoomed in.*
@@ -87,49 +112,59 @@ thumbnails when the graph viewer is zoomed in.*
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=v3N_mZ8cTZA"
 target="_blank"><center><img align="center" 
 src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_25.jpg"
-width="800" height="533" /></center></a>
+width="600" height="400" /></center></a>
 
-*Fig. 25.  Increment bundle adjustment for 2317 ground photos shot around
-eastern MIT.  The reconstructed point cloud illustrates static urban 3D
-structure.  White-colored frust depict relative position and orientation
-for photos' cameras.*
+*Figure 25.  Incremental bundle adjustment for 2317 ground photos shot
+around the east side of MIT campus.  The reconstructed point cloud
+illustrates static urban 3D structure.  White-colored frusta depict
+relative position and orientation for photos' cameras.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=7zKH6kv2R8E"
 target="_blank"><center><img align="center" 
 src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_28_29.jpg"
-width="800" height="533" /></center></a>
+width="600" height="400" /></center></a>
 
-*Fig. 28.  Georegistered ground photos displayed among 3D building models.
-230 of 2317 photos are represented as frusta.  Close up view of frusta
-illustrates their cameras' geopositions and pointing directions.*
+*Figure 28.  Georegistered ground photos displayed among 3D building
+models.  230 of 2317 photos are represented as frusta.  Close up views of
+frusta illustrate their cameras' geopositions and pointing directions.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=1hAA84CwHSU"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/1hAA84CwHSU/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/1hAA84CwHSU/maxresdefault.jpg" width="600" height="400" /></center></a>
 
-Figure 38
+*Figure 35.  Synchronized Google map and 3D viewer displays of
+reconstructed ground photos.  Camera geolocation and geo-orientation
+information are displayed within the web browser when a user clicks on a
+colored dot.  The Google map interface was developed by Jennifer Drexler.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=g2tBoDZ0deI"
 target="_blank"><center><img align="center" 
 src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_38.jpg"
-width="800" height="533" /></center></a>
+width="600" height="400" /></center></a>
 
-Figure 39-40-41
+*Figure 38. Flythrough of a New York City 3D map generated from ladar data,
+satellite imagery and GIS layers.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=GggQ2A8OUBM"
 target="_blank"><center><img align="center" 
 src="https://raw.githubusercontent.com/PeterCho/blog/gh-pages/images/3d_exploitation/figure_39_40_41.jpg"
-width="800" height="533" /></center></a>
+width="600" height="400" /></center></a>
 
-
-Figure 43-44
+*Figures 39, 40 and 41.  1012 Flickr photos georegistered with the 3D NYC
+map.  Flickr photo alignments with combined reconstructed and ladar NYC
+point clouds are seen when the virtual camera assumes the same positions
+and orientations as georegistered cameras and image planes are faded away.*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=o_KKFrCIpWQ"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/o_KKFrCIpWQ/maxresdefault.jpg" width="800" height="533" /></center></a>
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/o_KKFrCIpWQ/maxresdefault.jpg" width="600" height="400" /></center></a>
 
+*Figures 43 and 44.  Image-based querying.  A user selects pixels in a
+Flickr photo.  The machine then traces their corresponding rays back into
+the 3D NYC map.  Voxels intercepted by the rays have their ranges and
+altitudes displayed within the photo window.  Camera ranges to 3D voxels
+depend upon image, while voxel altitudes remain invariant.*
 
 ## References
 
-1.  P. Cho and M. Yee, *Image Search System*, 41st AIPR workshop, 2012.
-
-2.  See www.arxiv.org/archive/astro-ph.
+1.  [P. Cho and N. Snavely, "3D Exploitation of 2D Imagery", Lincoln
+Laboratory Journal, Vol 20, Number 1 (2013).](https://www.ll.mit.edu/publications/journal/pdf/vol20_no1/20_1_8_Cho.pdf)
 
