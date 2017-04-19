@@ -8,9 +8,9 @@ categories: Computer vision
 This blog entry presents a set of movies which accompany the review article
 ["3D Exploitation of 2D
 Imagery"](https://www.ll.mit.edu/publications/journal/pdf/vol20_no1/20_1_8_Cho.pdf)
-which I published with Noah Snavely in ref [1].  Many of the figures in the
+that I published with Noah Snavely in ref [1].  Many of the figures in the
 paper are snapshots from these movies.  So figure numbers and captions from
-[1] are used to label the movies below.  The dynamic movies more vividly
+[1] are used to label the videos below.  The dynamic movies more vividly
 demonstrate the concepts and capabilities of geometry-based imagery
 exploitation than the static figures in the paper.
 
