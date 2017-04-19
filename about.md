@@ -5,4 +5,5 @@ permalink: /about/
 ---
 
 Various ideas, problems and projects in machine learning, computer vision
-and computer graphics which I find interesting.  Hopefully you may too...
+and natural language processing which I find interesting.  Hopefully you
+may too...
