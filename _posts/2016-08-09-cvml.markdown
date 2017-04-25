@@ -351,8 +351,8 @@ increasing the incorrectly-classified female fraction.
   </tbody>
 </table>
 
-*Table 1. Classification results for a held-out truth set of 1037 non-face
-+ 1812 male + 1687 female = 4536 image chips.*
+*Table 1. Classification results for a held-out truth set of 1037 non-face,
+1812 male face and 1687 female face image chips.*
 
 After aggregating subtotals within Table 1, we find 84.46% of our test
 images were correctly classifed and 9.72% were incorrectly classified.  The
