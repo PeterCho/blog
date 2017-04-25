@@ -20,12 +20,12 @@ many colored bricks as possible with the ball in order to maximize the
 total game score.
 
 In our previous Pong blog writeup [2], we found that Reinforcement Learning
-$($RL$)$ methods based upon policy gradient methods yielded highly
-effective agent behavior.  So it is natural to hypothesize the same should
-be true for Breakout.  But deep RL training via policy gradients instead
-leads the agent to become trapped in poor local maxima of state space.  One
-of the worst strategies learned by the agent is exhibited in the movie of
-figure 1:
+$($RL$)$ based upon policy gradient methods yielded highly effective agent
+behavior.  So it is natural to hypothesize the same should be true for
+Breakout.  But deep RL training via policy gradients instead leads the
+agent to become trapped in poor local maxima of state space.  One of the
+worst strategies learned by the agent is exhibited in the movie of figure
+1:
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=rEzXFA_58vw"
 target="_blank"><center><img align="center" src="http://img.youtube.com/vi/rEzXFA_58vw/0.jpg" width="600" height="400" /></center></a>
