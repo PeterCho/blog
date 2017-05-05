@@ -189,7 +189,7 @@ discarded.  A new set of 20K tuples is subsequently collected.
 Our IL system for teaching the student agent to play Breakout depends upon
 multiple hyperparameters whose manually optimized values are summarized in
 Table 1.  As for our previous RL investigations, we implement the system's
-neural network in own C++ code rather than utilize an existing deep
+neural network in our own C++ code rather than utilize an existing deep
 learning software package.  The neural network is sufficiently compact that
 it finishes training overnight when run on a modern CPU.
 
