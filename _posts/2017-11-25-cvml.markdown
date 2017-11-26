@@ -39,7 +39,7 @@ testing sets respectively contain 24922 and 9970 images.
 *Fig. 1.  Original 499 $\times$ 427 image of a cat is downsampled to a 160
 $\times$ 160 version that does not preserve the original's aspect ratio.*
 
-## CNN architectures, hyperparameters and training
+## Training data augmentation
 
 At the start of each training session, we randomly split 85% of the input
 24922 images into a training subset and the remaining 15% into validation
@@ -70,6 +70,8 @@ during a training session.  Once some previously incorrect training sample
 is reused, the probability of deleting it from $L_{wrong}$ decreases from
 from 1.0 to 0.25 during a training session.  The classifier is consequently
 exposed to increasingly difficult samples as training proceeds.
+
+## CNN architectures
 
 Over the course of 100+ experiments, we investigated a variety of CNN
 architectures and training strategies in search of those yielding maximal
@@ -156,14 +158,6 @@ field size R=157:
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td style="text-align: left">Training chip pixel size</td>
-      <td style="text-align: center">148</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Number of training epochs</td>
-      <td style="text-align: center">250</td>
-    </tr>
     <tr>
       <td style="text-align: left">Number of training chips per epoch</td>
       <td style="text-align: center">22434</td>
