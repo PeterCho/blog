@@ -20,13 +20,13 @@ winner achieved 98.3% accuracy.
 We revisit this fun problem and apply CNN techniques $($ e.g. batch
 normalization [3] $)$, optimizers $($ e.g. ADAM [4] $)$, frameworks $($
 e.g. TensorFlow [5] $)$ and architectures $($ e.g. DenseNet [6] $)$ which
-were developed since the original challenge ended.  Like the competition
-winners, we will work with an ensemble of trained CNNs in order to maximize
-classification accuracy.  But rather than finetune networks pre-trained on
-ImageNet data, we are more interested in training from scratch.  Moreover,
-we are willing to sacrifice some classification accuracy for training
-speed.  We believe such tradeoffs are common for "real-world"
-classification problems.
+were developed since the original challenge ended.  Like many Kaggle
+competition participants, we work with an ensemble of trained CNNs in order
+to maximize classification accuracy.  But rather than finetune networks
+pre-trained on ImageNet data, we are more interested in training from
+scratch.  Moreover, we are willing to sacrifice some classification
+accuracy for training speed.  We believe such tradeoffs are common for
+"real-world" classification problems.
 
 To decrease training time, we subsample all 35K Kaggle images down to 160
 $\times$ 160 pixel size without preserving aspect ratio $($ see figure 1
@@ -35,11 +35,9 @@ testing images.  We further discarded samples containing no cat or dog as
 well as images containing both cats and dogs [7].  Our cleaned training and
 testing sets respectively contain 24922 and 9970 images.
 
-![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/original_cat.jpg)
-*Fig. 1.  $($a$)$ Original 499 $\times$ 427 image of a cat.  $($b$)$
-Downsampled 160 $\times$ 160 version which does not preserve the original
-image's aspect ratio.*
-
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/cat_orig_downsampled.png)
+*Fig. 1.  Original 499 $\times$ 427 image of a cat is downsampled to a 160
+$\times$ 160 version that does not preserve the original's aspect ratio.*
 
 ## CNN architectures, hyperparameters and training
 
@@ -48,15 +46,15 @@ At the start of each training session, we randomly split 85% of the input
 data.  Dynamic image augmentation of the training subset is subsequently
 performed to increase its diversity and regularize neural network training.
 Following common practice, we randomly crop a 148 $\times$ 148 chip from
-each input 160 \$times$ 160 image and horizontally flip with 50%
+each input 160 $\times$ 160 image and horizontally flip with 50%
 probability.  Since cats and dogs are deformable objects that may appear in
 highly variable poses, we also randomly rotate 12% of training images by
 90, 180 or 270 degrees.  Finally, we globally alter the hue, saturation and
 value color contents for a maximum of 20% of training inputs.  Examples of
-augmented versions of the 160 $\times$ 160 image in figure 1b are displayed
+augmented versions of the 160 $\times$ 160 image in figure 1 are displayed
 in figure 2.  We note that random cropping is also performed on validation
-and testing samples so that CNNs always work with 148 $\times$ 148 pixel
-size inputs.
+and testing samples so that CNNs always ingest 148 $\times$ 148 pixel size
+inputs.
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_augment.png)
 *Fig. 2.  Examples of training data augmentation include random
