@@ -19,7 +19,7 @@ winner attained 98.3% accuracy.
 
 In this blog post, we revisit this fun problem and apply Convolutional
 Neural Network $\small($CNN$\small)$ techniques $\small($e.g. batch
-normalization [3]$\small)$, optimizers $\small($e.g. ADAM [4]$\small)$,
+normalization [3]$\small)$, optimizers $\small($e.g. Adam [4]$\small)$,
 frameworks $\small($e.g. TensorFlow [5]$\small)$ and architectures
 $\small($e.g. DenseNet [6]$\small)$ which were developed after the original
 challenge ended.  Like many Kaggle competition participants, we work with
@@ -75,10 +75,10 @@ TensorBoard.
 ## CNN architectures
 
 Over the course of 100+ experiments, we investigated a variety of CNN
-architectures and training strategies in search of those yielding maximal
-validation classification accuracies.  While running these experiments on
-the cats and dogs imagery corpus, we noted several "rules-of-thumb" which
-may hold for other classification problems:
+architectures and different training strategies in search of those yielding
+maximal validation classification accuracies.  While running these
+experiments on the cats and dogs imagery corpus, we noted several
+"rules-of-thumb" which may hold for other classification problems:
 
 *  Deeper networks based upon 3x3 convolution kernels did not yield better
 validation results than networks with fewer 5x5 convolution kernels layers.
@@ -97,45 +97,49 @@ help reduce data overfitting.
 * A final fully connected layer did not benefit from having more than 6
 times as many nodes as the number of classification states.
 
-We empirically found the following combinations of convolutions with 5x5
-kernels, batch normalization, leaky ReLU activation [8], 2x2 pooling and
-fully connected layers to be useful:
+We found the following combinations of convolutions with 5x5 kernels, batch
+normalization, leaky ReLU activation [8], 2x2 pooling and fully connected
+layers to be useful building blocks:
 
-CBLP: Conv, Batch Norm, Leaky Relu, Pool
+CBLP: Conv5, Batch Norm, Leaky ReLU, Pool
 
-CBL: Conv, Batch Norm, Leaky Relu
+CBL: Conv5, Batch Norm, Leaky ReLU
 
-BLD: Batch Norm, Leaky Relu, Dense Conv with no bottleneck
+BLD: Batch Norm, Leaky ReLU, Dense Conv5 with no bottleneck
 
-FBL: Fully connected, Batch Norm, Leaky Relu
+FBL: Fully connected, Batch Norm, Leaky ReLU.
 
-We choose these super-layers' parameters and their number within network
-configurations so that total receptive field and training image pixel sizes
-are comparable.  Our top three CNN architectures all have receptive field
-size R=157 [9]:
+We choose these super-layers' parameters and their numbers in deep network
+configurations so that total CNN receptive field and training image pixel
+sizes are comparable.  The best three architectures we found for Kaggle
+cats and dogs classification all have receptive field size R=157 [9]:
 
 Architecture I with 9 super-layers: 
-    3 x [CBLP], 4 x [CBL], 2 x [FBL]
+
+$\qquad$ 3 $\times$ [CBLP], 4 $\times$ [CBL], 2 $\times$ [FBL]
 
 Architecture II with 10 super-layers: 
-    2 x [CBLP], 2 x [CBL], CBLP, 3 x [CBL], 2 x [FBL]
+
+$\qquad$ 2 $\times$ [CBLP], 2 $\times$ [CBL], CBLP, 3 $\times$ [CBL], 2 $\times$ [FBL]
 
 Architecture III with 10 super-layers including 5 dense blocks:
-    2 x [CBLP], 2 x [BLD], CBLP, 3 x [BLD], 2 x [FBL]
+    
+$\qquad$ 2$\times$ [CBLP], 2$\times$ [BLD], CBLP, 3$\times$ [BLD], 2$\times$ [FBL]
 
+As we shall see, each of these CNN architectures can yield binary
+classification accuracies on validation imagery greater than 97%.
 
-## CNN training and testing
+## CNN training and ensemble testing
 
-
-As training proceeds, we maintain a list $L_{wrong}$ of incorrectly
-classified training samples whose size is capped at the number of training
-chips per epoch.  We randomly replace entries in training batches with
-samples from $L_{wrong}$.  The probability of reusing a previous
-incorrectly-classified training samples linearly increases from 0 to 0.9
-during a training session.  Once some previously incorrect training sample
-is reused, the probability of deleting it from $L_{wrong}$ decreases from
-from 1.0 to 0.25 during a training session.  The classifier is consequently
-exposed to increasingly difficult samples as training proceeds.
+Deep learning often involves setting several hyperparameters whose values
+must be empirically determined.  Some hyperparameter choices are discrete
+such as optimizer type while others are continuous like base learning rate.
+Table 1 lists hyperparameter values which we found worked well with CNN
+architectures I, II and III for classifying cats and dogs.  It is worth
+noting that this table does not include any dropout probability or weight
+decay coefficient.  Instead, we observed that batch normalization plus data
+augmentation provided sufficient regularization to prevent significant
+overfitting.  
 
 <table style="width:100%">
   <thead>
@@ -158,6 +162,10 @@ exposed to increasingly difficult samples as training proceeds.
       <td style="text-align: center">100</td>
     </tr>
     <tr>
+      <td style="text-align: left">Optimizer type</td>
+      <td style="text-align: center">Adam</td>
+    </tr>
+    <tr>
       <td style="text-align: left">Base learning rate</td>
       <td style="text-align: center">0.01</td>
     </tr>
@@ -168,7 +176,21 @@ exposed to increasingly difficult samples as training proceeds.
   </tbody>
 </table>
 
-*Table 1.  List of common CNN hyperparameters.*
+*Table 1.  List of hyperparameters employed for CNN architectures I, II and
+III.*
+
+
+
+As training proceeds, we maintain a list $L_{wrong \; samples}$ of
+incorrectly classified training samples whose size is capped at the number
+of training chips per epoch.  We randomly replace entries in training
+batches with samples from $L_{wrong \; samples}$.  The probability of
+reusing a previous incorrectly-classified training samples linearly
+increases from 0 to 0.9 during a training session.  Once some previously
+incorrect training sample is reused, the probability of deleting it from
+$L_{wrong \; samples}$ decreases from from 1.0 to 0.25 during a training
+session.  The classifier is consequently exposed to increasingly difficult
+samples as training proceeds.
 
 
 
@@ -192,11 +214,11 @@ data sets for one particular CNN experiment.*
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/preferred_filters.png)
 *Fig. 7.  Examples of preferred inputs for trained filters within all
-convolution layers of CNN architecture I
+convolution layers of CNN architecture I.* 
 
-![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/multiexpt_preferred_final_ocnv_filters.png)
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/multiexpt_preferred_final_conv_filters.png)
 *Fig. 8.  Examples of preferred inputs for trained filters within final 
-convolution layers of CNNs with architectures I, II and III.
+convolution layers of four different CNNs with various architectures.*
 
 
 
@@ -204,8 +226,7 @@ convolution layers of CNNs with architectures I, II and III.
 
 ## References
 
-1.  [See the 2013 Kaggle dogs vs cats
-competition.](https://www.kaggle.com/c/dogs-vs-cats)
+1.  [See the 2013 Kaggle "Dogs vs Cats" competition.](https://www.kaggle.com/c/dogs-vs-cats)
 
 2.  [P. Sermanet, D. Eigen, X. Zhang, M. Mathieu, R. Ferbus and Y. LeCun,
 "OverFeat: Integrated Recognition, Localization and Detection using
@@ -235,11 +256,11 @@ Neural Network Acoustic Models", 50th ICML $\small{(2013)}$.](https://web.stanfo
 9.  [D.H.T Hien, "A guide to receptive field arithmetic for Convolutional
 Neural Networks," $\small{(2017)}$.](https://medium.com/@nikasa1889/a-guide-to-receptive-field-arithmetic-for-convolutional-neural-networks-e0f514068807)
 
-
 10.  [T.G. Dietterich, "Ensemble Methods in Machine Learning," International
 Workshop on Mutiple Classifier Systems $\small{(2000)}$ 1.](http://web.engr.oregonstate.edu/~tgd/publications/mcs-ensembles.pdf)
 
-11.  [C. Olah, A. Mordvintsev and L. Schubert, "Feature Visualization,"
-Distill $\small{(2017)}$.](https://distill.pub/2017/feature-visualization/)
+11.  [See DeepDreaming with TensorFlow.](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/deepdream/deepdream.ipynb)
 
+12.  [C. Olah, A. Mordvintsev and L. Schubert, "Feature Visualization,"
+Distill $\small{(2017)}$.](https://distill.pub/2017/feature-visualization/)
 
