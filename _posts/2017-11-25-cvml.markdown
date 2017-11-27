@@ -213,8 +213,8 @@ data sets for one particular CNN experiment.*
 
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/preferred_filters.png)
-*Fig. 7.  Examples of preferred inputs for trained filters within all
-convolution layers of CNN architecture I.* 
+*Fig. 7.  Examples of preferred inputs for trained filters within
+convolution layers of CNN architecture I.*
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/multiexpt_preferred_final_conv_filters.png)
 *Fig. 8.  Examples of preferred inputs for trained filters within final 
