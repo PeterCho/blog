@@ -1,12 +1,12 @@
 ---
 layout: post
-title:  "Classifying Cat and Dog Imagery via a CNN Ensemble"
-date:   2017-11-24 12:00:00
+title:  "Classifying Cat and Dog Images via an Ensemble of CNNs"
+date:   2017-11-25 12:00:00
 categories: Deep Learning
 use_math: true
 ---
 
-## A Kaggle competition redux
+## Revisiting a Kaggle competition
 
 In September 2013, Kaggle sponsored a competition to create an algorithm
 which determines whether images contain either a dog or a cat [1].  This
@@ -15,61 +15,62 @@ cats.  It further supplied a testing corpus of 10K unlabeled images of dogs
 and cats.  A total of 215 teams participated in the competition.  The first
 place winner in 2014, Pierre Sermanet, achieved a classification accuracy
 of 98.9% using his OverFeat deep learning library [2].  The second place
-winner achieved 98.3% accuracy.
+winner attained 98.3% accuracy.
 
-We revisit this fun problem and apply CNN techniques $($ e.g. batch
-normalization [3] $)$, optimizers $($ e.g. ADAM [4] $)$, frameworks $($
-e.g. TensorFlow [5] $)$ and architectures $($ e.g. DenseNet [6] $)$ which
-were developed since the original challenge ended.  Like many Kaggle
-competition participants, we work with an ensemble of trained CNNs in order
-to maximize classification accuracy.  But rather than finetune networks
-pre-trained on ImageNet data, we are more interested in training from
-scratch.  Moreover, we are willing to sacrifice some classification
-accuracy for training speed.  We believe such tradeoffs are common for
-"real-world" classification problems.
+In this blog post, we revisit this fun problem and apply Convolutional
+Neural Network $\small($CNN$\small)$ techniques $\small($e.g. batch
+normalization [3]$\small)$, optimizers $\small($e.g. ADAM [4]$\small)$,
+frameworks $\small($e.g. TensorFlow [5]$\small)$ and architectures
+$\small($e.g. DenseNet [6]$\small)$ which were developed after the original
+challenge ended.  Like many Kaggle competition participants, we work with
+an ensemble of trained CNNs in order to maximize classification accuracy.
+But rather than finetune networks pre-trained on ImageNet data, we are more
+interested in training CNNs from scratch.  Moreover, we are willing to
+sacrifice some classification accuracy for training speed.  Such tradeoffs
+are commonly made for "real-world" classification problems.
 
-To decrease training time, we subsample all 35K Kaggle images down to 160
-$\times$ 160 pixel size without preserving aspect ratio $($ see figure 1
-$)$.  We also corrected mislabeled training images and manually labeled all
-testing images.  We further discarded samples containing no cat or dog as
-well as images containing both cats and dogs [7].  Our cleaned training and
-testing sets respectively contain 24922 and 9970 images.
-
-![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/cat_orig_downsampled.png)
-*Fig. 1.  Original 499 $\times$ 427 image of a cat is downsampled to a 160
-$\times$ 160 version that does not preserve the original's aspect ratio.*
-
-## Training data augmentation
+A relatively small number of the Kaggle training images were mislabeled,
+and none of the testing images were annotated.  So we first manually fixed
+the training data and labeled the testing data.  We also discarded Kaggle
+pictures containing no cat or dog as well as images containing both cats
+and dogs [7].  Our cleaned training and testing sets respectively contain
+24922 and 9970 images.
 
 At the start of each training session, we randomly split 85% of the input
 24922 images into a training subset and the remaining 15% into validation
-data.  Dynamic image augmentation of the training subset is subsequently
-performed to increase its diversity and regularize neural network training.
-Following common practice, we randomly crop a 148 $\times$ 148 chip from
-each input 160 $\times$ 160 image and horizontally flip with 50%
-probability.  Since cats and dogs are deformable objects that may appear in
-highly variable poses, we also randomly rotate 12% of training images by
-90, 180 or 270 degrees.  Finally, we globally alter the hue, saturation and
-value color contents for a maximum of 20% of training inputs.  Examples of
-augmented versions of the 160 $\times$ 160 image in figure 1 are displayed
-in figure 2.  We note that random cropping is also performed on validation
-and testing samples so that CNNs always ingest 148 $\times$ 148 pixel size
-inputs.
+data.  To decrease training time, we subsample all 35K Kaggle images down
+to 160 $\times$ 160 pixel size without preserving aspect ratio $\small($see
+figure 1$\small)$.  Dynamic image augmentation of the training subset is
+subsequently performed to increase its diversity and regularize neural
+network training.  Following common practice, we randomly crop a 148
+$\times$ 148 chip from each input 160 $\times$ 160 image and horizontally
+flip with 50% probability.  Since cats and dogs are deformable objects that
+may appear in highly variable poses, we also randomly rotate 12% of
+training images by 90, 180 or 270 degrees.  Finally, we globally alter the
+hue, saturation and value color contents for a maximum of 20% of training
+inputs.  Examples of augmented versions of the 160 $\times$ 160 image in
+figure 1 are displayed in figure 2.  We note that random cropping is also
+performed on validation and testing samples so that CNN input is always 148
+$\times$ 148 in size.
+
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/cat_orig_downsampled.png)
+*Fig. 1.  An original 499 $\times$ 427 Kaggle image of a cat is downsampled
+to 160 $\times$ 160.*
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_augment.png)
 *Fig. 2.  Examples of training data augmentation include random
 combinations of image crops, 90 degree rotations, horizontal flips and
 global color alterations.*
 
-As training proceeds, we maintain a list $L_{wrong}$ of incorrectly
-classified training samples whose size is capped at the number of training
-chips per epoch.  We randomly replace entries in training batches with
-samples from $L_{wrong}$.  The probability of reusing a previous
-incorrectly-classified training samples linearly increases from 0 to 0.9
-during a training session.  Once some previously incorrect training sample
-is reused, the probability of deleting it from $L_{wrong}$ decreases from
-from 1.0 to 0.25 during a training session.  The classifier is consequently
-exposed to increasingly difficult samples as training proceeds.
+In this Kaggle competition redux, we work within the popular TensorFlow
+machine learning framework [5].  The TensorBoard feature of TensorFlow may
+be used to display input images as training proceeds.  Figure 3 presents
+dynamically augmented cat and dog training samples visualized via
+TensorBoard.
+
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/training_images.png)
+*Fig. 3.  Tensorboard display of dynamically augmented training images.*
+
 
 ## CNN architectures
 
@@ -93,62 +94,48 @@ consequently train more quickly than the former.
 *  Adding final dropout layers in addition to batch normalization did not
 help reduce data overfitting.
 
-*  A final fully connected layer does not benefit from having more than 6
+* A final fully connected layer did not benefit from having more than 6
 times as many nodes as the number of classification states.
 
-In the end, we empirically found particular "super-layer" combinations of
-2D convolution with 5x5 kernels, batch normalization, leaky ReLU activation
-[8], 2x2 pooling and fully connected layers to be most useful:
+We empirically found the following combinations of convolutions with 5x5
+kernels, batch normalization, leaky ReLU activation [8], 2x2 pooling and
+fully connected layers to be useful:
 
 CBLP: Conv, Batch Norm, Leaky Relu, Pool
 
 CBL: Conv, Batch Norm, Leaky Relu
 
-Dense: Batch Norm, Leaky Relu, Dense Conv with no bottleneck
+BLD: Batch Norm, Leaky Relu, Dense Conv with no bottleneck
 
-FC: Fully connected, Batch Norm, Leaky Relu
+FBL: Fully connected, Batch Norm, Leaky Relu
 
-We choose these super-layers' parameters along with their number in network
+We choose these super-layers' parameters and their number within network
 configurations so that total receptive field and training image pixel sizes
-are comparable [9].  Our top three CNN architectures all have receptive
-field size R=157:
+are comparable.  Our top three CNN architectures all have receptive field
+size R=157 [9]:
 
-9 super-layer architecture: 
-    3 x [CBLP], 4 x [CBL], 2 x [FC]
+Architecture I with 9 super-layers: 
+    3 x [CBLP], 4 x [CBL], 2 x [FBL]
 
-10 super-layer architecture: 
-    2 x [CBLP], 2 x [CBL], CBLP, 3 x [CBL], 2 x [FC]
+Architecture II with 10 super-layers: 
+    2 x [CBLP], 2 x [CBL], CBLP, 3 x [CBL], 2 x [FBL]
 
-10 super-layer densenet architecture:
-    2 x [CBLP], 2 x [Dense], CBLP, 3 x [Dense], 2 x [FC]
-
-In the end, we empirically found particular "super-layer" combinations of
-2D convolution with 5x5 kernels, batch normalization, leaky ReLU
-activation, 2x2 pooling and fully connected layers to be most useful:
-
-CBLP: Conv, Batch Norm, Leaky Relu, Pool
-
-CBL: Conv, Batch Norm, Leaky Relu
-
-Dense: Batch Norm, Leaky Relu, Dense Conv with no bottleneck
-
-FC: Fully connected, Batch Norm, Leaky Relu
-
-We choose these super-layers' parameters along with their number in network
-configurations so that total receptive field and training image pixel sizes
-are comparable [ref].  Our top three CNN architectures all have receptive
-field size R=157:
-
-9 super-layer architecture: 
-    3 x [CBLP], 4 x [CBL], 2 x [FC]
-
-10 super-layer architecture: 
-    2 x [CBLP], 2 x [CBL], CBLP, 3 x [CBL], 2 x [FC]
-
-10 super-layer densenet architecture:
-    2 x [CBLP], 2 x [Dense], CBLP, 3 x [Dense], 2 x [FC]
+Architecture III with 10 super-layers including 5 dense blocks:
+    2 x [CBLP], 2 x [BLD], CBLP, 3 x [BLD], 2 x [FBL]
 
 
+## CNN training and testing
+
+
+As training proceeds, we maintain a list $L_{wrong}$ of incorrectly
+classified training samples whose size is capped at the number of training
+chips per epoch.  We randomly replace entries in training batches with
+samples from $L_{wrong}$.  The probability of reusing a previous
+incorrectly-classified training samples linearly increases from 0 to 0.9
+during a training session.  Once some previously incorrect training sample
+is reused, the probability of deleting it from $L_{wrong}$ decreases from
+from 1.0 to 0.25 during a training session.  The classifier is consequently
+exposed to increasingly difficult samples as training proceeds.
 
 <table style="width:100%">
   <thead>
@@ -171,26 +158,49 @@ field size R=157:
       <td style="text-align: center">100</td>
     </tr>
     <tr>
-      <td style="text-align: left">Optimizer</td>
-      <td style="text-align: center">ADAM</td>
-    </tr>
-
-    <tr>
       <td style="text-align: left">Base learning rate</td>
       <td style="text-align: center">0.01</td>
     </tr>
     <tr>
-      <td style="text-align: left">Leaky ReLU alpha</td>
+      <td style="text-align: left">Leaky ReLU coefficient</td>
       <td style="text-align: center">0.1</td>
     </tr>
   </tbody>
 </table>
 
-*Table 1.  List of common hyperparameters used to train a CNN ensemble.*
+*Table 1.  List of common CNN hyperparameters.*
 
+
+
+
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/class_accur.png)
+*Fig. 4.  Tensorboard display of fractional classification accuracy for
+training $\small($green$\small)$ and validation $\small($purple$\small)$
+data sets for one particular CNN experiment.*
+
+
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_correct_cats.png)
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_correct_dogs.png)
+*Fig. 5.  Representative examples of correctly classified cat and dog test images.*
+
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_incorrect.png)
+*Fig. 6.  Representative examples of incorrectly classified test images.*
 
 
 ## Visualizing CNN Learning
+
+
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/preferred_filters.png)
+*Fig. 7.  Examples of preferred inputs for trained filters within all
+convolution layers of CNN architecture I
+
+![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/multiexpt_preferred_final_ocnv_filters.png)
+*Fig. 8.  Examples of preferred inputs for trained filters within final 
+convolution layers of CNNs with architectures I, II and III.
+
+
+
+
 
 ## References
 
