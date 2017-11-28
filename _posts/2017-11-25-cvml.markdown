@@ -15,7 +15,7 @@ cats.  It further supplied a testing corpus of 10K unlabeled images of dogs
 and cats.  A total of 215 teams participated in the competition.  The first
 place winner in 2014, Pierre Sermanet, achieved a classification accuracy
 of 98.9% using his OverFeat deep learning library [2].  The second place
-winner attained 98.3% accuracy.
+winner, Zhao Xing, attained 98.3% accuracy.
 
 In this blog post, we revisit this fun problem and apply Convolutional
 Neural Network $\small($CNN$\small)$ techniques $\small($e.g. batch
@@ -220,20 +220,36 @@ weighted voting scheme for binary classification.
 
 Inference performed using an ensemble of classifiers generally yields
 better performance than any of its individual constituents [10].  We apply
-ensemble classification on the Kaggle test set of 10K cat and dog images
+ensemble classification on the Kaggle test set of 9970 cat and dog images
 which we manually labeled.  The ensemble of 8 trained CNNs achieves a
-classification accuracy of 98.0% on the held-out test set.  Representative
-examples of correctly classified test images are presented in figure 5,
-while examples of incorrect classifications are displayed in figure 6.
+classification accuracy of 98.0% on the held-out test set.  While our
+classifier's performance does not exceed the 2014 competition winner's, we
+intentionally worked with downsampled versions of the Kaggle imagery for
+speed purposes and did not use any other external data.
 
+Representative examples of correctly classified test images are presented
+in figure 5.  Successfully classified photos display cats and dogs in a
+variety of poses, often include human owners or more than one animal, and
+sometimes contain occluding foreground objects such as cages.  It is
+interesting to compare examples of correctly classified test images with
+those in figure 6 representing incorrect classification results.  In some
+cases, wrongly classified animals appear small in the image due to physical
+size or distance from the camera.  In others, the animals' orientations are
+uncommon.  Yet after having looked through the O(200) of O(10K) test images
+which were incorrectly classified by the CNN ensemble, we have not observed
+obvious signals which differentiate them from correctly classified photos.
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_correct_cats.png)
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_correct_dogs.png)
 *Fig. 5.  Representative examples of correctly classified cat and dog test images.*
 
+
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_incorrect.png)
 *Fig. 6.  Representative examples of incorrectly classified test images.*
 
+To gain insight into how trained CNNs learn to distinguish cats from dogs,
+we need to investigate more results than just test imagery classification
+results.  So we take up this topic in the next section.
 
 ## Visualizing CNN Learning
 
@@ -246,6 +262,17 @@ convolution layers of CNN architecture I.*
 *Fig. 8.  Examples of preferred inputs for trained filters within final 
 convolution layers of four different CNNs with various architectures.*
 
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=hzXOs6o91CU"
+target="_blank"><center><img align="center" src="http://img.youtube.com/vi/0.jpg" width="600" height="400" /></center></a>
+
+
+
+
+*Fig. 9.  Movie of an RL agent playing Atari Breakout after being trained
+via conventional Deep Reinforcement Learning.  The agent unsatisfactorily
+learns to score a few points by pinning its paddle to the game window's
+left wall.  Click on image above to start the YouTube video.*
 
 
 
