@@ -131,15 +131,15 @@ classification accuracies on validation imagery greater than 97%.
 
 ## CNN training and ensemble testing
 
-Deep learning often involves setting several hyperparameters whose values
-must be empirically determined.  Some hyperparameter choices are discrete
-such as optimizer type while others are continuous like base learning rate.
-Table 1 lists hyperparameter values which we found worked well with CNN
-architectures I, II and III for classifying cats and dogs.  It is worth
-noting that this table does not include any dropout probability or weight
-decay coefficient.  Instead, we observed that batch normalization plus data
+Deep learning usually requires setting several hyperparameters whose values
+must be empirically determined.  Some hyperparameter choices such as
+optimizer type are discrete while others like base learning rate are
+continuous.  Table 1 lists hyperparameter values which we found worked well
+with CNN architectures I, II and III for classifying cats and dogs.  It is
+worth noting that this table does not include any dropout probability or
+weight decay coefficient.  We observed that batch normalization plus data
 augmentation provided sufficient regularization to prevent significant
-overfitting.  
+overfitting.
 
 <table style="width:100%">
   <thead>
@@ -179,26 +179,52 @@ overfitting.
 *Table 1.  List of hyperparameters employed for CNN architectures I, II and
 III.*
 
+As training proceeds, we maintain a list $L_{incorrect}$ of incorrectly
+classified training samples whose size is capped at the number of training
+chips per epoch.  We randomly replace entries in training minibatches with
+samples from $L_{incorrect}$.  Once an incorrect training sample is reused,
+the probability of deleting it from $L_{incorrect}$ decreases from 1.0 to
+0.25 during a training session.  And the probability of using previous
+incorrectly-classified training samples linearly ramps up from 0 to 0.9.
+The classifier is consequently exposed to increasingly difficult training
+samples as the CNN learns.
 
-
-As training proceeds, we maintain a list $L_{wrong \; samples}$ of
-incorrectly classified training samples whose size is capped at the number
-of training chips per epoch.  We randomly replace entries in training
-batches with samples from $L_{wrong \; samples}$.  The probability of
-reusing a previous incorrectly-classified training samples linearly
-increases from 0 to 0.9 during a training session.  Once some previously
-incorrect training sample is reused, the probability of deleting it from
-$L_{wrong \; samples}$ decreases from from 1.0 to 0.25 during a training
-session.  The classifier is consequently exposed to increasingly difficult
-samples as training proceeds.
-
-
-
+Learning curves for one representative training session are plotted in
+figure 4.  Fractional classification accuracies on both the training and
+validation data sets exhibit significant fluctuations.  But their time
+averages generally rise as training proceeds.  We note that aggressive data
+augmentation along with hard negative mining renders training samples more
+challenging than their validation sample counterparts.  So the green
+learning curve for the training subset in figure 4 increases more slowly
+than the purple curve for the validation data.  Yet by the end of the
+experiment, both reach similar classification accuracy fractions.  We
+consequently do not observe signs of significant over-fitting or
+under-fitting in this plot or others like it for our three CNN
+architectures.
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/class_accur.png)
 *Fig. 4.  Tensorboard display of fractional classification accuracy for
 training $\small($green$\small)$ and validation $\small($purple$\small)$
-data sets for one particular CNN experiment.*
+data sets for one particular experiment training an architecture I CNN.*
+
+After running a series of training experiments, we harvest 8 TensorFlow
+models frozen at epochs with maximal validation accuracies ranging from
+97.3% to 97.5%.  Two of the frozen models come from different epochs within
+one training session for an architecture I CNN.  Two others come from
+different epochs in another experiment for a CNN with architecture II.  The
+8 individual models subsequently become inputs to a CNN ensemble.  Given an
+input image, we sum cat and dog classification probabilities from each of
+the 8 models.  Classification state is then determined by the maximum
+cumulative score.  This aggregation approach effectively corresponds to a
+weighted voting scheme for binary classification.
+
+Inference performed using an ensemble of classifiers generally yields
+better performance than any of its individual constituents [10].  We apply
+ensemble classification on the Kaggle test set of 10K cat and dog images
+which we manually labeled.  The ensemble of 8 trained CNNs achieves a
+classification accuracy of 98.0% on the held-out test set.  Representative
+examples of correctly classified test images are presented in figure 5,
+while examples of incorrect classifications are displayed in figure 6.
 
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_correct_cats.png)
