@@ -254,25 +254,29 @@ results.  So we take up this topic in the next section.
 ## Visualizing CNN Learning
 
 
+<a
+href="http://www.youtube.com/watch?feature=player_embedded&v=Si2sxR5Pm_w"
+target="_blank"><center><img
+src="http://img.youtube.com/vi/Si2sxR5Pm_w/0.jpg" width="600"
+height="400"/></center></a>
+
+*Fig. 7. Movie showing PCA decompositions of 12-dimensional feature descriptors
+from the final fully connected layer of CNN architecture I.  Red and blue
+dots represent cat and dog descriptor projections onto the three dominant
+PCA eigendirections.  The four 3D point clouds illustrate increasing
+separation between cat and dog descriptors at training epochs 0, 4, 8 and 16.
+Click on the image above to start the YouTube video.*
+
+
+
+
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/preferred_filters.png)
-*Fig. 7.  Examples of preferred inputs for trained filters within
+*Fig. 8.  Examples of preferred inputs for trained filters within
 convolution layers of CNN architecture I.*
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/multiexpt_preferred_final_conv_filters.png)
-*Fig. 8.  Examples of preferred inputs for trained filters within final 
+*Fig. 9.  Examples of preferred inputs for trained filters within final 
 convolution layers of four different CNNs with various architectures.*
-
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=hzXOs6o91CU"
-target="_blank"><center><img align="center" src="http://img.youtube.com/vi/0.jpg" width="600" height="400" /></center></a>
-
-
-
-
-*Fig. 9.  Movie of an RL agent playing Atari Breakout after being trained
-via conventional Deep Reinforcement Learning.  The agent unsatisfactorily
-learns to score a few points by pinning its paddle to the game window's
-left wall.  Click on image above to start the YouTube video.*
 
 
 
