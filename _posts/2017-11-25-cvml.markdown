@@ -170,10 +170,14 @@ overfitting.
       <td style="text-align: center">0.01</td>
     </tr>
     <tr>
-      <td style="text-align: left">Leaky ReLU coefficient</td>
+      <td style="text-align: left">Leaky ReLU slope coefficient</td>
       <td style="text-align: center">0.1</td>
     </tr>
-  </tbody>
+    <tr>
+      <td style="text-align: left">Loss function</td>
+      <td style="text-align: center">Cross entropy</td>
+    </tr>
+</tbody>
 </table>
 
 *Table 1.  List of hyperparameters employed for CNN architectures I, II and
@@ -252,6 +256,11 @@ we need to investigate more results than just test imagery classification
 results.  So we take up this topic in the next section.
 
 ## Visualizing CNN Learning
+
+
+
+
+
 
 
 <a
