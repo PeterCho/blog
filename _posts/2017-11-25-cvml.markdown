@@ -8,31 +8,31 @@ use_math: true
 
 ## Revisiting a Kaggle competition
 
-In September 2013, Kaggle sponsored a competition to create an algorithm
-which determines whether images contain either a dog or a cat [1].  This
-challenge provided a training archive of 25K labeled images of dogs and
-cats.  It further supplied a testing corpus of 10K unlabeled images of dogs
-and cats.  A total of 215 teams participated in the competition.  The first
-place winner in 2014, Pierre Sermanet, achieved a classification accuracy
-of 98.9% using his OverFeat deep learning library [2].  The second place
-winner, Zhao Xing, attained 98.3% accuracy.
+In September 2013, Kaggle sponsored a competition to create an algorithm to
+classify cat and dog images [1].  This challenge provided a training
+archive of 25K labeled images.  It further supplied a testing corpus of 10K
+unlabeled images of cats and dogs.  A total of 215 teams participated in
+the competition.  The first place winner in 2014, Pierre Sermanet, achieved
+a classification accuracy of 98.9% using his OverFeat deep learning library
+[2].  The second place winner, Zhao Xing, attained 98.3% accuracy.
 
-In this blog post, we revisit this fun problem and apply Convolutional
-Neural Network $\small($CNN$\small)$ techniques $\small($e.g. batch
-normalization [3]$\small)$, optimizers $\small($e.g. Adam [4]$\small)$,
-frameworks $\small($e.g. TensorFlow [5]$\small)$ and architectures
-$\small($e.g. DenseNet [6]$\small)$ which were developed after the original
-challenge ended.  Like many Kaggle competition participants, we work with
-an ensemble of trained CNNs in order to maximize classification accuracy.
-But rather than finetune networks pre-trained on ImageNet data, we are more
-interested in training CNNs from scratch.  Moreover, we are willing to
-sacrifice some classification accuracy for training speed.  Such tradeoffs
-are commonly made for "real-world" classification problems.
+In this blog post, we revisit this fun problem and apply deep learning
+techniques $\small($e.g. batch normalization [3]$\small)$, optimizers
+$\small($e.g. Adam [4]$\small)$, frameworks $\small($e.g. TensorFlow
+[5]$\small)$ and architectures $\small($e.g. DenseNet [6]$\small)$ which
+were developed after the original challenge ended.  Like many Kaggle
+competition participants, we work with an ensemble of trained Convolutional
+Neural Networks $\small($CNNs$\small)$ in order to maximize classification
+accuracy.  But rather than finetune various networks pre-trained on
+ImageNet data, we are more interested in training CNNs from scratch.
+Moreover, we are willing to sacrifice some classification accuracy for
+training speed.  Such tradeoffs are commonly made for "real-world"
+classification problems.
 
 A relatively small number of the Kaggle training images were mislabeled,
 and none of the testing images were annotated.  So we first manually fixed
 the training data and labeled the testing data.  We also discarded Kaggle
-pictures containing no cat or dog as well as images containing both cats
+pictures containing no cat or dog along with photos containing both cats
 and dogs [7].  Our cleaned training and testing sets respectively contain
 24922 and 9970 images.
 
@@ -45,13 +45,13 @@ subsequently performed to increase its diversity and regularize neural
 network training.  Following common practice, we randomly crop a 148
 $\times$ 148 chip from each input 160 $\times$ 160 image and horizontally
 flip with 50% probability.  Since cats and dogs are deformable objects that
-may appear in highly variable poses, we also randomly rotate 12% of
-training images by 90, 180 or 270 degrees.  Finally, we globally alter the
-hue, saturation and value color contents for a maximum of 20% of training
-inputs.  Examples of augmented versions of the 160 $\times$ 160 image in
-figure 1 are displayed in figure 2.  We note that random cropping is also
-performed on validation and testing samples so that CNN input is always 148
-$\times$ 148 in size.
+may appear in highly variable poses, we also randomly rotate 12% of the
+training images by 90, 180 or 270 degrees.  Furthermore, we globally alter
+the hue, saturation and value color contents for a maximum of 20% of
+training inputs.  Examples of augmented versions of the 160 $\times$ 160
+image in figure 1 are displayed in figure 2.  We note that random cropping
+is also performed on validation and testing samples so that CNN input is
+always 148 $\times$ 148 in size.
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/cat_orig_downsampled.png)
 *Fig. 1.  An original 499 $\times$ 427 Kaggle image of a cat is downsampled
@@ -62,7 +62,7 @@ to 160 $\times$ 160.*
 combinations of image crops, 90 degree rotations, horizontal flips and
 global color alterations.*
 
-In this Kaggle competition redux, we work within the popular TensorFlow
+In this Kaggle competition redux, we work with the popular TensorFlow
 machine learning framework [5].  The TensorBoard feature of TensorFlow may
 be used to display input images as training proceeds.  Figure 3 presents
 dynamically augmented cat and dog training samples visualized via
@@ -74,14 +74,16 @@ TensorBoard.
 
 ## CNN architectures
 
-Over the course of 100+ experiments, we investigated a variety of CNN
-architectures and different training strategies in search of those yielding
-maximal validation classification accuracies.  While running these
-experiments on the cats and dogs imagery corpus, we noted several
-"rules-of-thumb" which may hold for other classification problems:
+Over the course of 100+ cat vs dog classification experiments, we
+investigated a variety of CNN architectures and training strategies in
+search of those yielding maximal validation accuracies.  While running
+these experiments on the Kaggle data corpus, we noted several
+"rules-of-thumb" which we strongly suspect hold for other image
+classification problems:
 
-*  Deeper networks based upon 3x3 convolution kernels did not yield better
-validation results than networks with fewer 5x5 convolution kernels layers.
+* Deeper networks based upon 3x3 convolution kernels did not yield better
+validation results than networks with fewer 5x5 convolution kernels layers
+and comparable receptive field sizes.
 
 *  Networks with 2 pooling layers did not yield better validation results
 than those with 3 pooling layers.
@@ -99,13 +101,13 @@ times as many nodes as the number of classification states.
 
 We found the following "super-layer" combinations of convolutions with 5x5
 kernels, batch normalization, leaky ReLU activation [8], 2x2 pooling and
-fully connected layers to be useful building blocks:
+fully connected layers to be useful CNN building blocks:
 
 CBLP: Conv5, Batch norm, Leaky ReLU, Pool
 
 CBL: Conv5, Batch norm, Leaky ReLU
 
-BLD: Batch norm, Leaky ReLU, Dense conv5 with no bottleneck
+BLD: Batch norm, Leaky ReLU, Dense conv5 with no bottleneck [6]
 
 FBL: Fully connected, Batch norm, Leaky ReLU
 
@@ -138,10 +140,10 @@ classification accuracies on validation imagery greater than 97%.
 Deep learning usually requires setting several hyperparameters whose values
 must be empirically determined.  Some hyperparameter choices such as
 optimizer type are discrete while others like base learning rate are
-continuous.  Table 1 lists hyperparameter values which we found worked well
-with CNN architectures I, II and III for classifying cats and dogs.  It is
-worth noting that this table does not include any dropout probability or
-weight decay coefficient.  We observed that batch normalization plus data
+continuous.  Table 1 lists hyperparameter values which worked well with CNN
+architectures I, II and III for classifying cats and dogs.  It is worth
+noting that this table does not include any dropout probability nor weight
+decay coefficient.  We found that batch normalization plus data
 augmentation provided sufficient regularization to prevent significant
 overfitting.
 
@@ -197,18 +199,18 @@ incorrectly-classified training samples linearly ramps up from 0 to 0.9.
 The classifier is consequently exposed to increasingly difficult training
 samples as the CNN learns.
 
-Learning curves for one representative training session are plotted in
-figure 4.  Fractional classification accuracies on both the training and
+Learning curves for one particular training session are plotted in figure 4.
+Fractional classification accuracies on both the training and
 validation data sets exhibit significant fluctuations.  But their time
 averages generally rise as training proceeds.  We note that aggressive data
 augmentation along with hard negative mining renders training samples more
-challenging than their validation sample counterparts.  So the green
-learning curve for the training subset in figure 4 increases more slowly
-than the purple curve for the validation data.  Yet by the end of the
+challenging to classify than their validation sample counterparts.  So the green
+learning curve for the training subset increases more slowly
+than the purple curve for the validation data in figure 4.  Yet by the end of the
 experiment, both reach similar classification accuracy fractions.  We
 consequently do not observe signs of significant over-fitting or
-under-fitting in this plot or others like it for our three CNN
-architectures.
+under-fitting in this plot or others like it for our CNN
+architectures I, II and III.
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/class_accur.png)
 *Fig. 4.  Tensorboard display of fractional classification accuracy for
@@ -223,29 +225,31 @@ different epochs in another experiment for a CNN with architecture II.  The
 8 individual models subsequently become inputs to a CNN ensemble.  Given an
 input image, we sum cat and dog classification probabilities from each of
 the 8 models.  Classification state is then determined by the maximum
-cumulative score.  This aggregation approach effectively corresponds to a
-weighted voting scheme for binary classification.
+cumulative score.  This aggregation approach effectively yields a weighted
+voting scheme for binary classification.
 
-Inference performed using an ensemble of classifiers generally yields
-better performance than any of its individual constituents [10].  We apply
-ensemble classification on the Kaggle test set of 9970 cat and dog images
-which we manually labeled.  The ensemble of 8 trained CNNs achieves a
+Inference results from an ensemble of classifiers are generally better than
+those from any of its individual constituents [10].  We perform ensemble
+classification on our cleaned Kaggle test set of 9970 cat and dog images
+that we manually labeled.  The ensemble of 8 trained CNNs achieves a
 classification accuracy of 98.0% on the held-out test set.  While our
 classifier's performance does not exceed the 2014 competition winner's, we
+did not employ any external data from sources like ImageNet, and we
 intentionally worked with downsampled versions of the Kaggle imagery for
-speed purposes and did not use any other external data.
+speed purposes.
 
 Representative examples of correctly classified test images are presented
 in figure 5.  Successfully classified photos display cats and dogs in a
 variety of poses, often include human owners or more than one animal, and
 sometimes contain occluding foreground objects such as cages.  It is
 interesting to compare examples of correctly classified test images with
-those in figure 6 representing incorrect classification results.  In some
-cases, wrongly classified animals appear small in the image due to physical
-size or distance from the camera.  In others, the animals' orientations are
-uncommon.  Yet after having looked through the O(200) of O(10K) test images
-which were incorrectly classified by the CNN ensemble, we have not observed
-obvious signals which differentiate them from correctly classified photos.
+those in figure 6 depicting incorrect classification results.  In some
+cases, wrongly classified animals appear small due to physical size or
+distance from the camera.  In others, the animals' orientations are
+uncommon.  Yet after having looked through the O$($200$)$ of O$($10K$)$
+test images which were incorrectly classified by the CNN ensemble, we did
+not see obvious signals that differentiate them from correctly classified
+photos.
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_correct_cats.png)
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_correct_dogs.png)
@@ -255,9 +259,9 @@ obvious signals which differentiate them from correctly classified photos.
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_incorrect.png)
 *Fig. 6.  Representative examples of incorrectly classified test images.*
 
-To gain insight into how trained CNNs learn to distinguish cats from dogs,
-we need to investigate more results than just test imagery classification
-results.  We take up this topic in the next section.
+To gain insight into how CNNs learn to categorize, we need to investigate
+more than just test imagery classification results.  We take up this topic
+in the next section.
 
 ## Visualizing CNN Learning
 
