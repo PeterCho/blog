@@ -48,7 +48,7 @@ flip with 50% probability.  Since cats and dogs are deformable objects that
 may appear in highly variable poses, we also randomly rotate 12% of the
 training images by 90, 180 or 270 degrees.  Furthermore, we globally alter
 the hue, saturation and value color contents for a maximum of 20% of
-training inputs.  Examples of augmented versions of the 160 $\times$ 160
+training images.  Examples of augmented versions of the 160 $\times$ 160
 image in figure 1 are displayed in figure 2.  We note that random cropping
 is also performed on validation and testing samples so that CNN input is
 always 148 $\times$ 148 in size.
@@ -59,7 +59,7 @@ to 160 $\times$ 160.*
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/montage_augment.png)
 *Fig. 2.  Examples of training data augmentation include random
-combinations of image crops, 90 degree rotations, horizontal flips and
+combinations of image crops, horizontal flips, 90 degree rotations and
 global color alterations.*
 
 In this Kaggle competition redux, we work with the popular TensorFlow
@@ -88,13 +88,13 @@ and comparable receptive field sizes.
 *  Networks with 2 pooling layers did not yield better validation results
 than those with 3 pooling layers.
 
-*  Networks with extra convolution layers interspersed among the 3 pooling
+* Networks with extra convolution layers interspersed among the 3 pooling
 layers did not yield better validation results than networks with 3
-up-front pooling layers.  The latter aggressively reduce image size and
-consequently train more quickly than the former.
+up-front pooling layers.  The latter more aggressively reduce image size
+and consequently train faster than the former.
 
-*  Adding final dropout layers in addition to batch normalization did not
-help reduce data overfitting.
+* Adding dropout layers to networks already instrumented with batch
+normalization did not help reduce data overfitting.
 
 * A final fully connected layer did not benefit from having more than 6
 times as many nodes as the number of classification states.
@@ -107,7 +107,7 @@ CBLP: Conv5, Batch norm, Leaky ReLU, Pool
 
 CBL: Conv5, Batch norm, Leaky ReLU
 
-BLD: Batch norm, Leaky ReLU, Dense conv5 with no bottleneck [6]
+BLD: Batch norm, Leaky ReLU, Dense conv5 with no bottleneck layer [6]
 
 FBL: Fully connected, Batch norm, Leaky ReLU
 
@@ -115,8 +115,9 @@ SOFT:  Fully connected, Softmax.
 
 We choose these super-layers' parameters and their numbers in deep network
 configurations so that total CNN receptive field and training image pixel
-sizes are comparable.  The best three architectures we found for Kaggle
-cats and dogs classification all have receptive field size R=157 [9]:
+sizes are comparable.  The best three architectures we found for
+classifying 148 $\times$ 148 cat and dog images all have receptive field
+size R=157 [9]:
 
 Architecture I with 9 nonlinear super-layers: 
 
@@ -127,7 +128,7 @@ Architecture II with 10 nonlinear super-layers:
 $\qquad$ 2 $\times$ [CBLP], 2 $\times$ [CBL], CBLP, 3 $\times$ [CBL], 2
 $\times$ [FBL], SOFT
 
-Architecture III with 10 nonlinear super-layers including 5 dense blocks:
+Architecture III with 10 nonlinear super-layers including 5 dense blocks [6]:
     
 $\qquad$ 2$\times$ [CBLP], 2$\times$ [BLD], CBLP, 3$\times$ [BLD],
 2$\times$ [FBL], SOFT
@@ -139,7 +140,7 @@ classification accuracies on validation imagery greater than 97%.
 
 Deep learning usually requires setting several hyperparameters whose values
 must be empirically determined.  Some hyperparameter choices such as
-optimizer type are discrete while others like base learning rate are
+optimizer type are discrete, while others like base learning rate are
 continuous.  Table 1 lists hyperparameter values which worked well with CNN
 architectures I, II and III for classifying cats and dogs.  It is worth
 noting that this table does not include any dropout probability nor weight
@@ -195,27 +196,27 @@ chips per epoch.  We randomly replace entries in training minibatches with
 samples from $L_{incorrect}$.  Once an incorrect training sample is reused,
 the probability of deleting it from $L_{incorrect}$ decreases from 1.0 to
 0.25 during a training session.  And the probability of using previous
-incorrectly-classified training samples linearly ramps up from 0 to 0.9.
-The classifier is consequently exposed to increasingly difficult training
-samples as the CNN learns.
+incorrectly-classified training samples linearly ramps up from 0 to 0.9
+over an experiment.  The classifier is consequently exposed to increasingly
+difficult training samples as the CNN learns.
 
 Learning curves for one particular training session are plotted in figure 4.
 Fractional classification accuracies on both the training and
 validation data sets exhibit significant fluctuations.  But their time
 averages generally rise as training proceeds.  We note that aggressive data
 augmentation along with hard negative mining renders training samples more
-challenging to classify than their validation sample counterparts.  So the green
-learning curve for the training subset increases more slowly
-than the purple curve for the validation data in figure 4.  Yet by the end of the
+challenging to classify than their validation counterparts.  So the green
+learning curve for the training subset improves more slowly than the
+purple curve for validation data in figure 4.  Yet by the end of the
 experiment, both reach similar classification accuracy fractions.  We
-consequently do not observe signs of significant over-fitting or
-under-fitting in this plot or others like it for our CNN
-architectures I, II and III.
+consequently do not observe signs of significant overfitting or
+underfitting in this plot or others like it for CNN architectures I,
+II and III.
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/class_accur.png)
 *Fig. 4.  Tensorboard display of fractional classification accuracy for
 training $\small($green$\small)$ and validation $\small($purple$\small)$
-data sets for one particular experiment training an architecture I CNN.*
+data sets for one CNN architecture I experiment.*
 
 After running a series of training experiments, we harvest 8 TensorFlow
 models frozen at epochs with maximal validation accuracies ranging from
@@ -233,15 +234,15 @@ those from any of its individual constituents [10].  We perform ensemble
 classification on our cleaned Kaggle test set of 9970 cat and dog images
 that we manually labeled.  The ensemble of 8 trained CNNs achieves a
 classification accuracy of 98.0% on the held-out test set.  While our
-classifier's performance does not exceed the 2014 competition winner's, we
-did not employ any external data from sources like ImageNet, and we
+classification performance does not exceed the 2014 competition winner's,
+we did not employ any external data from sources like ImageNet, and we
 intentionally worked with downsampled versions of the Kaggle imagery for
 speed purposes.
 
 Representative examples of correctly classified test images are presented
 in figure 5.  Successfully classified photos display cats and dogs in a
 variety of poses, often include human owners or more than one animal, and
-sometimes contain occluding foreground objects such as cages.  It is
+sometimes contain occluding foreground objects like cages.  It is
 interesting to compare examples of correctly classified test images with
 those in figure 6 depicting incorrect classification results.  In some
 cases, wrongly classified animals appear small due to physical size or
