@@ -265,25 +265,25 @@ in the next section.
 
 ## Visualizing CNN Learning
 
-Neural network feature visualization sheds light upon what CNN neurons
-learn to recognize [11].  Starting from some node within a trained network,
-we can backpropagate to an input image initialized with noise.  The image's
-values are optimized to maximally activate the neuron while all trained
-network weights are held fixed.  Details within views of inputs preferred
-by trained filters vary each time they are synthesized from different
-random noise.  But the qualitative appearance of preferred inputs for
-entire CNN layers is generally stable.
+Neural network feature visualization provides insight into what trained CNN
+neurons have learned to recognize [11].  Starting from some node within a
+network, we backpropagate to an input image initialized with noise.  The
+image's pixel values are subsequently optimized to maximally activate the
+selected neuron while all trained network weights are held fixed.  The
+detailed appearances of input views preferred by trained filters vary each
+time they are synthesized from random noise.  But the qualitative pattern
+of inputs preferred by entire layers in a CNN is generally stable.
 
-Figure 7 displays representative examples of inputs which maximally
-activate trained neurons within each of the convolutional layers in one of
-our architecture I CNNs.  These results were generated via a minor variant
-of TensorFlow code developed by Alex Mordvintsev [12].  Nodes in the
-network's first convolutional layer respond to input image colors.  Neurons
-in deeper layers fire when they observe increasingly complicated textures
-and patterns.  Zooming into the sixth layer of figure 7, we see filter
-responding to cat ears and dog eyes.  Entire animal faces become
-recognizable within the preferred inputs for some nodes in the final layer
-of the trained CNN.
+Figure 7 displays representative examples of inputs that maximally activate
+neurons within each of the convolutional layers in one particular trained
+architecture I CNN.  These results were generated via a minor variant of
+TensorFlow code developed by Alex Mordvintsev [12].  Nodes in the network's
+first layer respond to input image colors.  Neurons in deeper layers fire
+when they observe increasingly complicated textures and patterns.  Zooming
+into the convolution 6 layer of the figure, we see filters responding to
+cat ears and dog eyes.  In the network's final convolutional layer, entire
+animal faces become recognizable among preferred inputs for some nodes.
+
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/preferred_filters.png)
 *Fig. 7.  Examples of preferred inputs for trained filters within
@@ -291,47 +291,40 @@ convolution layers of CNN architecture I.*
 
 It is interesting to compare feature visualization results for different
 networks trained on the same imagery corpus.  Figure 8 presents such a
-comparison among four of the eight CNNs within our ensemble used to
-classify cat and dog test images.  The final layer results in this figure
-were intentionally selected based upon their cat and dog face contents.
-Qualitatively different animal faces can be recognized within the preferred
-inputs of final convolution layer nodes among the different trained CNNs.
-Such qualitative variation among filter responses holds even for model
-snapshots from a single CNN at different epochs during its training.  It is
-consequently not surprising that the classification performance from an
-ensemble of trained CNNs is superior to that of any of its individual
-members.
+comparison for four of the eight CNNs within our ensemble used to classify
+cat and dog test images.  The final convolutional layer results in this
+figure were intentionally chosen based upon their animal face contents.
+Qualitatively different cat and dog faces are clearly visible within the
+preferred inputs for the four CNNs.  Such qualitative variation among
+filter responses holds even for models frozen from a single network at
+different training epochs.  It consequently makes sense that classification
+performance from an ensemble of trained CNNs is superior to that of any
+individual member.
 
 ![CatsDogs]({{site.url}}/blog/images/cats_and_dogs/multiexpt_preferred_final_conv_filters.png)
 *Fig. 8.  Examples of preferred inputs for trained filters within the final 
 convolution layers of four different CNNs with various architectures.*
 
-Our final visualization of CNN learning focuses upon class clustering as
-training proceeds.  Nonlinear layers in CNNs generally transform input
-images into representations which are easier for their final classifier
-layer to handle.  For example, our architecture I CNN converts 148 $
-\times$ 148 images into 12-dimensional descriptors which are fed into its
-final softmax classifier.  Before training starts, the CNN's weights are
-randomly initialized, and cat plus dog images are intermingled within the
-12-dimensional descriptor space.  But as the CNN's weights evolve during
-training, we would expect distinct clusters of cat and dog descriptors to
-develop.  Visualizing the formation of such class clusters provides an
-instructive view into CNN learning.
+Our final visualization of CNN learning focuses upon binary class
+clustering.  Nonlinear layers in CNNs generally transform input images into
+representations which are easier for their final classifier layer to
+handle.  For example, our architecture I CNN converts 148 $ \times$ 148
+images into 12-dimensional descriptors which feed into its final softmax
+classifier.  Before training starts, the CNN's weights are randomly
+initialized.  Descriptors corresponding to cat and dog input images are
+then intermingled within the 12-dimensional output space.  But as the CNN's
+weights evolve during training, we expect distinct clusters of cat and dog
+descriptors to develop.  Visualizing the formation of such class clusters
+provides an instructive view into CNN learning.
 
 The movie in figure 9 illustrates PCA decompositions of image descriptors
-from the final fully connected nonlinear layer of CNN architecture I.
-Working with a fully trained network, we calculcated the PCA
-eigendirections from a distribution of O(2.4K) validation image
-descriptors.  12-dimensional validation descriptors were subsequently
-projected onto the first three dominant PCA eigendirections at training
-epochs 0, 4, 8 and 16.  The red and blue dots appearing within the figure
-represent projected cat and dog descriptors.  As the movie plays, we
-clearly observe more separation with increasing training epoch between
-projected cat and dog descriptors within the 3D point clouds.  The
-relatively small overlap between cat and dog points within the last
-quadrant of figure 9 would presumably diminish if more PCA eigendirections
-could be plotted.  But some intermingling among descriptors would survive
-since CNN classification is never perfect.
+from the final fully connected nonlinear layer of an architecture I CNN.
+Starting with the network after it has been trained for 250 epochs, we
+first compute descriptor eigendirections from a distribution of O$($2.4K$)$
+validation image descriptors. Twelve-dimensional validation descriptors at
+training epochs 0, 4, 8 and 16 are subsequently projected onto the dominant
+three asymptotic eigendirections.  Cat and dog PCA descriptors are depicted
+by red and blue points in figure 9.
 
 <a
 href="http://www.youtube.com/watch?feature=player_embedded&v=Si2sxR5Pm_w"
@@ -342,6 +335,13 @@ height="400"/></center></a>
 *Fig. 9. Movie showing PCA decompositions of 12-dimensional image
 descriptors of cat and dog test images at various training epochs.  Click
 on the image above to start the YouTube video.*
+
+Watching the movie, we clearly observe greater separation between projected
+cat and dog descriptors as training epoch number increases.  The relatively
+small overlap between red and blue dots within the last quadrant's point
+cloud would presumably diminish if more PCA eigendirections could be
+plotted.  But some intermingling among descriptors would persist since CNN
+classification is never perfect.
 
 
 In closing, we note the emergence of projected descriptor subclusters in
