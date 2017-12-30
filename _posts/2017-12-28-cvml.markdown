@@ -15,6 +15,27 @@ use_math: true
 ![SuperRes]({{site.url}}/blog/images/superres/train_valid_error.png)
 *Fig. A.  Training and validation learning curves.*
 
+![SuperRes]({{site.url}}/blog/images/superres/highpass_montage.jpg)
+*Fig. B.  Four results from high-pass residual super resolution.*
+
+![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_flower.jpg)
+*Fig. C1.  Low and high resolution flower images.*
+
+![SuperRes]({{site.url}}/blog/images/superres/montage_flower.jpg)
+*Fig. C2.  Reconstructed flower images coming from pixel, perceptual and
+highpass loss functions.*
+
+![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_cars.jpg)
+*Fig. D1.  Low and high resolution car images.*
+
+![SuperRes]({{site.url}}/blog/images/superres/montage_cars.jpg)
+*Fig. D2.  Reconstructed car images coming from pixel, perceptual and
+highpass loss functions.*
+
+
+
+![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png)
+*Fig. X.  Examples of super-resolved 32x32 CIFAR images.*
 
 
 ## References
