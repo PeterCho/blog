@@ -37,14 +37,45 @@ dimensions.  Substantial "hallucination" of image content is required to
 fill in missing high-spatial frequency content.
 
 
-![SuperRes]({{site.url}}/blog/images/superres/flower_upsampling.png)
-*Fig. AA.  Upsampling an input 64x64 image to an output 256x256 size.*
+![SuperRes]({{site.url}}/blog/images/superres/padded_flower_upsampled.jpg)
+*Fig. 1.  Upsampling an input 64x64 image to an output picture with 256x256
+pixel size.*
 
 
+- Interpolation establishes a baseline, while the original high-resolution
+image represents ideal reconstruction.  We will compare various
+super-resolution results to these two limiting cases in order to
+qualitatively assess CNN performance.
 
 
 ## CNN loss functions and training
 
+- Experimented with a variety of CNN architectures.  
+
+We found the following "super-layer" combinations of convolutions with 5x5
+kernels, batch normalization, leaky ReLU activation [8], DenseNets with 3x3
+kernels [ref], and transposed convolutions with 3x3 kernels plus $(2,2)$
+strides to be useful CNN building blocks:
+
+CBL: Conv5, Batch norm, Leaky ReLU
+
+Dense-n: n-layer DenseNet with Batch norm and Leaky ReLU but no bottleneck layer
+
+UP-conv: Tranposed Conv3
+
+CNN Architecture for n = 4X or 8X super-resolution: 
+
+$\qquad$ CBL $\small{(64 \, {\rm channels})}$,
+
+$\qquad$ Dense-14 $\small{(32 \, {\rm channels})}$,
+
+$\qquad$ $\log_2(n) \times$ [UP-conv] $\small{(64 \, {\rm channels})}$,
+
+$\qquad$ CBL $\small{(3 \, {\rm channels})}$
+
+
+
+Number of trainable parameters = 1.17M for 4X and 1.21M for 8X upsampling.
 
 - Per-pixel loss
 
@@ -53,41 +84,56 @@ fill in missing high-spatial frequency content.
 - High spatial frequency loss
 
 
-
+Training and validation learning curves are plotted in figure 2.
 
 ![SuperRes]({{site.url}}/blog/images/superres/train_valid_error.png)
-*Fig. A.  Training and validation learning curves.*
+*Fig. 2.  Tensorboard display of mean regression errors between predicted
+and ground truth high-spatial frequency contents for training $($orange$)$
+and validation $($green$)$ image samples.*
 
 ## Superresolution results
 
+Figure 3 illustrates four examples of super-resolved images.  In each
+example, low-resolution inputs to the CNN are displayed within the figure's
+upper-left quadrants.  High-resolution contents predicted by the CNN appear
+in the upper-right quadrants.  The sums of low plus high spatial
+frequencies yield the image reconstructions presented in the figure's
+lower-left quadrants.  For comparison, ideal reconstructions are shown in
+the lower-right quadrants.
+
 ![SuperRes]({{site.url}}/blog/images/superres/highpass_montage.jpg)
-*Fig. B.  Four results from high-pass residual super resolution.*
+*Fig. 3.  Representative examples of high-pass residual super resolution
+results.*
+
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_flower.jpg)
-*Fig. C1.  Low and high resolution flower images.*
+*Fig. 4A.  Low and high resolution flower images.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_flower.jpg)
-*Fig. C2.  Reconstructed flower images coming from pixel, perceptual and
+*Fig. 4B.  Reconstructed flower images coming from pixel, perceptual and
 highpass loss functions.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_cars.jpg)
-*Fig. D1.  Low and high resolution car images.*
+*Fig. 5A.  Low and high resolution car images.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cars.jpg)
-*Fig. D2.  Reconstructed car images coming from pixel, perceptual and
+*Fig. 5B.  Reconstructed car images coming from pixel, perceptual and
 highpass loss functions.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/red_car_montage.jpg)
 ![SuperRes]({{site.url}}/blog/images/superres/crack_montage.jpg)
 ![SuperRes]({{site.url}}/blog/images/superres/heart_assoc_montage.jpg)
 
-*Fig. E.  Low-res, highpass reconstruction and high-resolution
-images.*
+*Fig. 6.  Low-resolution imagery inputs to the fully convolution neural
+network of various pixel sizes.  Super-resolved imagery outputs from the
+CNN.  Idealized reconstructions.*
 
 
 
-![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png)
-*Fig. F.  Examples of super-resolved 32x32 CIFAR images.*
+
+![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png) *Fig. 7.
+Examples of 32x32 CIFAR images and their super-resolved 256x256
+counterparts.*
 
 
 ## References
@@ -96,7 +142,7 @@ images.*
 
 *.  Johnson et al perceptual loss
 
-
+*.  Densenet ref
 
 3.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
 Network Training by Reducing Internal Covariate Shift," 32nd ICML 

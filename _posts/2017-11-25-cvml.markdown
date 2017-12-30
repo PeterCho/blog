@@ -100,14 +100,15 @@ normalization did not help reduce data overfitting.
 times as many nodes as the number of classification states.
 
 We found the following "super-layer" combinations of convolutions with 5x5
-kernels, batch normalization, leaky ReLU activation [8], 2x2 pooling and
-fully connected layers to be useful CNN building blocks:
+kernels, batch normalization, leaky ReLU activation [8], 2x2 pooling,
+DenseNets with 5x5 kernels [6] and fully connected layers to be useful CNN
+building blocks:
 
 CBLP: Conv5, Batch norm, Leaky ReLU, Pool
 
 CBL: Conv5, Batch norm, Leaky ReLU
 
-BLD: Batch norm, Leaky ReLU, Dense conv5 with no bottleneck layer [6]
+Dense-n: n-layer DenseNet with Batch norm and Leaky ReLU but no bottleneck layer
 
 FBL: Fully connected, Batch norm, Leaky ReLU
 
@@ -119,19 +120,19 @@ sizes are comparable.  The best three architectures we found for
 classifying 148 $\times$ 148 cat and dog images all have receptive field
 size R=157 [9]:
 
-Architecture I with 9 nonlinear super-layers: 
+Architecture I with 9 nonlinear super-layers and 2.5M trainable parameters:
 
 $\qquad$ 3 $\times$ [CBLP], 4 $\times$ [CBL], 2 $\times$ [FBL], SOFT
 
-Architecture II with 10 nonlinear super-layers: 
+Architecture II with 10 nonlinear super-layers and 2.9M trainable parameters:
 
 $\qquad$ 2 $\times$ [CBLP], 2 $\times$ [CBL], CBLP, 3 $\times$ [CBL], 2
 $\times$ [FBL], SOFT
 
-Architecture III with 10 nonlinear super-layers including 5 dense blocks [6]:
+Architecture III with 10 nonlinear super-layers including 5 dense blocks
+and 9.1M trainable parameters:
     
-$\qquad$ 2$\times$ [CBLP], 2$\times$ [BLD], CBLP, 3$\times$ [BLD],
-2$\times$ [FBL], SOFT
+$\qquad$ 2$\times$ [CBLP], Dense-2, CBLP, Dense-3, 2$\times$ [FBL], SOFT
 
 As we shall see, each of these CNN architectures can yield binary
 classification accuracies on validation imagery greater than 97%.
