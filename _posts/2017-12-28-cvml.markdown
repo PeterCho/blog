@@ -1,0 +1,24 @@
+---
+layout: post
+title:  "Superresolving Images via Fully Convolutional Neural Networks"
+date:   2017-12-28 12:00:00
+categories: Deep Learning
+use_math: true
+---
+
+## Revisiting a Kaggle competition
+
+## CNN architectures
+
+## CNN training and ensemble testing
+
+![SuperRes]({{site.url}}/blog/images/superres/train_valid_error.png)
+*Fig. A.  Training and validation learning curves.*
+
+
+
+## References
+
+3.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
+Network Training by Reducing Internal Covariate Shift," 32nd ICML 
+$\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
