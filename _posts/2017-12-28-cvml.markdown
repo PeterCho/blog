@@ -6,14 +6,59 @@ categories: Deep Learning
 use_math: true
 ---
 
-## Revisiting a Kaggle competition
+## Imagery reconstruction
 
-## CNN architectures
+- Blur removal, inpainting and colorization are examples of restoring lost
+information.
 
-## CNN training and ensemble testing
+- Inverse problems are fundamentally ill-defined, for multiple inputs could
+map onto the same restored output.
+
+- Before the widespread adoption of CNN techniques for imagery
+reconstruction, a variety of hand-crafted rules -hoc rules were used to
+reconstruct high-resolution, colored and defect-free images from
+low-resolution, greyscale images containing defects.
+
+- But now deep learning approaches can identify patterns present in
+real-world imagery which may be used to fill in missing information.
+
+- Huge supply of training data.  Start with non-blurry, non-corrupted and
+RGB colored internet imagery.  Then intentionally apply blur, superpose
+artifacts or remove color channels to obtain degraded versions.  Latter
+outputs become inputs to CNNs, while high-quality original images enter
+into loss functions for training.
+
+- In this blog post, we focus upon image superresolution via CNNs.  In
+particular, we want to upsample small images to larger versions which are
+as sharp as possible.
+
+- Focus upon upsampling by 4X and 8X in both the horizontal and vertical
+dimensions.  Substantial "hallucination" of image content is required to
+fill in missing high-spatial frequency content.
+
+
+![SuperRes]({{site.url}}/blog/images/superres/flower_upsampling.png)
+*Fig. AA.  Upsampling an input 64x64 image to an output 256x256 size.*
+
+
+
+
+## CNN loss functions and training
+
+
+- Per-pixel loss
+
+- Perceptual loss
+
+- High spatial frequency loss
+
+
+
 
 ![SuperRes]({{site.url}}/blog/images/superres/train_valid_error.png)
 *Fig. A.  Training and validation learning curves.*
+
+## Superresolution results
 
 ![SuperRes]({{site.url}}/blog/images/superres/highpass_montage.jpg)
 *Fig. B.  Four results from high-pass residual super resolution.*
@@ -32,13 +77,26 @@ highpass loss functions.*
 *Fig. D2.  Reconstructed car images coming from pixel, perceptual and
 highpass loss functions.*
 
+![SuperRes]({{site.url}}/blog/images/superres/red_car_montage.jpg)
+![SuperRes]({{site.url}}/blog/images/superres/crack_montage.jpg)
+![SuperRes]({{site.url}}/blog/images/superres/heart_assoc_montage.jpg)
+
+*Fig. E.  Low-res, highpass reconstruction and high-resolution
+images.*
+
 
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png)
-*Fig. X.  Examples of super-resolved 32x32 CIFAR images.*
+*Fig. F.  Examples of super-resolved 32x32 CIFAR images.*
 
 
 ## References
+
+*.  First per-pixel loss paper
+
+*.  Johnson et al perceptual loss
+
+
 
 3.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
 Network Training by Reducing Internal Covariate Shift," 32nd ICML 
