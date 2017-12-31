@@ -43,7 +43,7 @@ qualitatively and quantitatively evaluate restoration performance.
 *Fig. 1.  Different upsamplings of an input 64x64 image to an output picture
 with 256x256 pixel size.*
 
-## CNN architecture, loss functions and training
+## CNN architecture and loss functions
 
 A number of authors have recently explored CNN feed-forward models to
 super-resolve input images.  For example, the Super-Resolution
@@ -134,12 +134,14 @@ like that appearing in figure 3 and their predicted CNN analogues.
 interpolated low-resolution counterpart contains high spatial frequency
 content.*
 
-We build the CNN architecture and loss functions using python within the
-TensorFlow framework [10].  We also download a subset of the Open Images
-Dataset to serve as training, validation and testing data [11].  CNN
-training depends upon a sizable number of hyperparameters which must be
+## CNN training and validation
+
+Programming in python, we build the CNN architecture and loss functions
+within the TensorFlow framework [10].  We also download a subset of the
+Open Images Dataset to serve as training, validation and testing data [11].
+CNN training depends upon a sizable number of hyperparameters which must be
 empirically set.  Table 2 summarizes the hyperparameter values that we
-settled upon after conducting multiple experiments.
+settled upon after running 30+ experiments.
 
 <table style="width:100%">
   <thead>
@@ -236,12 +238,14 @@ into these pictures.*
 *Fig. 6b.  Reconstructed car images coming from pixel, perceptual and
 highpass loss functions.*
 
-![SuperRes]({{site.url}}/blog/images/superres/red_car_montage.jpg)
-![SuperRes]({{site.url}}/blog/images/superres/crack_montage.jpg)
-![SuperRes]({{site.url}}/blog/images/superres/heart_assoc_montage.jpg)
 
 ## Super-resolution inference results
 
+![SuperRes]({{site.url}}/blog/images/superres/crack_montage.jpg)
+
+![SuperRes]({{site.url}}/blog/images/superres/red_car_montage.jpg)
+
+![SuperRes]({{site.url}}/blog/images/superres/heart_assoc_montage.jpg)
 
 *Fig. 7.  Three examples of full-image upsampling for pictures of various
 pixel sizes.  $\small{(Left)}$ Image inputs downsampled by 4X in both the
