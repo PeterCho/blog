@@ -6,7 +6,7 @@ categories: Deep Learning
 use_math: true
 ---
 
-## Imagery reconstruction
+## Image reconstruction
 
 Reconstructing degraded images to their original forms represents a classic
 problem in computer vision.  Image deblurring, denoising, inpainting and
@@ -30,24 +30,18 @@ training loss functions.  Neural networks can consequently exploit vast
 quantities of data to learn typical patterns that may be used to fill in
 missing imagery information.
 
-In this blog post, we focus upon single image super-resolution via fully
+In this blog post, we investigate single image super-resolution via fully
 convolutional neural networks.  In particular, we want to upsample small
-images to larger versions which are as sharp as possible.
-
-- Focus upon upsampling by 4X and 8X in both the horizontal and vertical
-dimensions.  Substantial "hallucination" of image content is required to
-fill in missing high-spatial frequency content.
-
+images to larger versions which are as sharp as possible.  As figure 1
+illustrates, pixel interpolation establishes a relatively poor baseline for
+image upsampling.  In contrast, the original progenitor for the subsampled
+image represents an ideal reconstruction.  We will compare various
+super-resolution results to these two limiting cases in order to
+qualitatively and quantitatively evaluate restoration performance.
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_flower_upsampled.jpg)
-*Fig. 1.  Upsampling a 64x64 image to an output picture with 256x256 pixel
-size.*
-
-
-- Interpolation establishes a baseline, while the original high-resolution
-image represents ideal reconstruction.  We will compare various
-super-resolution results to these two limiting cases in order to
-qualitatively assess CNN performance.
+*Fig. 1.  Different upsamplings of an input 64x64 image to an output picture
+with 256x256 pixel size.*
 
 
 ## CNN loss functions and training
@@ -148,15 +142,6 @@ Number of trainable parameters = 1.17M for 4X and 1.21M for 8X upsampling.
 
 *Table 1.  List of CNN hyperparameters.*
 
-
-
-
-
-
-
-
-
-
 Training and validation learning curves are plotted in figure 2.
 
 ![SuperRes]({{site.url}}/blog/images/superres/train_valid_error.png)
@@ -164,15 +149,16 @@ Training and validation learning curves are plotted in figure 2.
 and ground truth high-spatial frequency contents for training $($orange$)$
 and validation $($green$)$ image samples.*
 
-## Super-Resolution results
+## Super-resolution results
 
 Figure 3 illustrates four examples of super-resolved images.  In each
-example, low-resolution inputs to the CNN are displayed within the figure's
-upper-left quadrants.  High-resolution contents predicted by the CNN appear
-in the upper-right quadrants.  The sums of low plus high spatial
-frequencies yield the image reconstructions presented in the figure's
-lower-left quadrants.  For comparison, ideal reconstructions are shown in
-the lower-right quadrants.
+example, 64x64 inputs to the CNN are displayed after interpolation to
+256x256 within the figure's upper-left quadrants.  High-resolution contents
+predicted by the CNN appear in the figure's upper-right quadrants.  The
+sums of low plus high spatial frequencies yield the image reconstructions
+presented in lower-left quadrants.  For comparison, the original 256x256
+images which represent ideal reconstructions are shown in the lower-right
+quadrants.
 
 ![SuperRes]({{site.url}}/blog/images/superres/highpass_montage.jpg)
 *Fig. 3.  Representative examples of high-pass residual super-resolution
@@ -180,32 +166,34 @@ results.*
 
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_flower.jpg)
-*Fig. 4A.  Low and high resolution flower images.*
+*Fig. 4a.  Low and high resolution flower images.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_flower.jpg)
-*Fig. 4B.  Reconstructed flower images coming from pixel, perceptual and
-highpass loss functions.*
+*Fig. 4b.  Reconstructed flower images coming from pixel, perceptual and
+highpass loss functions.  Reconstruction differences can be seen by zooming
+into these pictures.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_cars.jpg)
-*Fig. 5A.  Low and high resolution car images.*
+*Fig. 5a.  Low and high resolution car images.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cars.jpg)
-*Fig. 5B.  Reconstructed car images coming from pixel, perceptual and
+*Fig. 5b.  Reconstructed car images coming from pixel, perceptual and
 highpass loss functions.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/red_car_montage.jpg)
 ![SuperRes]({{site.url}}/blog/images/superres/crack_montage.jpg)
 ![SuperRes]({{site.url}}/blog/images/superres/heart_assoc_montage.jpg)
 
-*Fig. 6.  Low-resolution imagery inputs to the fully convolution neural
-network of various pixel sizes.  Super-resolved imagery outputs from the
-CNN.  Idealized reconstructions.*
+*Fig. 6.  Three examples of full-image upsampling for pictures of various
+pixel sizes.  $\small{(Left)}$ Image inputs downsampled by 4X in both the
+horizontal and vertical directions.  $\small{(Center)}$ Super-resolved
+image outputs from the CNN.  $\small{(Right)}$ Original image progenitors.*
 
 
 
 
-![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png) *Fig. 7.
-Examples of 32x32 CIFAR images and their super-resolved 256x256
+![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png)
+*Fig. 7. Examples of 32x32 CIFAR images and their super-resolved 256x256
 counterparts.*
 
 
