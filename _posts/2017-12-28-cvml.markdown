@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Superresolving Images via Fully Convolutional Neural Networks"
+title:  "Super-Resolving Individual Images via Fully Convolutional Neural Networks"
 date:   2017-12-28 12:00:00
 categories: Deep Learning
 use_math: true
@@ -8,29 +8,31 @@ use_math: true
 
 ## Imagery reconstruction
 
-- Blur removal, inpainting and colorization are examples of restoring lost
-information.
+Reconstructing degraded images to their original forms represents a classic
+problem in computer vision.  Image deblurring, denoising, inpainting and
+colorization all require recovering lost information.  Image restoration
+problems represent ill-defined inverse problems, for downgraded input
+generally maps onto many possible outputs.  We consequently should be
+content to generate reconstructions that appear visually reasonable to the
+human eye.
 
-- Inverse problems are fundamentally ill-defined, for multiple inputs could
-map onto the same restored output.
+Before the widespread adoption of deep learning techniques within computer
+vision, researchers attempted to recover higher resolution, RGB-colored
+and/or defect-free pictures from low resolution, greyscale and/or defective
+inputs via hand-crafted rules.  Today, Convolutional Neural Network (CNN)
+approaches can automatically identify patterns present in real-world
+imagery.  Moreover, the internet provides a nearly limitless source for CNN
+training data which is inexpensive to harvest.  Starting with crisp, clean
+and fully colored photos, one simply blurs, introduces artifacts and/or
+removes color channels to obtain downgraded versions.  The resulting
+downgraded pictures become CNN inputs, while their progenitors enter into
+training loss functions.  Neural networks can consequently exploit vast
+quantities of data to learn typical patterns that may be used to fill in
+missing imagery information.
 
-- Before the widespread adoption of CNN techniques for imagery
-reconstruction, a variety of hand-crafted rules -hoc rules were used to
-reconstruct high-resolution, colored and defect-free images from
-low-resolution, greyscale images containing defects.
-
-- But now deep learning approaches can identify patterns present in
-real-world imagery which may be used to fill in missing information.
-
-- Huge supply of training data.  Start with non-blurry, non-corrupted and
-RGB colored internet imagery.  Then intentionally apply blur, superpose
-artifacts or remove color channels to obtain degraded versions.  Latter
-outputs become inputs to CNNs, while high-quality original images enter
-into loss functions for training.
-
-- In this blog post, we focus upon image superresolution via CNNs.  In
-particular, we want to upsample small images to larger versions which are
-as sharp as possible.
+In this blog post, we focus upon single image super-resolution via fully
+convolutional neural networks.  In particular, we want to upsample small
+images to larger versions which are as sharp as possible.
 
 - Focus upon upsampling by 4X and 8X in both the horizontal and vertical
 dimensions.  Substantial "hallucination" of image content is required to
@@ -38,8 +40,8 @@ fill in missing high-spatial frequency content.
 
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_flower_upsampled.jpg)
-*Fig. 1.  Upsampling an input 64x64 image to an output picture with 256x256
-pixel size.*
+*Fig. 1.  Upsampling a 64x64 image to an output picture with 256x256 pixel
+size.*
 
 
 - Interpolation establishes a baseline, while the original high-resolution
@@ -84,6 +86,77 @@ Number of trainable parameters = 1.17M for 4X and 1.21M for 8X upsampling.
 - High spatial frequency loss
 
 
+
+
+
+
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">Hyperparameter description</th>
+      <th style="text-align: center">Value    </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Input image size</td>
+      <td style="text-align: center">64 x 64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Output image size</td>
+      <td style="text-align: center">256 x 256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Number of training images</td>
+      <td style="text-align: center">108000</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Number of validation images</td>
+      <td style="text-align: center">4320</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Minibatch size</td>
+      <td style="text-align: center">25</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Optimizer type</td>
+      <td style="text-align: center">SGD with momentum</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Momentum coefficient</td>
+      <td style="text-align: center">0.9</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Learning rate decay coefficient</td>
+      <td style="text-align: center">0.333</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Learning rate decay period</td>
+      <td style="text-align: center">27000 training steps</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Base learning rate</td>
+      <td style="text-align: center">0.01</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Leaky ReLU slope coefficient</td>
+      <td style="text-align: center">0.1</td>
+    </tr>
+</tbody>
+</table>
+
+*Table 1.  List of CNN hyperparameters.*
+
+
+
+
+
+
+
+
+
+
 Training and validation learning curves are plotted in figure 2.
 
 ![SuperRes]({{site.url}}/blog/images/superres/train_valid_error.png)
@@ -91,7 +164,7 @@ Training and validation learning curves are plotted in figure 2.
 and ground truth high-spatial frequency contents for training $($orange$)$
 and validation $($green$)$ image samples.*
 
-## Superresolution results
+## Super-Resolution results
 
 Figure 3 illustrates four examples of super-resolved images.  In each
 example, low-resolution inputs to the CNN are displayed within the figure's
@@ -102,7 +175,7 @@ lower-left quadrants.  For comparison, ideal reconstructions are shown in
 the lower-right quadrants.
 
 ![SuperRes]({{site.url}}/blog/images/superres/highpass_montage.jpg)
-*Fig. 3.  Representative examples of high-pass residual super resolution
+*Fig. 3.  Representative examples of high-pass residual super-resolution
 results.*
 
 
@@ -138,12 +211,19 @@ counterparts.*
 
 ## References
 
-*.  First per-pixel loss paper
 
-*.  Johnson et al perceptual loss
+*.  [Dong, C., Loy, C.C., He, K., Tang, X., "Image Super-Resolution Using
+Deep Convolutional Networks," (2015).](https://arxiv.org/pdf/1501.00092.pdf)
 
-*.  Densenet ref
+*.  [J. Johnson, A. Alahi and L. Fei-Fei, "Perceptual Losses for Real-Time
+Style Transfer and Super-Resolution," ECCV $\small{(2016)}$.](https://arxiv.org/abs/1603.08155)
 
-3.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
+*.  [J. Johnson, A. Alahi and L. Fei-Fei, "Perceptual Losses for Real-Time
+Style Transfer and Super-Resolution: Supplementary Material," $\small{(2016)}$.](https://cs.stanford.edu/people/jcjohns/papers/fast-style/fast-style-supp.pdf)
+
+*.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
 Network Training by Reducing Internal Covariate Shift," 32nd ICML 
 $\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
+
+*.  [G. Huang, Z. Liu, K.Q. Weinberger, L. van der Maaten, "Densely
+Connected Convolutional Networks," CVPR $\small{(2017)}$.](https://arxiv.org/abs/https://arxiv.org/abs/1608.06993)
