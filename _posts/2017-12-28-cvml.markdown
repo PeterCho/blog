@@ -47,30 +47,30 @@ with 256x256 pixel size.*
 
 A number of authors have recently explored CNN feed-forward models to
 super-resolve input images.  For example, the Super-Resolution
-Convolutional Neural Network (SRCNN) of Dong et al utilizes a 3
+Convolutional Neural Network $($SRCNN$)$ of Dong et al utilizes a 3
 convolutional layer network with a per-pixel loss function that operates on
 low resolution images upscaled via bicubic interpolation [1].  Johnson et
-al worked with end-to-end ResNets containing 12 or 13 convolutional layers
-and a perceptual loss function [2,3].  Tai et al investigated even deeper
-ResNet architectures with up to 52 convolutional layers which were trained
-via recursive learning [4].
+al worked with end-to-end ResNets containing 12 - 13 convolutional layers
+[2,3].  Tai et al investigated even deeper ResNet architectures with up to
+52 convolutional layers which were trained via recursive learning [4].
+These investigators and others have reported impressive super-resolution
+results using CNNs.
 
-Drawing inspiration from these previous studies, we experimented with a
-variety of fully convolutional networks.  We found the following
-"super-layer" combinations of convolutions with 5x5 kernels, batch
-normalization [5], leaky ReLU activation [6], DenseNets with 3x3 kernels
-[7], and transposed convolutions with 3x3 kernels [8] to be useful CNN
-building blocks:
+Drawing inspiration from earlier studies, we experimented with a variety of
+fully convolutional networks.  We found the following "super-layer"
+combinations of convolutions with 5x5 kernels, batch normalization [5],
+leaky ReLU activation [6], DenseNets with 3x3 kernels [7], and transposed
+convolutions with 3x3 kernels [8] to be useful CNN building blocks:
 
-CBL: Conv5, Batch norm, Leaky ReLU
+$\qquad$ CBL: Conv5, Batch norm, Leaky ReLU
 
-Dense-n: n-layer DenseNet with Batch norm and Leaky ReLU but no bottleneck layer
+$\qquad$ Dense-n: n-layer DenseNet with Batch norm and Leaky ReLU but no bottleneck layer
 
-UP-conv: Tranposed Conv3
+$\qquad$ UP-conv: Tranposed Conv3
 
-We assembled these building blocks into the CNN architecture presented in
-table 1 which we employed for 4X image super-resolution.  This particular
-CNN contains 1.17M trainable parameters.
+We assembled these building blocks into the fully convolutional
+architecture presented in table 1 which performs 4X super-resolution of RGB
+images and contains 1.17M trainable parameters:
 
 <table style="width:100%">
   <thead>
@@ -110,22 +110,36 @@ channels] </th>
 
 *Table 1.  CNN architecture for 4X super-resolution of an input RGB image.*
 
+In addition to trying various network architectures, we also explored
+different loss functions.  The first is a per-pixel Euclidean loss which is
+commonly used in image reconstruction problems.  It computes the L2 norm of
+the difference between a ground-truth progenitor image and its
+reconstructed counterpart.  The second is a perceptual loss which measures
+the L1 norm of the difference between descriptors for progenitor and
+reconstructed images computed via pretrained CNNs.  Following Johnson et al
+[2], we use the relu2_2 layer from the VGG-16 model [9] to generate image
+descriptors.
 
-We also explored different loss functions.
+The final loss function we consider is based upon residual differences
+between progenitor high-resolution images and their interpolated
+low-resolution counterpats.  As figure 2 illustrates, such differences
+contain high spatial frequency components present in the former and missing
+in the latter.  We are consequently motivated to train a CNN to output high
+frequency contents given low frequency inputs.  Our third loss function
+computes the L2 norm of differences between high spatial frequency images
+like that appearing in figure 3 and their predicted CNN analogues.
 
+![SuperRes]({{site.url}}/blog/images/superres/hires_lores_residual2.jpg)
+*Fig. 2.  The difference between a progenitor high-resolution image and its
+interpolated low-resolution counterpart contains high spatial frequency
+content.*
 
-
-- Per-pixel loss
-
-- Perceptual loss
-
-- High spatial frequency loss
-
-
-
-
-
-
+We build the CNN architecture and loss functions using python within the
+TensorFlow framework [10].  We also download a subset of the Open Images
+Dataset to serve as training, validation and testing data [11].  CNN
+training depends upon a sizable number of hyperparameters which must be
+empirically set.  Table 2 summarizes the hyperparameter values that we
+settled upon after conducting multiple experiments.
 
 <table style="width:100%">
   <thead>
@@ -185,18 +199,15 @@ We also explored different loss functions.
 *Table 2.  List of hyperparameters employed for 4X super-resolution CNN
 training and validation.*
 
-
-
-Training and validation learning curves are plotted in figure 2.
+Training and validation learning curves are plotted in figure 3.
 
 ![SuperRes]({{site.url}}/blog/images/superres/train_valid_error.png)
-*Fig. 2.  Tensorboard display of mean regression errors between predicted
+*Fig. 3.  Tensorboard display of mean regression errors between predicted
 and ground truth high-spatial frequency contents for training $($orange$)$
 and validation $($green$)$ image samples.*
 
-## Super-resolution results
 
-Figure 3 illustrates four examples of super-resolved images.  In each
+Figure 4 illustrates four examples of super-resolved images.  In each
 example, 64x64 inputs to the CNN are displayed after interpolation to
 256x256 within the figure's upper-left quadrants.  High-resolution contents
 predicted by the CNN appear in the figure's upper-right quadrants.  The
@@ -206,37 +217,40 @@ images which represent ideal reconstructions are shown in the lower-right
 quadrants.
 
 ![SuperRes]({{site.url}}/blog/images/superres/highpass_montage.jpg)
-*Fig. 3.  Representative examples of high-pass residual super-resolution
-results.*
+*Fig. 4.  Representative examples of high-pass residual super-resolution
+results on validation samples.*
 
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_flower.jpg)
-*Fig. 4a.  Low and high resolution flower images.*
+*Fig. 5a.  Low and high resolution flower images.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_flower.jpg)
-*Fig. 4b.  Reconstructed flower images coming from pixel, perceptual and
+*Fig. 5b.  Reconstructed flower images coming from pixel, perceptual and
 highpass loss functions.  Reconstruction differences can be seen by zooming
 into these pictures.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_cars.jpg)
-*Fig. 5a.  Low and high resolution car images.*
+*Fig. 6a.  Low and high resolution car images.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cars.jpg)
-*Fig. 5b.  Reconstructed car images coming from pixel, perceptual and
+*Fig. 6b.  Reconstructed car images coming from pixel, perceptual and
 highpass loss functions.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/red_car_montage.jpg)
 ![SuperRes]({{site.url}}/blog/images/superres/crack_montage.jpg)
 ![SuperRes]({{site.url}}/blog/images/superres/heart_assoc_montage.jpg)
 
-*Fig. 6.  Three examples of full-image upsampling for pictures of various
+## Super-resolution inference results
+
+
+*Fig. 7.  Three examples of full-image upsampling for pictures of various
 pixel sizes.  $\small{(Left)}$ Image inputs downsampled by 4X in both the
 horizontal and vertical directions.  $\small{(Center)}$ Super-resolved
 image outputs from the CNN.  $\small{(Right)}$ Original image progenitors.*
 
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png)
-*Fig. 7. Examples of 32x32 CIFAR images and their super-resolved 256x256
+*Fig. 8. Examples of 32x32 CIFAR images and their super-resolved 256x256
 counterparts.*
 
 
@@ -266,3 +280,10 @@ Connected Convolutional Networks," CVPR $\small{(2017)}$.](https://arxiv.org/abs
 
 8.  [V. Dumoulin and F. Visin, "A Guide to Convolution Arithmetic for Deep
 Learning," arXiv:1603.07285 v1 $\small{(2016)}$.](https://ai2-s2-pdfs.s3.amazonaws.com/7918/2aab186f0b68a8432540d8695e1646338479.pdf)
+
+9.  [K. Simonyan and A. Zisserman, "Very Deep Convolutional Networks for
+Large-Scale Image Recognition," ICLR $\small{(2015)}$.](https://arxiv.org/pdf/1409.1556.pdf)
+
+10.  [See TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+
+11.  [See Open Images Dataset V3.](https://github.com/openimages/dataset)
