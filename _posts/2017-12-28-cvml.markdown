@@ -218,19 +218,19 @@ and validation $($green$)$ image samples.*
 Once training concludes, it is instructive to compare CNN inputs and
 outputs.  Figure 4 illustrates four selected examples of 4X super-resolved
 validation images.  In the figure's upper-left quadrants, 64x64 inputs to
-the CNN are displayed after interpolated upsampling to 256x256.  High
-spatial frequency contents predicted by the CNN appear in the figure's
-upper-right quadrants.  Sums of low plus high spatial frequencies yield the
-image reconstructions presented in the lower-left quadrants.  For
-comparison, the progenitor 256x256 images representing ideal
-reconstructions are exhibited in the lower-right quadrants.
+the CNN are displayed after they are upsampled via interpolation to
+256x256.  High spatial frequency contents predicted by the CNN appear in
+the figure's upper-right quadrants.  Sums of low plus high spatial
+frequencies yield the image reconstructions presented in the lower-left
+quadrants.  For comparison, the progenitor 256x256 images representing
+ideal reconstructions are exhibited in the lower-right quadrants.
 
 ![SuperRes]({{site.url}}/blog/images/superres/highpass_montage.jpg)
-*Fig. 4.  Representative examples of high-pass residual super-resolution
+*Fig. 4.  Representative examples of highpass residual super-resolution
 results on validation samples.*
 
 Looking at these super-resolution results, we observe that our CNN with the
-high-pass residual loss function recovers much, but not all, of the high
+highpass residual loss function recovers much, but not all, of the high
 spatial frequency content missing from the input images.  For instance in
 the first car radio example in figure 4, we can readily read the red
 "96.80" FM station characters in the super-resolved output but not within
@@ -269,12 +269,34 @@ into these pictures.*
 highpass loss functions.*
 
 In order to quantitatively compare super-resolution results coming from the
-three different CNN loss functions, we compute their PSNR values.
+three different CNN loss functions, we compute their peak signal-to-noise
+ratios.  PSNR is a super-resolution performance metric often reported in
+the literature which somewhat correlates with image restoration quality.
+Following [1,2], we first evaluate Y channel PSNR after converting
+progenitor and reconstructed images to YCbCr colorspace.  Working with 48
+pairs of 4X super-resolved and progenitor validation images, we find PSNR =
+29.79 for the per-pixel loss function, 29.81 for the perceptual loss
+function, and 30.21 for the spatial frequency residual loss function.  If
+we instead evaluate PSNR for three color channel RGB images, we obtain PSNR
+= 22.68 for the per-pixel loss function, 17.75 for the perceptual loss
+function and 24.43 for the spatial frequency residual loss function.
 
+So based upon these qualitative and quantiative comparisons, we conclude
+the residual loss function yields the best CNN super-resolution
+performance.
 
+## Super-resolution inference 
 
-
-## Super-resolution inference results
+The neural network architecture in Table 1 is fully convolutional.  It
+consequently may be applied to images of any input pixel size.  Figure 7
+exhibits 4X super-resolved images derived from the Tensorflow model which
+generated the validation results in figure 4.  The heights and widths of
+the low-resolution input and reconstructed output images are annotated in
+the figure.  High spatial frequency content recovered by the CNN may
+readily be observed by zooming into the figure.  It is particularly
+interesting to observe restored crack details within the top stone picture.
+Similarly, super-resolution significantly sharpens blurry background text
+in the bottom photo of figure 7.
 
 ![SuperRes]({{site.url}}/blog/images/superres/crack_montage.jpg)
 
@@ -287,11 +309,24 @@ pixel sizes.  $\small{(Left)}$ Image inputs downsampled by 4X in both the
 horizontal and vertical directions.  $\small{(Center)}$ Super-resolved
 image outputs from the CNN.  $\small{(Right)}$ Original image progenitors.*
 
+In theory, we could transform arbitrarily small input images into large
+output sizes by adding more up-convolutions at the end of the CNN
+architecture in Table 1.  In practice, increasing super-resolution
+magnification yields diminishing returns as fine detail from high spatial
+frequencies is irretrievably lost.  Yet as figure 8 demonstrates, even 8X
+CNN super-resolution is meaningfully possible.
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png)
-*Fig. 8. Examples of 32x32 CIFAR images and their super-resolved 256x256
-counterparts.*
+*Fig. 8. Examples of 32x32 CIFAR images interpolated to 256x256 and their
+8X super-resolved counterparts.*
 
+The figure illustrates natural and man-made objects from selected CIFAR-10
+images [12].  The 32x32 pictures upsampled via interpolation to 256x256 are
+recognizable but very blurry.  In contrast, their 8X super-resolved
+counterparts look surprisingly crisp.  We do not have access to the
+original images from which CIFAR samples were created.  So this final
+example is reasonably close to a "real-world" application of individual
+image super-resolution.
 
 ## References
 
@@ -326,3 +361,6 @@ Large-Scale Image Recognition," ICLR $\small{(2015)}$.](https://arxiv.org/pdf/14
 10.  [See TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
 
 11.  [See Open Images Dataset V3.](https://github.com/openimages/dataset)
+
+12.  [A. Krizhevsky, "Learning Multiple Layers of Features from Tiny
+Images," Technical Report $\small{(2009)}.] http://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf
