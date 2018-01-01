@@ -40,8 +40,8 @@ super-resolution results to these two limiting cases in order to
 qualitatively and quantitatively evaluate restoration performance.
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_flower_upsampled.jpg)
-*Fig. 1.  Different upsamplings of an input 64x64 image to an output picture
-with 256x256 pixel size.*
+*Fig. 1.  Different upsamplings of an input 64x64 flower image to an output
+picture with 256x256 pixel size.*
 
 ## CNN architecture and loss functions
 
@@ -130,18 +130,18 @@ computes the L2 norm of differences between high spatial frequency images
 like that appearing in figure 3 and their predicted CNN analogues.
 
 ![SuperRes]({{site.url}}/blog/images/superres/hires_lores_residual2.jpg)
-*Fig. 2.  The difference between a progenitor high-resolution image and its
+*Fig. 2.  The difference between the progenitor flower image and its
 interpolated low-resolution counterpart contains high spatial frequency
 content.*
 
 ## CNN training and validation
 
 Programming in python, we build the CNN architecture and loss functions
-within the TensorFlow framework [10].  We also download a subset of the
-Open Images Dataset to serve as training, validation and testing data [11].
-CNN training depends upon a sizable number of hyperparameters which must be
-empirically set.  Table 2 summarizes the hyperparameter values that we
-settled upon after running 30+ experiments.
+within the TensorFlow deep learning framework [10].  We also download a
+subset of the Open Images Dataset to serve as training, validation and
+testing data [11].  CNN training depends upon a number of hyperparameters
+which must be empirically set.  Table 2 summarizes the hyperparameter
+values that we settled upon after running 30+ training experiments.
 
 <table style="width:100%">
   <thead>
@@ -201,30 +201,60 @@ settled upon after running 30+ experiments.
 *Table 2.  List of hyperparameters employed for 4X super-resolution CNN
 training and validation.*
 
-Training and validation learning curves are plotted in figure 3.
+Utilizing the hyperparameters in Table 2 and working with the residual
+high-spatial frequency loss function, we first train a CNN to perform 4X
+super-resolution.  Its training and validation learning curves generated
+after running for 18 hours on a single GTX 1080 Ti GPU are illustrated in
+figure 3.  The Tensorboard traces for both curves exhibit significant
+fluctuations about their time-averaged means.  Yet both learning curves
+asymptote to approximately the same mean regression errors.  So our CNN
+does not appear to significantly overfit or underfit.  
 
 ![SuperRes]({{site.url}}/blog/images/superres/train_valid_error.png)
 *Fig. 3.  Tensorboard display of mean regression errors between predicted
 and ground truth high-spatial frequency contents for training $($orange$)$
 and validation $($green$)$ image samples.*
 
-
-Figure 4 illustrates four examples of super-resolved images.  In each
-example, 64x64 inputs to the CNN are displayed after interpolation to
-256x256 within the figure's upper-left quadrants.  High-resolution contents
-predicted by the CNN appear in the figure's upper-right quadrants.  The
-sums of low plus high spatial frequencies yield the image reconstructions
-presented in lower-left quadrants.  For comparison, the original 256x256
-images which represent ideal reconstructions are shown in the lower-right
-quadrants.
+Once training concludes, it is instructive to compare CNN inputs and
+outputs.  Figure 4 illustrates four selected examples of 4X super-resolved
+validation images.  In the figure's upper-left quadrants, 64x64 inputs to
+the CNN are displayed after interpolated upsampling to 256x256.  High
+spatial frequency contents predicted by the CNN appear in the figure's
+upper-right quadrants.  Sums of low plus high spatial frequencies yield the
+image reconstructions presented in the lower-left quadrants.  For
+comparison, the progenitor 256x256 images representing ideal
+reconstructions are exhibited in the lower-right quadrants.
 
 ![SuperRes]({{site.url}}/blog/images/superres/highpass_montage.jpg)
 *Fig. 4.  Representative examples of high-pass residual super-resolution
 results on validation samples.*
 
+Looking at these super-resolution results, we observe that our CNN with the
+high-pass residual loss function recovers much, but not all, of the high
+spatial frequency content missing from the input images.  For instance in
+the first car radio example in figure 4, we can readily read the red
+"96.80" FM station characters in the super-resolved output but not within
+the low resolution input.  But it is still nearly impossible to decipher
+the smaller white characters printed on the radio's buttons.  Restoration
+of leaf edges and veins, flying fire embers and dancer costume sequins in
+figure 4 are also noteworthy qualitative successes of CNN super-resolution.
+
+It is instructive to compare variations in super-resolution results coming
+from different loss functions while holding all other CNN hyperparameters
+fixed.  In figure 5a, we see again the 64x64 flower image following
+up-interpolation alongside its 256x256 progenitor.  Figure 5b exhibits 4X
+super-resolved outputs from our CNN using the per-pixel, perceptual and
+high spatial frequency residual loss functions.  To first approximation,
+the three individual super-resolution results look similar.  But if we zoom
+into figure 5b, we observe that the perceptual loss function result
+exhibits "checkerboard patterning" which is not present in the other two
+loss function outputs.  Johnson et al note that the feature reconstruction
+loss gives rise to a slight cross-hatch pattern visible under
+mangnification [2].  A similar checkerboard pattern can be seen after
+zooming within the perceptual loss result presented in figure 6.
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_flower.jpg)
-*Fig. 5a.  Low and high resolution flower images.*
+*Fig. 5a.  Low resolution input and ideal high resolution output flower images.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_flower.jpg)
 *Fig. 5b.  Reconstructed flower images coming from pixel, perceptual and
@@ -232,11 +262,16 @@ highpass loss functions.  Reconstruction differences can be seen by zooming
 into these pictures.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_cars.jpg)
-*Fig. 6a.  Low and high resolution car images.*
+*Fig. 6a.  Low resolution input and ideal high resolution car images.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cars.jpg)
 *Fig. 6b.  Reconstructed car images coming from pixel, perceptual and
 highpass loss functions.*
+
+In order to quantitatively compare super-resolution results coming from the
+three different CNN loss functions, we compute their PSNR values.
+
+
 
 
 ## Super-resolution inference results
