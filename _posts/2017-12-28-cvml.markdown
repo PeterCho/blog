@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Super-Resolving Individual Images via Fully Convolutional Neural Networks"
+title:  "Super-Resolving Single Images via Fully Convolutional Neural Networks"
 date:   2017-12-28 12:00:00
 categories: Deep Learning
 use_math: true
@@ -10,25 +10,25 @@ use_math: true
 
 Reconstructing degraded images to their original forms represents a classic
 problem in computer vision.  Image deblurring, denoising, inpainting and
-colorization all require recovering lost information.  Image restoration
-problems represent ill-defined inverse problems, for downgraded input
-generally maps onto many possible outputs.  We consequently should be
-content to generate reconstructions that appear visually reasonable to the
-human eye.
+colorization all require recovering and/or hallucinating lost information.
+Image restoration is generally an ill-defined inverse problem, for
+downgraded input can map onto many possible outputs.  We consequently must
+be content to generate reconstructions that appear visually reasonable to
+the human eye.
 
 Before the widespread adoption of deep learning techniques within computer
 vision, researchers attempted to recover higher resolution, RGB-colored
 and/or defect-free pictures from low resolution, greyscale and/or defective
-inputs via hand-crafted rules.  Today, Convolutional Neural Network (CNN)
-approaches can automatically identify patterns present in real-world
-imagery.  Moreover, the internet provides a nearly limitless source for CNN
-training data which is inexpensive to harvest.  Starting with crisp, clean
-and fully colored photos, one simply blurs, introduces artifacts and/or
-removes color channels to obtain downgraded versions.  The resulting
-downgraded pictures become CNN inputs, while their progenitors enter into
-training loss functions.  Neural networks can consequently exploit vast
-quantities of data to learn typical patterns that may be used to fill in
-missing imagery information.
+inputs via hand-crafted rules.  Today, Convolutional Neural Network
+$($CNN$)$ approaches can automatically identify patterns present in
+real-world imagery.  Moreover, the internet provides a nearly limitless
+source for CNN training data which is inexpensive to harvest.  Starting
+with crisp, clean and fully colored photos, one simply blurs, introduces
+artifacts and/or removes color channels to obtain downgraded versions.  The
+resulting downgraded pictures become CNN inputs, while their progenitors
+enter into training loss functions.  Neural networks can consequently
+exploit vast quantities of data to learn typical patterns that may be used
+to fill in missing imagery information.
 
 In this blog post, we investigate single image super-resolution via fully
 convolutional neural networks.  In particular, we want to upsample small
@@ -46,21 +46,20 @@ picture with 256x256 pixel size.*
 ## CNN architecture and loss functions
 
 A number of authors have recently explored CNN feed-forward models to
-super-resolve input images.  For example, the Super-Resolution
-Convolutional Neural Network $($SRCNN$)$ of Dong et al utilizes a 3
-convolutional layer network with a per-pixel loss function that operates on
-low resolution images upscaled via bicubic interpolation [1].  Johnson et
-al worked with end-to-end ResNets containing 12 - 13 convolutional layers
-[2,3].  Tai et al investigated even deeper ResNet architectures with up to
-52 convolutional layers which were trained via recursive learning [4].
-These investigators and others have reported impressive super-resolution
-results using CNNs.
+super-resolve single images.  For example, the Super-Resolution
+Convolutional Neural Network $($SRCNN$)$ of Dong et al utilized a 3 layer
+convolutional network which imports low resolution images upscaled via
+bicubic interpolation [1].  Johnson et al worked with end-to-end ResNets
+containing 12 - 13 convolutional layers [2,3].  Tai et al investigated even
+deeper ResNet architectures with up to 52 convolutional layers which were
+trained via recursive learning [4].  These investigators and others have
+reported impressive super-resolution results using CNNs.
 
 Drawing inspiration from earlier studies, we experimented with a variety of
 fully convolutional networks.  We found the following "super-layer"
 combinations of convolutions with 5x5 kernels, batch normalization [5],
 leaky ReLU activation [6], DenseNets with 3x3 kernels [7], and transposed
-convolutions with 3x3 kernels [8] to be useful CNN building blocks:
+convolutions with 3x3 kernels [8,9] to be useful CNN building blocks:
 
 $\qquad$ CBL: Conv5, Batch norm, Leaky ReLU
 
@@ -69,7 +68,7 @@ $\qquad$ Dense-n: n-layer DenseNet with Batch norm and Leaky ReLU but no bottlen
 $\qquad$ UP-conv: Tranposed Conv3
 
 We assembled these building blocks into the fully convolutional
-architecture presented in table 1 which performs 4X super-resolution of RGB
+architecture outlined in table 1 which performs 4X super-resolution of RGB
 images and contains 1.17M trainable parameters:
 
 <table style="width:100%">
@@ -108,7 +107,7 @@ channels] </th>
 </tbody>
 </table>
 
-*Table 1.  CNN architecture for 4X super-resolution of an input RGB image.*
+*Table 1.  CNN architecture for 4X super-resolution of input RGB imagery.*
 
 In addition to trying various network architectures, we also explored
 different loss functions.  The first is a per-pixel Euclidean loss which is
@@ -117,17 +116,17 @@ the difference between a ground-truth progenitor image and its
 reconstructed counterpart.  The second is a perceptual loss which measures
 the L1 norm of the difference between descriptors for progenitor and
 reconstructed images computed via pretrained CNNs.  Following Johnson et al
-[2], we use the relu2_2 layer from the VGG-16 model [9] to generate image
-descriptors.
+[2], we employ the relu2_2 layer from the VGG-16 model [10] to generate
+image descriptors.
 
-The final loss function we consider is based upon residual differences
-between progenitor high-resolution images and their interpolated
-low-resolution counterpats.  As figure 2 illustrates, such differences
+A third loss function we consider is based upon residual differences
+between high-resolution progenitor images and their low-resolution
+interpolated counterparts.  As figure 2 illustrates, such differences
 contain high spatial frequency components present in the former and missing
 in the latter.  We are consequently motivated to train a CNN to output high
 frequency contents given low frequency inputs.  Our third loss function
-computes the L2 norm of differences between high spatial frequency images
-like that appearing in figure 3 and their predicted CNN analogues.
+computes the L2 norm of differences between high spatial frequency residual
+images like that appearing in figure 3 and their predicted CNN analogues.
 
 ![SuperRes]({{site.url}}/blog/images/superres/hires_lores_residual2.jpg)
 *Fig. 2.  The difference between the progenitor flower image and its
@@ -137,9 +136,9 @@ content.*
 ## CNN training and validation
 
 Programming in python, we build the CNN architecture and loss functions
-within the TensorFlow deep learning framework [10].  We also download a
+within the TensorFlow deep learning framework [11].  We also download a
 subset of the Open Images Dataset to serve as training, validation and
-testing data [11].  CNN training depends upon a number of hyperparameters
+testing data [12].  CNN training depends upon a number of hyperparameters
 which must be empirically set.  Table 2 summarizes the hyperparameter
 values that we settled upon after running 30+ training experiments.
 
@@ -201,14 +200,14 @@ values that we settled upon after running 30+ training experiments.
 *Table 2.  List of hyperparameters employed for 4X super-resolution CNN
 training and validation.*
 
-Utilizing the hyperparameters in Table 2 and working with the residual
-high-spatial frequency loss function, we first train a CNN to perform 4X
-super-resolution.  Its training and validation learning curves generated
-after running for 18 hours on a single GTX 1080 Ti GPU are illustrated in
-figure 3.  The Tensorboard traces for both curves exhibit significant
-fluctuations about their time-averaged means.  Yet both learning curves
-asymptote to approximately the same mean regression errors.  So our CNN
-does not appear to significantly overfit or underfit.  
+Working with these hyperparameters and the high-spatial frequency residual
+loss function, we first train a CNN to perform 4X super-resolution.  Figure
+3 plots the network's training and validation learning curves generated
+after running for 18 hours on a single GTX 1080 Ti GPU.  The Tensorboard
+traces appearing in the figure exhibit significant fluctuations about their
+temporally smoothed means.  Yet both learning curves asymptote to
+approximately the same average regression error.  So our CNN does not
+appear to significantly overfit or underfit.
 
 ![SuperRes]({{site.url}}/blog/images/superres/train_valid_error.png)
 *Fig. 3.  Tensorboard display of mean regression errors between predicted
@@ -218,85 +217,85 @@ and validation $($green$)$ image samples.*
 Once training concludes, it is instructive to compare CNN inputs and
 outputs.  Figure 4 illustrates four selected examples of 4X super-resolved
 validation images.  In the figure's upper-left quadrants, 64x64 inputs to
-the CNN are displayed after they are upsampled via interpolation to
-256x256.  High spatial frequency contents predicted by the CNN appear in
-the figure's upper-right quadrants.  Sums of low plus high spatial
-frequencies yield the image reconstructions presented in the lower-left
-quadrants.  For comparison, the progenitor 256x256 images representing
-ideal reconstructions are exhibited in the lower-right quadrants.
+the CNN are displayed after they are interpolated up to 256x256.  High
+spatial frequency contents predicted by the CNN appear in the figure's
+upper-right quadrants.  Sums of low plus high spatial frequencies yield the
+image reconstructions within the lower-left quadrants.  For comparison, the
+progenitor 256x256 images representing ideal reconstructions are exhibited
+in the lower-right quadrants.
 
 ![SuperRes]({{site.url}}/blog/images/superres/highpass_montage.jpg)
 *Fig. 4.  Representative examples of highpass residual super-resolution
 results on validation samples.*
 
 Looking at these super-resolution results, we observe that our CNN with the
-highpass residual loss function recovers much, but not all, of the high
-spatial frequency content missing from the input images.  For instance in
-the first car radio example in figure 4, we can readily read the red
-"96.80" FM station characters in the super-resolved output but not within
-the low resolution input.  But it is still nearly impossible to decipher
-the smaller white characters printed on the radio's buttons.  Restoration
-of leaf edges and veins, flying fire embers and dancer costume sequins in
-figure 4 are also noteworthy qualitative successes of CNN super-resolution.
+residual loss function recovers much, but not all, of the high spatial
+frequency content missing from the input images.  For instance in the first
+car radio example in figure 4, we can readily read the red "96.80" station
+label in the super-resolved output that is difficult to decipher in the low
+resolution input.  But it is still nearly impossible to make out the
+smaller white characters printed on the radio's buttons.  Restoration of
+narrow leaf veins, flying fire embers and dancer costume sequins in figure
+4 are also noteworthy super-resolution successes.
 
-It is instructive to compare variations in super-resolution results coming
-from different loss functions while holding all other CNN hyperparameters
-fixed.  In figure 5a, we see again the 64x64 flower image following
-up-interpolation alongside its 256x256 progenitor.  Figure 5b exhibits 4X
-super-resolved outputs from our CNN using the per-pixel, perceptual and
-high spatial frequency residual loss functions.  To first approximation,
-the three individual super-resolution results look similar.  But if we zoom
-into figure 5b, we observe that the perceptual loss function result
-exhibits "checkerboard patterning" which is not present in the other two
-loss function outputs.  Johnson et al note that the feature reconstruction
-loss gives rise to a slight cross-hatch pattern visible under
-mangnification [2].  A similar checkerboard pattern can be seen after
-zooming within the perceptual loss result presented in figure 6.
+It is instructive to compare CNN outputs resulting from different loss
+functions while all other hyperparameters are held fixed.  In figure 5a, we
+again see the 64x64 flower image following up-interpolation alongside its
+256x256 progenitor.  Figure 5b exhibits 4X super-resolved outputs from our
+CNN using the per-pixel, perceptual and high spatial frequency residual
+loss functions.  At first glance, the three super-resolved pictures look
+nearly identical.  But if we zoom into figure 5b, we observe that the
+perceptual loss function result suffers from "checkerboard" pixelation
+which is not present in the other two loss function outputs.  Johnson et al
+note that the feature reconstruction loss gives rise to a slight
+cross-hatch pattern visible under mangnification [2].  Similar checkerboard
+patterning can be seen after zooming into the perceptual loss result
+presented in figure 6.
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_flower.jpg)
 *Fig. 5a.  Low resolution input and ideal high resolution output flower images.*
 
-![SuperRes]({{site.url}}/blog/images/superres/montage_flower.jpg)
-*Fig. 5b.  Reconstructed flower images coming from pixel, perceptual and
-highpass loss functions.  Reconstruction differences can be seen by zooming
-into these pictures.*
+![SuperRes]({{site.url}}/blog/images/superres/montage_flower.jpg) *Fig. 5b.
+Reconstructed flower images coming from pixel, perceptual and residual loss
+functions.  Reconstruction differences can be seen by zooming into these
+pictures.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/padded_lores_hires_cars.jpg)
 *Fig. 6a.  Low resolution input and ideal high resolution car images.*
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cars.jpg)
 *Fig. 6b.  Reconstructed car images coming from pixel, perceptual and
-highpass loss functions.*
+residual loss functions.*
 
-In order to quantitatively compare super-resolution results coming from the
-three different CNN loss functions, we compute their peak signal-to-noise
-ratios.  PSNR is a super-resolution performance metric often reported in
-the literature which somewhat correlates with image restoration quality.
-Following [1,2], we first evaluate Y channel PSNR after converting
-progenitor and reconstructed images to YCbCr colorspace.  Working with 48
-pairs of 4X super-resolved and progenitor validation images, we find PSNR =
-29.79 for the per-pixel loss function, 29.81 for the perceptual loss
-function, and 30.21 for the spatial frequency residual loss function.  If
-we instead evaluate PSNR for three color channel RGB images, we obtain PSNR
-= 22.68 for the per-pixel loss function, 17.75 for the perceptual loss
-function and 24.43 for the spatial frequency residual loss function.
+In order to quantitatively compare super-resolution outputs from the three
+different CNN loss functions, we compute their peak signal-to-noise ratios
+$($PSNR$)$.  This performance metric is often reported in the
+super-resolution literature, and it correlates somewhat with image
+restoration quality.  Following [1,2], we first evaluate Y channel PSNR
+after converting progenitor and reconstructed images to YCbCr colorspace.
+Working with 48 pairs of 4X super-resolved and progenitor validation
+images, we find PSNR = 29.79 for the per-pixel loss function, 29.81 for the
+perceptual loss function, and 30.21 for the residual loss function.  If we
+instead evaluate PSNR for three color-channel RGB images, we obtain PSNR =
+22.68 for the per-pixel loss function, 17.75 for the perceptual loss
+function and 24.43 for the residual loss function.
 
-So based upon these qualitative and quantiative comparisons, we conclude
-the residual loss function yields the best CNN super-resolution
-performance.
+Based upon these qualitative and quantiative comparisons, we conclude the
+high spatial frequency residual loss function yields the best CNN
+super-resolution performance.
 
 ## Super-resolution inference 
 
 The neural network architecture in Table 1 is fully convolutional.  It
-consequently may be applied to images of any input pixel size.  Figure 7
+consequently may be applied to input images of any pixel size.  Figure 7
 exhibits 4X super-resolved images derived from the Tensorflow model which
 generated the validation results in figure 4.  The heights and widths of
-the low-resolution input and reconstructed output images are annotated in
-the figure.  High spatial frequency content recovered by the CNN may
-readily be observed by zooming into the figure.  It is particularly
-interesting to observe restored crack details within the top stone picture.
-Similarly, super-resolution significantly sharpens blurry background text
-in the bottom photo of figure 7.
+the low-resolution input and reconstructed output images are indicated in
+the figure.  Zooming into the figure renders apparent high spatial
+frequency content recovered by the CNN.  It is particularly interesting to
+observe restored crack details within the top stone picture.  Similarly,
+super-resolution significantly sharpens blurry background text in the
+bottom "American Heart Association" photo.
 
 ![SuperRes]({{site.url}}/blog/images/superres/crack_montage.jpg)
 
@@ -310,23 +309,23 @@ horizontal and vertical directions.  $\small{(Center)}$ Super-resolved
 image outputs from the CNN.  $\small{(Right)}$ Original image progenitors.*
 
 In theory, we could transform arbitrarily small input images into large
-output sizes by adding more up-convolutions at the end of the CNN
-architecture in Table 1.  In practice, increasing super-resolution
-magnification yields diminishing returns as fine detail from high spatial
-frequencies is irretrievably lost.  Yet as figure 8 demonstrates, even 8X
-CNN super-resolution is meaningfully possible.
+output sizes by adding more up-convolutions to the CNN architecture in
+Table 1.  In practice, increasing super-resolution magnification yields
+diminishing returns as fine detail from high spatial frequencies is
+irretrievably lost.  Yet as figure 8 demonstrates, even 8X CNN
+super-resolution is meaningfully possible.
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png)
 *Fig. 8. Examples of 32x32 CIFAR images interpolated to 256x256 and their
 8X super-resolved counterparts.*
 
 The figure illustrates natural and man-made objects from selected CIFAR-10
-images [12].  The 32x32 pictures upsampled via interpolation to 256x256 are
-recognizable but very blurry.  In contrast, their 8X super-resolved
+images [13].  The objects in the 32x32 pictures interpolated up to 256x256
+are recognizable but very blurry.  In contrast, their 8X super-resolved
 counterparts look surprisingly crisp.  We do not have access to the
 original images from which CIFAR samples were created.  So this final
-example is reasonably close to a "real-world" application of individual
-image super-resolution.
+example represents a "real-world" application of single image
+super-resolution.
 
 ## References
 
@@ -355,12 +354,16 @@ Connected Convolutional Networks," CVPR $\small{(2017)}$.](https://arxiv.org/abs
 8.  [V. Dumoulin and F. Visin, "A Guide to Convolution Arithmetic for Deep
 Learning," arXiv:1603.07285 v1 $\small{(2016)}$.](https://ai2-s2-pdfs.s3.amazonaws.com/7918/2aab186f0b68a8432540d8695e1646338479.pdf)
 
-9.  [K. Simonyan and A. Zisserman, "Very Deep Convolutional Networks for
+9.  [F.-F. Li, J. Johnson and S. Yeung, "CS-231N course slides, lecture 11,
+Detection and Segmentation," slides 28 - 43
+$\small{(2017)}$.](http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture11.pdf)
+
+10.  [K. Simonyan and A. Zisserman, "Very Deep Convolutional Networks for
 Large-Scale Image Recognition," ICLR $\small{(2015)}$.](https://arxiv.org/pdf/1409.1556.pdf)
 
-10.  [See TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+11.  [See TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
 
-11.  [See Open Images Dataset V3.](https://github.com/openimages/dataset)
+12.  [See Open Images Dataset V3.](https://github.com/openimages/dataset)
 
-12.  [A. Krizhevsky, "Learning Multiple Layers of Features from Tiny
-Images," Technical Report $\small{(2009)}.] http://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf
+13.  [A. Krizhevsky, "Learning Multiple Layers of Features from Tiny
+Images," Technical Report $\small{(2009)}$.](http://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf)
