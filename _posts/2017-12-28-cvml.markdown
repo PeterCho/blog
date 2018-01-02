@@ -315,7 +315,7 @@ returns as fine detail is irretrievably lost.  Yet as figure 8
 demonstrates, even 8X CNN super-resolution is meaningfully possible.
 
 ![SuperRes]({{site.url}}/blog/images/superres/montage_cifar.png)
-*Fig. 8. Examples of 32x32 CIFAR images interpolated to 256x256 and their
+*Fig. 8. Examples of 32x32 CIFAR images interpolated up to 256x256 and their
 8X super-resolved counterparts.*
 
 The figure illustrates natural and man-made objects from selected CIFAR-10
