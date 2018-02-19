@@ -1,0 +1,21 @@
+---
+layout: post
+title:  "Work in progress: Generating faces and flowers via DCGANs, WGANs and BEGANs"
+date:   2018-02-19 12:00:00
+categories: Deep Learning
+use_math: true
+---
+
+## Image reconstruction
+
+![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/padded_eigencenter_face.png)
+*Fig. X.  Eigencenter face.*
+
+## CNN architecture and loss functions
+
+
+## References
+
+1.  [C. Dong, C.C. Loy, K. He and X. Tang, "Image Super-Resolution Using
+Deep Convolutional Networks," IEEE Transactions on Pattern Analysis and
+Machine Intelligence $\small{(2015)}$.](https://arxiv.org/pdf/1501.00092.pdf)
