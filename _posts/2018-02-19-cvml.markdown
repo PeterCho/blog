@@ -11,6 +11,9 @@ use_math: true
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/padded_eigencenter_face.png)
 *Fig. X.  Eigencenter face.*
 
+![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/padded_half_grinning_redlips_and_mustaches_montage.png)
+*Fig. X.  XXX.*
+
 ## CNN architecture and loss functions
 
 
