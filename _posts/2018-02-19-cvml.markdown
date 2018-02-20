@@ -13,8 +13,8 @@ use_math: true
 from the CelebA training set.*
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/training_flowers_64x64.png)
-*Fig. X.  Tensorboard display of augmented images drawn from the combined
-17-flower and 102-flower training sets.*
+*Fig. X.  Tensorboard display of dynamically augmented images drawn from
+the combined 17-flower and 102-flower training sets.*
 
 ## Results
 
