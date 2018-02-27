@@ -97,7 +97,23 @@ training set.*
 *Fig. 2.  Tensorboard display of dynamically augmented images from two
 Oxford flower datasets.*
 
+Over a series of 150+ experiments performed within the TensorFlow framework
+[12], we used these images to train DCGANs, WGANs and BEGANs with varying
+architectures and hyperparameters.  They involved convolutions and
+transposed convolutions [13, 14] with 3x3 and 5x5 kernels.  We also tried
+incorporating batch normalization [5], layer normalization [15] and no
+normalization.  We further experimented with ReLU, leaky ReLU and
+exponential linear units [17] as nonlinear activations functions.
 
+The DCGAN architecture we adopted closely mimics that of Radford et al [4].
+The particular "super layer" combinations of convolutions, normalizations
+and nonlinearities in our DCGAN discriminator and generator networks for
+synthesizing 64x64 images are listed in Table 1.  The receptive fields of
+these networks equals 61, and they contain O$($36M$)$ trainable parameters.
+We employed similar discriminator and generator architectures for WGAN
+experiments.  But following [ref], we replaced batch normalization with
+layer normalization and dispensed with a final sigmoid activation in the
+WGAN discriminator.
 
 <table style="width:100%">
   <thead>
@@ -113,19 +129,19 @@ channels] </th>
       <td style="text-align: center">64 x 64 x 3</td>
     </tr>
     <tr>
-      <td style="text-align: left">Conv3, Norm, Leaky Relu, stride 2</td>
+      <td style="text-align: left">Conv5, Leaky Relu, stride 2</td>
       <td style="text-align: center">32 x 32 x 128</td>
     </tr>
     <tr>
-      <td style="text-align: left">Conv3, Norm, Leaky Relu, stride 2</td>
+      <td style="text-align: left">Conv5, Norm, Leaky Relu, stride 2</td>
       <td style="text-align: center">16 x 16 x 256</td>
     </tr>
     <tr>
-      <td style="text-align: left">Conv3, Norm, Leaky Relu, stride 2</td>
+      <td style="text-align: left">Conv5, Norm, Leaky Relu, stride 2</td>
       <td style="text-align: center">8 x 8 x 512</td>
     </tr>
     <tr>
-      <td style="text-align: left">Conv3, Norm, Leaky Relu, stride 2</td>
+      <td style="text-align: left">Conv5, Norm, Leaky Relu, stride 2</td>
       <td style="text-align: center">4 x 4 x 1024</td>
     </tr>
     <tr>
@@ -160,19 +176,19 @@ channels] </th>
       <td style="text-align: center">4 x 4 x 1024</td>
     </tr>
     <tr>
-      <td style="text-align: left">Transposed conv3, Batch norm, ReLU</td>
+      <td style="text-align: left">Transposed conv5, Batch norm, ReLU</td>
       <td style="text-align: center">8 x 8 x 512</td>
     </tr>
     <tr>
-      <td style="text-align: left">Transposed conv3, Batch norm, ReLU</td>
+      <td style="text-align: left">Transposed conv5, Batch norm, ReLU</td>
       <td style="text-align: center">16 x 16 x 256</td>
     </tr>
     <tr>
-      <td style="text-align: left">Transposed conv3, Batch norm, ReLU</td>
+      <td style="text-align: left">Transposed conv5, Batch norm, ReLU</td>
       <td style="text-align: center">32 x 32 x 128</td>
     </tr>
     <tr>
-      <td style="text-align: left">Transposed conv3, Tanh</td>
+      <td style="text-align: left">Transposed conv5, Tanh</td>
       <td style="text-align: center">64 x 64 x 3</td>
     </tr>
 
@@ -357,7 +373,7 @@ channels] </th>
     </tr>
     <tr>
       <td style="text-align: left">Descriptor dimension $Z_{dim}$</td>
-      <td style="text-align: center">100 $($DCGAN$)$; 128 $($WGAN$)$; 64 $($BEGAN$)$ </td>
+      <td style="text-align: center">128 $($DCGAN & WGAN$)$; 64 $($BEGAN$)$ </td>
     </tr>
     <tr>
       <td style="text-align: left">Standard deviation for weight-initializing gaussian</td>
@@ -463,9 +479,18 @@ $\small{(2015)}$.](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
 11. [M.-E. Nilsback and A. Zisserman, "17 and 102 Category Flower
 Datasets," $\small{(2008)}$.](http://www.robots.ox.ac.uk/~vgg/data/flowers/)
 
-12. [J. L. Ba, J. R. Kiros and G.E. Hinton, "Layer Normalization,"
+12.  [See TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+
+13.  [V. Dumoulin and F. Visin, "A Guide to Convolution Arithmetic for Deep
+Learning," arXiv:1603.07285 v1 $\small{(2016)}$.](https://ai2-s2-pdfs.s3.amazonaws.com/7918/2aab186f0b68a8432540d8695e1646338479.pdf)
+
+14.  [F.-F. Li, J. Johnson and S. Yeung, "CS-231N course slides, lecture 11,
+Detection and Segmentation," slides 28 - 43
+$\small{(2017)}$.](http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture11.pdf)
+
+15. [J. L. Ba, J. R. Kiros and G.E. Hinton, "Layer Normalization,"
 arXiv:1607.06450 $\small{(2016)}$.](https://arxiv.org/abs/1607.06450.pdf)
 
-13. [D.-A. Clevert, T. Unterthiner and S. Hochreiter, "Fast and Accurate
+17. [D.-A. Clevert, T. Unterthiner and S. Hochreiter, "Fast and Accurate
 Deep Network Learning by Exponential Linear Units," arXiv:1511.07289 $\small{(2016)}$.](
 https://arxiv.org/pdf/1511.07289.pdf)
