@@ -6,7 +6,7 @@ categories: Deep Learning
 use_math: true
 ---
 
-## Three GAN zoo members
+## Three members of the GAN zoo 
 
 Generative Adversarial Networks $($GANS$)$ belong to a family of generative
 models that learn to sample from specified data distributions.  GANs
@@ -105,16 +105,17 @@ incorporating batch normalization [5], layer normalization [15] and no
 normalization.  We further experimented with ReLU, leaky ReLU and
 exponential linear units [17] as nonlinear activations functions.
 
-The DCGAN architecture we adopted closely follows that of Radford et al [4].
-The particular "super layer" combinations of convolutions, normalizations and
-nonlinearities in our DCGAN discriminator and generator networks for
-synthesizing 64x64 images are listed in Table 1.  The receptive fields of these
-networks equals 61, and they contain O$($36M$)$ trainable parameters.  We
-employed similar discriminator and generator architectures for WGAN experiments.
-But following [8], we utilized a gradient penalty term within the loss function
-rather than weight clipping as in the original WGAN paper [7].  Moreover, we
-replaced batch normalization with layer normalization and dispensed with a final
-sigmoid activation in the WGAN discriminator.
+The DCGAN architecture we adopted closely follows that of Radford et al
+[4].  The particular "super layer" combinations of convolutions,
+normalizations and nonlinearities in our DCGAN discriminator and generator
+networks for synthesizing 64x64 images are listed in Table 1.  The
+receptive fields of these networks equals 61, and they contain O$($36.6M$)$
+trainable parameters.  We employed similar discriminator and generator
+architectures for WGAN experiments.  But following [8], we utilized a
+gradient penalty term within the loss function rather than weight clipping
+as in the original WGAN paper [7].  Moreover, we replaced batch
+normalization with layer normalization and dispensed with a final sigmoid
+activation in the WGAN discriminator.
 
 <table style="width:100%">
   <thead>
@@ -214,8 +215,7 @@ basic architectures for the encoder and decoder are outlined in Table 2.
 Following Berhelot et al [9], we incorporate skip connections in the decoder
 network that concatenate the input descriptor to each upsampling layer.
 Moreover, we adopt these authors' suggestion to initialize the network using
-vanishing residuals [9].  The architecture of the BEGAN generator is simply
-taken to be the same as the decoder's.
+vanishing residuals [9].
 
 <table style="width:100%">
   <thead>
@@ -346,11 +346,15 @@ channels] </th>
 
 *Table 2.  BEGAN encoder and decoder network architectures.*
 
-
-
-
-
-
+We take the architecture for the BEGAN generator to simply be the same as
+the decoder's.  A BEGAN which synthesizes 64x64 images then contains
+O(17.2M) trainable parameters.  It also depends upon a set of
+hyperparameters.  Some hyperparameters are particular to BEGANs such as
+diversity ratio $\gamma$ which regulates the discriminator's balance
+between autoencoding real images and distinguishing synthetic from genuine
+images.  $($ We typically set $\gamma = 0.5$. $)$ Others like those listed
+in Table 3 enter into DCGAN, WGAN and BEGAN training experiments.  We
+settled upon these hyperparameter values via trial and error.
 
 <table style="width:100%">
   <thead>
@@ -397,6 +401,9 @@ channels] </th>
 </table>
 
 *Table 3.  Hyperparameter values employed for DCGAN, WGAN and BEGAN face synthesis.*
+
+
+
 
 
 
