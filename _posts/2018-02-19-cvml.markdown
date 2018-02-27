@@ -105,15 +105,16 @@ incorporating batch normalization [5], layer normalization [15] and no
 normalization.  We further experimented with ReLU, leaky ReLU and
 exponential linear units [17] as nonlinear activations functions.
 
-The DCGAN architecture we adopted closely mimics that of Radford et al [4].
-The particular "super layer" combinations of convolutions, normalizations
-and nonlinearities in our DCGAN discriminator and generator networks for
-synthesizing 64x64 images are listed in Table 1.  The receptive fields of
-these networks equals 61, and they contain O$($36M$)$ trainable parameters.
-We employed similar discriminator and generator architectures for WGAN
-experiments.  But following [ref], we replaced batch normalization with
-layer normalization and dispensed with a final sigmoid activation in the
-WGAN discriminator.
+The DCGAN architecture we adopted closely follows that of Radford et al [4].
+The particular "super layer" combinations of convolutions, normalizations and
+nonlinearities in our DCGAN discriminator and generator networks for
+synthesizing 64x64 images are listed in Table 1.  The receptive fields of these
+networks equals 61, and they contain O$($36M$)$ trainable parameters.  We
+employed similar discriminator and generator architectures for WGAN experiments.
+But following [8], we utilized a gradient penalty term within the loss function
+rather than weight clipping as in the original WGAN paper [7].  Moreover, we
+replaced batch normalization with layer normalization and dispensed with a final
+sigmoid activation in the WGAN discriminator.
 
 <table style="width:100%">
   <thead>
@@ -205,6 +206,17 @@ channels] </th>
 discriminator, Norm = batch normalization for DGCAN and layer normalization
 for WGAN.  Activation = Sigmoid for DCGAN and Identity for WGAN.*
 
+The BEGAN discriminator qualitatively differs from its DCGAN and WGAN
+counterparts inasmuch as it assumes an autoencoder form.  The autoencoder is
+comprised of an encoder which maps an input image to an intermediate bottleneck
+descriptor followed by a decoder that reconstructs the original image.  The
+basic architectures for the encoder and decoder are outlined in Table 2.
+Following Berhelot et al [9], we incorporate skip connections in the decoder
+network that concatenate the input descriptor to each upsampling layer.
+Moreover, we adopt these authors' suggestion to initialize the network using
+vanishing residuals [9].  The architecture of the BEGAN generator is simply
+taken to be the same as the decoder's.
+
 <table style="width:100%">
   <thead>
     <tr>
@@ -267,9 +279,6 @@ channels] </th>
     </tr>
 </tbody>
 </table>
-
-
-
 
 <table style="width:100%">
   <thead>
