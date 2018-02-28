@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Synthesizing Face and Flower Images via DCGANs, WGANs and BEGANs"
+title:  "Work in progress: Synthesizing Face and Flower Images via DCGANs, WGANs and BEGANs"
 date:   2018-02-19 12:00:00
 categories: Deep Learning
 use_math: true
