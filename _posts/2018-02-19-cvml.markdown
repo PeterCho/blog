@@ -62,21 +62,21 @@ described problems arising from the KL divergence and proposed replacing it
 with an Earth Mover distance function.  They also introduced a measure of
 convergence that can be monitored during training and empirically
 demonstrated it correlates well with generated sample quality.  Refinements
-to the original WGAN model's training procedure were reported in [8].
+to the original WGAN model's training procedure were reported in ref. [8].
 
 III.  Boundary Equilibrium GANs $($BEGANs$)$
 
 In 2017, Berthelot, Schumm and Metz proposed using proportional control
 theory to maintain an equilibrium during training between the discriminator
-and generator [9].  These authors also employed an autoencoder for the GAN
+and generator [9].  These authors employed an autoencoder for the GAN
 discriminator with a per-pixel loss.  They further introduced an adjustable
 parameter $\gamma$ which trades off between generated image diversity and
 discriminator reconstruction quality.  Like WGANs, BEGANs provide an
 approximate convergence measure which helps monitoring of training
 progress.
 
-We implement these three GAN types and assess their performance in the
-following section.  
+We implement these three GAN types and assess their relative performance in
+the following section.
 
 ## Face and flower image generation
 
@@ -85,9 +85,9 @@ is the "CelebA" dataset containing O$($220K$)$ celebrity faces [10].  The
 second is a combination of 17-category and 102-category "Oxford flower"
 datasets with O$($9.5K$)$ pictures [11].  We increase the number and
 variation of flower images by dynamically augmenting the originals via
-random horizontal flips, 90 degree rotation angles and HSV color
-modulations.  Representative examples of face and flower training images
-are presented in figures 1 and 2.
+random horizontal flips, 90 degree rotations and HSV color modulations.
+Representative examples of face and flower training images are presented in
+figures 1 and 2.
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/training_faces_64x64.png)
 *Fig. 1.  Tensorboard display of representative face images from the CelebA
@@ -208,14 +208,14 @@ discriminator, Norm = batch normalization for DGCAN and layer normalization
 for WGAN.  Activation = Sigmoid for DCGAN and Identity for WGAN.*
 
 The BEGAN discriminator qualitatively differs from its DCGAN and WGAN
-counterparts inasmuch as it assumes an autoencoder form.  The autoencoder is
-comprised of an encoder which maps an input image to an intermediate bottleneck
-descriptor followed by a decoder that reconstructs the original image.  The
-basic architectures for the encoder and decoder are outlined in Table 2.
-Following Berhelot et al [9], we incorporate skip connections in the decoder
-network that concatenate the input descriptor to each upsampling layer.
-Moreover, we adopt these authors' suggestion to initialize the network using
-vanishing residuals [9].
+counterparts inasmuch as it assumes an autoencoder form.  The autoencoder
+is comprised of an encoder which maps an input image to an intermediate
+bottleneck descriptor followed by a decoder that reconstructs the original
+image.  The basic architectures for the encoder and decoder are outlined in
+Table 2.  Following Berthelot et al [9], we incorporate skip connections in
+the decoder network that concatenate the input descriptor with each
+upsampling layer.  Moreover, we adopt the authors' suggestion to initialize
+the network using vanishing residuals.
 
 <table style="width:100%">
   <thead>
@@ -346,13 +346,13 @@ channels] </th>
 
 *Table 2.  BEGAN encoder and decoder network architectures.*
 
-We take the architecture for the BEGAN generator to simply be the same as
-the decoder's.  A BEGAN which synthesizes 64x64 images then contains
+We take the architecture for the BEGAN generator to be the same as the
+decoder's.  A BEGAN which synthesizes 64x64 images then contains
 O$($17.2M$)$ trainable parameters.  The input descriptor to the generator
 has the same form as the intermediate bottleneck within the BEGAN
 discriminator's autoencoder.  As we process genuine images through the
 autoencoder, we iteratively keep track of the mean and covariance matrix
-for their intermediate bottleneck results.  Using these evolving
+for their intermediate bottleneck descriptors.  Using these evolving
 statistics, we then sample input descriptors for the BEGAN generator from a
 multivariate gaussian distribution.  In contrast, the descriptor inputs for
 DCGAN and WGAN generators are completely random noise vectors whose
@@ -360,12 +360,11 @@ components are sampled from uniform distributions.
 
 The three types of GANs with which we work depend upon a sizable set of
 hyperparameters.  Some hyperparameters are particular to only one of the
-GANs.  For example, the diversity ratio $\gamma$ that regulates the BEGAN
+GANs.  For example, the diversity ratio $\gamma$ regulates the BEGAN
 discriminator's balance between autoencoding real images and distinguishing
-synthetic from genuine images.  $($ We typically set $\gamma = 0.5$. $)$
-But others like those listed in Table 3 influence all DCGAN, WGAN and BEGAN
-training experiments.  We settled upon the tabulated hyperparameter values
-via trial and error.
+synthetic from genuine images.  But others like those listed in Table 3
+influence all DCGAN, WGAN and BEGAN training experiments.  We settled upon
+the tabulated hyperparameter values via trial and error.
 
 <table style="width:100%">
   <thead>
@@ -416,17 +415,12 @@ via trial and error.
 Face and flower images generated by DCGAN, WGAN and BEGAN architectures are
 displayed side-by-side in figures 3 and 4 for comparison.  These 64x64
 examples were intentionally selected from particular points during training
-experiments based upon their generally good qualitative appearance.
-Looking at the face results, we observe that the DCGAN and WGAN outputs
-contain higher spatial frequency content than their BEGAN counterparts.
-But several of the DCGAN faces also exhibit significant distortions.
+experiments based upon their generally good qualitative appearances.
+Looking at the results, we observe that the DCGAN and WGAN outputs contain
+higher spatial frequency content than their BEGAN counterparts.  But
+several of the DCGAN faces also exhibit significant distortions.
 Similarly, DCGAN flowers look more like impressionistic paintings than
-actual photographs.  WGAN results are qualitatively similar to those from
-DCGAN.  Though the theoretical arguments for employing the Wasserstein loss
-function are attractive [7], we empirically find no practical WGAN benefit
-relative to DCGAN and much slower training rates.  In contrast, BEGAN
-outputs are remarkably realistic-looking.  We consequently focus primarily
-upon BEGAN image generation in the remainder of this posting.
+actual photographs.
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/dcgan_wgan_began_faces.png)
 *Fig. 3.  Example 64x64 faces generated by DCGAN $($left$)$, WGAN
@@ -436,46 +430,55 @@ $($center$)$ and BEGAN $($right$)$ architectures.*
 *Fig. 4.  Example 64x64 flowers generated by DCGAN $($left$)$, WGAN
 $($center$)$ and BEGAN $($right$)$ architectures.*
 
-As GAN networks train, we observe that generator outputs frequently exhibit
-noticeable correlations which vary over time.  For example, skin tones in
-generated faces and dominant colorings of generated flowers randomly change
-for varying model checkpoints.  Figure 5 illustrates this phenomenon where
-BEGAN training outputs are superposed on a plot of the model's approximate
-convergence measure as a function of training iteration.  Abundances of
-pink, white and purple flowers are produced at different times during
-training.  For the particular case of BEGAN models, more variety in
-generated output can be requested by increasing the diversity ratio
-$\gamma$ typically at the cost of diminished quality.  But we observed the
-same phenomenon of evolving color correlation for DCGAN and WGAN generated
-images as well.  
+WGAN results are qualitatively similar to those from DCGAN.  Though the
+theoretical arguments for employing the Wasserstein loss function are
+attractive [7], we empirically find no practical benefit relative to the
+more conventional DCGAN loss which justifies much slower WGAN training
+rates.  In contrast, BEGAN outputs are remarkably realistic-looking.  We
+consequently focus primarily upon BEGAN image generation in the remainder
+of this posting.
+
+As generative adversarial networks train, we observe that generator outputs
+frequently exhibit noticeable correlations which vary over time.  For
+instance, skin tones in faces and dominant colorings of flowers randomly
+change at varying model checkpoints.  Figure 5 illustrates this phenomenon
+where BEGAN training outputs are superposed on a plot of the model's
+approximate convergence measure as a function of training iteration.
+Abundances of pink, white and purple flowers are produced at different
+times during training.  For the particular case of BEGAN models, more
+variety in generated output can be requested by increasing the diversity
+ratio $\gamma$ at the cost of diminished image quality. $($We typically set
+$\gamma = 0.5$.$)$ But we observed the same phenomenon of evolving color
+correlation images generated via DCGANs and WGANs as well.
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/BEGAN_flowers_learning_curve.jpg)
-*Fig. 5.  BEGAN convergence measure generally decreases as training
-proceeds.  But abrupt jumps in the measure's value indicate training
+*Fig. 5.  The BEGAN convergence measure generally decreases as training
+proceeds.  Abrupt jumps in the measure's value signal training
 instabilities.  Insets illustrate 64x64 flower thumbnails generated at
 various points during the training session.*
 
 The convergence measure plot in figure 5 further illustrates a training
-instability problem that commonly plagues many GANs.  During training,
-discriminator and/or generator loss functions can exhibit major spikes.  An
+instability problem that commonly afflicts GANs.  During training,
+discriminator and/or generator loss functions can undergo major spikes.  An
 example of generated outputs going bad during such unstable training
-intervals is presented in the figure.  Our BEGAN experiments typically
-suffered less from such training instabilities than their DCGAN and WGAN
-counterparts.  But contrary to the authors' claims [9], BEGAN models do
-suffer occasionally from unstable training.
+intervals is shown in the figure.  Our BEGAN experiments typically suffered
+less from such training instabilities than their DCGAN and WGAN
+counterparts.  But contrary to the claims of Berthelot et al [9], BEGAN
+model training does occasionally become unstable.
 
 Generated images with 64x64 pixel sizes are small.  So it is obviously
 desirable to produce larger outputs.  We experimented with deeper networks
 architectures containing more convolutional layers, different kernel sizes
-and increased number of filter channels.  But we again found unacceptable
+and increased number of filter channels.  We again found unacceptable
 distortions in 128x128 faces coming from DCGANs and WGANs.  On the other
 hand, the BEGAN encoder and decoder superlayer architectures listed in
 Table 2 yielded the 128x128 faces shown in figure 6.  The BEGAN faces do
-not exhibit the same degree of variety as those within the training corpus
-$($ see figure 1$)$.  In particular, we never found a generated BEGAN face
-with glasses [9].  But the overall quality of the faces appearing in figure
-6 is noteworthy.  Unfortunately, we could not find a BEGAN architecture
-which produced similarly compelling results for 128x128 flowers.
+not exhibit the same degree of variety as those in the training corpus
+$($see figure 1$)$.  For instance, we never observed a generated BEGAN face
+with glasses even though the CelebA training set contains many such
+examples [9].  But the overall quality of the faces appearing in figure 6
+is noteworthy.  Unfortunately, we could not find a BEGAN architecture which
+produced similarly compelling results for 128x128 flowers.
 
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/began1_128x128_faces_expt_140_inference.png)
@@ -484,95 +487,96 @@ which produced similarly compelling results for 128x128 flowers.
 ## Synthetic image manipulation
 
 One of the most impressive results from the original DCGAN paper was the
-demonstration that generator inputs can be regarded as descriptors residing
-in a linear vector space [4].  Interpolating between two different
-descriptors yields a smooth morphing of the first generated image into the
-second.  Since DCGANs take random noise vectors as generator inputs, the
-prefered interpolation between starting and ending points in
-high-dimensional descriptor spaces is along spherical arcs [17].  But we
-work instead within a BEGAN descriptor space characterized by a mean vector
-$\vec{\mu}$ and covariance matrix $\Sigma$.  Linearly interpolated points
-between any of its descriptors lie inside the convex ellipsoidal space.
-Representative examples of interpolated flowers are presented in figure 7.
+demonstration that generator inputs can be regarded linear vector space
+descriptors [4].  Interpolating between two different descriptors yields a
+smooth morphing of the first generated image into the second.  Since DCGANs
+take random noise vectors as generator inputs, the preferred interpolation
+between starting and ending points in high-dimensional descriptor spaces is
+performed along spherical arcs [17].  But we work instead within a BEGAN
+descriptor space characterized by a mean vector $\vec{\mu}$ and covariance
+matrix $\Sigma$.  Linearly interpolated points between any of its
+descriptors lie inside a convex ellipsoidal space.  Representative examples
+of interpolated BEGAN flowers are pictured in figure 7.
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/padded_began1_64x64_flowers_linear_interp.png)
 *Fig. 7.  Linear interpolations between random points in BEGAN descriptor
-space yields smooth transformations between generated flower images.*
+space yield smooth transformations between generated flower images.*
 
 It is interesting to explore the structure of BEGAN descriptor spaces which
 our iteratively-derived gaussian statistics enable.  For example, the
-generated image corresponding to the descriptor-space mean $\vec{\mu}$
-shown in figure 8 is a caucasian woman's face.  Given that the celebA
-training corpus contains O$($118K$)$ female and O$($84K$)$ male faces and
-that it under-represents people of color, the average face in the figure is
-consistent with biases in the training data.
+generated image in figure 8 corresponding to the descriptor space mean
+$\vec{\mu}$ is of a caucasian woman's face.  Given that the celebA training
+corpus contains O$($118K$)$ female and O$($84K$)$ male faces and that it
+under-represents people of color, this average face is consistent with
+semantic biases in the training data.
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/padded_eigencenter_face.png)
 *Fig. 8.  Generated face corresponding to the center location in BEGAN
 descriptor space.*
 
-Starting from center point $\vec{\mu}$, we can move along eigenvectors
+Starting from the center point $\vec{\mu}$, we can move along eigenvectors
 extracted from covariance matrix $\Sigma$ for the BEGAN descriptor space.
-As the representative examples of generated images in figure 9 illustrate,
-such movements lead to descriptor space regions whose corresponding faces
-exhibit different genders, ethnicities and facial expressions.  We can
-thereby systematically map the semantic facial content which the trained
-BEGAN model is capable of generating.
+As the generated image examples in figure 9 illustrate, such eigenspace
+translations lead to descriptor regions whose corresponding faces exhibit
+different genders, ethnicities and facial expressions.  We can thus
+systematically map the semantic facial content which the trained BEGAN
+model is capable of generating.
 
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/eigendirs_09_images_006.png)
 *Fig. 9.  Movements along various eigendirections passing through the
-descriptor space's center yield smooth transitions between semantically
-different generated faces.*
+BEGAN descriptor space's center yield smooth transitions between semantically
+different faces.*
 
-In ref [4], Radford et al demonstrated amusing vector arithmetic
+In ref. [4], Radford et al demonstrated amusing vector arithmetic
 relationships within descriptor space such as "smiling woman - neutral
 woman + neutral man = similing man".  Working with our BEGAN descriptor
-space statistics, we can readily perform similar manipulations on entire
-eigenspace subregions.  For example, we first identify sets of
-eigendirections corresponding to semantically distinct subcategories of
-faces $($e.g. women with red lips and rosy cheeks, men with mustaches and
-people with wide grins$)$.  Then starting from random descriptors, we
-remove their initial projections along the semantically-meaningful
-eigendirections.  Next, we translate the flattened descriptors along the
-desired linear combinations of eigenvectors by several multiples of their
-corresponding square root eigenvalues.  As figure 10 illustrates, the
-engineered images exhibit female red lips, manly mustaches or toothy grins.
+space statistics, we can perform similar manipulations on entire eigenspace
+subregions.  For instance, we first identify sets of eigendirections
+corresponding to semantically distinct facial subcategories such as women
+with red lips, men with mustaches and people with wide grins.  Then
+starting from random descriptors, we remove their initial projections along
+the semantically-meaningful eigendirections.  Next, we translate the
+flattened descriptors along desired linear combinations of eigenvectors by
+several multiples of their corresponding square root eigenvalues.  As
+figure 10 demonstrates , the generated images corresponding to the
+engineered descriptors exhibit feminine red lips, manly mustaches and
+toothy grins.
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/redlips_grins_mustaches_montage.png)
 *Fig. 10.  Generated faces corresponding to random descriptors offset along
-particular eigendirections exhibit semantically similar traits.  For example,
-eigendirection combinations yield faces with red lips and rosy cheeks
-$($left$)$, wide grins $($center$)$ and mustaches $($right$)$.*
+particular eigendirections exhibit engineered traits.  For example,
+eigendirection combinations yield faces with red lips $($left$)$, wide
+grins $($center$)$ and mustaches $($right$)$.*
 
-We can generate images with more specified characteristics via descriptor
+We can produce images with more specific characteristics via descriptor
 space translations into more than one semantically meaningful
 eigen-subspace.  For example, by summing the eigendirections for female red
-lips with wide grins, we produce grinning female faces with red lips.
-Similarly, male faces with mustaches and grins are obtained by feeding
-descriptors from a particular descriptor space subregion into the BEGAN
-generator.  See figure 11.
+lips with wide grins, we can induce female faces with red lips.  Similarly,
+male faces with mustaches and grins are obtained by feeding descriptors
+from a particular descriptor space subregion into the BEGAN generator.  See
+figure 11.
 
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/grinredlips_grinmustaches_montage.png)
 *Fig. 11.  Taking combinations of semantically-meaningful eigendirections
-yields faces with red lips and wide grins $($left$)$ as well as mustaches
-and wide grins $($right$)$*
+yields female faces with red lips and wide grins $($left$)$ as well as
+grinning male faces with mustaches $($right$)$.*
 
-As a final example of synthetic image manipulation, we demonstrate
-controlled modulation of faces from neutral expressions into wide grins in
-figure 12.  Starting from neutral expression descriptors, we simply move
-along a linear combination of eigendirections which semantically correspond
-to grinning.  The sequence of faces in the figure exhibit other relatively
-minor changes besides grin development.  Perhaps it is possible to find a
-more precise eigendirection in BEGAN descriptor space which only affects
-grin content within generated images.  We leave such refined descriptor
-space investigation for future work.
+As a final example of synthetic image manipulation, figure 12 demonstrates
+controlled modulation of faces from neutral expressions into wide grins.
+Starting from neutral expression descriptors, we simply move along a linear
+combination of eigendirections which semantically corresponds to grinning.
+The sequence of faces in the figure exhibit other relatively minor changes
+besides grin development.  Perhaps it is possible to find a more precise
+eigendirection in BEGAN descriptor space which only affects grin content in
+generated images.  We leave such refined descriptor space investigation for
+future work.
 
 ![BEGAN]({{site.url}}/blog/images/gans_faces_flowers/neutral_to_grin.png)
-*Fig. 12.  Movement between points in descriptor space along a particular
-combination of eigendirections smoothly adds grins to initially neutral
-faces.*
+*Fig. 12.  Movement between descriptor space points along a particular
+linear combination of eigendirections smoothly adds grins to initially
+neutral faces.*
 
 
 ## References
