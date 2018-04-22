@@ -121,8 +121,7 @@ activation in the WGAN discriminator.
   <thead>
     <tr>
       <th style="text-align: left">DCGAN/WGAN discriminator super layer</th>
-      <th style="text-align: center">Activation volume [width x height x
-channels] </th>
+      <th style="text-align: center">Output shape [width x height x channels] </th>
     </tr>
   </thead>
   <tbody>
@@ -164,8 +163,7 @@ channels] </th>
   <thead>
     <tr>
       <th style="text-align: left">DCGAN/WGAN generator super layer</th>
-      <th style="text-align: center">Activation volume [width x height x
-channels] </th>
+      <th style="text-align: center">Output shape [width x height x channels] </th>
     </tr>
   </thead>
   <tbody>
@@ -178,15 +176,15 @@ channels] </th>
       <td style="text-align: center">4 x 4 x 1024</td>
     </tr>
     <tr>
-      <td style="text-align: left">Transposed conv5, Batch norm, ReLU</td>
+      <td style="text-align: left">Transposed conv5, Batch norm, Relu</td>
       <td style="text-align: center">8 x 8 x 512</td>
     </tr>
     <tr>
-      <td style="text-align: left">Transposed conv5, Batch norm, ReLU</td>
+      <td style="text-align: left">Transposed conv5, Batch norm, Relu</td>
       <td style="text-align: center">16 x 16 x 256</td>
     </tr>
     <tr>
-      <td style="text-align: left">Transposed conv5, Batch norm, ReLU</td>
+      <td style="text-align: left">Transposed conv5, Batch norm, Relu</td>
       <td style="text-align: center">32 x 32 x 128</td>
     </tr>
     <tr>
@@ -221,8 +219,7 @@ the network using vanishing residuals.
   <thead>
     <tr>
       <th style="text-align: left">BEGAN encoder super layer</th>
-      <th style="text-align: center">Activation volume [width x height x
-channels] </th>
+      <th style="text-align: center">Output shape [width x height x channels] </th>
     </tr>
   </thead>
   <tbody>
@@ -284,8 +281,7 @@ channels] </th>
   <thead>
     <tr>
       <th style="text-align: left">BEGAN decoder super layer</th>
-      <th style="text-align: center">Activation volume [width x height x
-channels] </th>
+      <th style="text-align: center">Output shape [width x height x channels] </th>
     </tr>
   </thead>
   <tbody>
