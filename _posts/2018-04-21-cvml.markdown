@@ -11,28 +11,46 @@ use_math: true
 In October 2017, Karras, Aila, Laine and Lehtinen published a paper
 entitled "Progressive Growing of GANS for Improved Quality, Stability and
 Variation" which presented new high-resolution results for synthetically
-generated imagery [1].  These authors described a novel progressive
-training methodology for generative adversarial networks [2].  They start
-by training shallow discriminator and generator networks on low resolution
-inputs.  New layers in both networks are subsequently introduced and
-trained in order to model higher resolution details.  The "PGGAN" generated
-1024 x 1024 face images of Karras et al are so stunning that their work was
-soon featured in the New York Times [3].
+generated images [1].  These authors described a novel training methodology
+for generative adversarial networks [2].  It begins by training shallow
+discriminator and generator networks on low resolution imagery inputs.  New
+layers in both networks are subsequently introduced and trained in order to
+model higher resolution details.  Working with an enhanced version of the
+popular CelebA dataset [3], Karras *et al.* taught their "Progressive GAN"
+$\small{\rm (PGGAN)}$ to output 1024 $\times$ 1024 facial images.  Their
+stunning synthesized faces were soon featured in the New York Times [4].
 
 Inspired by ref. [1], we explore in this blog posting an alternative
 approach to increasing image resolution during GAN training.  Unlike Karras
-et al, we keep the discriminator and generator network architectures fixed
-throughout training.  But the resolution of images fed into the
-discriminator gradually increases as training proceeds.  As we shall
-demonstrate, our simple approach yields synthetic images for at least one
-nontrivial class of objects which are qualitatively similar to those
-presented in ref. [1].
+*et al.*, we keep the discriminator and generator network architectures
+fixed throughout training.  But the resolution of images fed into the
+discriminator gradually increases as training proceeds.  So our GAN
+initially learns gross object shapes, colors and textures from
+intentionally blurred input imagery.  It later refines object parts and
+details as low-pass filtering is diminished and training proceeds to
+completion.
 
+In Appendix G of ref. [1], generated 256 $\times$ 256 views are displayed
+of other objects besides faces based upon 30 LSUN categories [5].  Karras
+*et al.* trained separate networks for each object class using at least
+100K images.  Though the overall quality of the synthetic pictures is
+impressive, several exhibit obvious flaws.  Distortions within generated
+animal images are particularly noticeable.  Other investigators have
+previously noted that GANs often fail to reproduce basic animal anatomy
+[6].
+
+Motivated by this animal synthesis challenge, we focus upon bird rather
+than face imagery in our investigation.  We work with a 2011 Caltech-UCSD
+dataset containing 11K+ bird images [7].  As the representative examples in
+figure 1 illustrate, bird pictures from this corpus exhibit much greater
+variety in 3D pose, foreground color and background content than do
+pre-aligned CelebA photos.  As we shall demonstrate, our simple approach to
+gradual GAN training yields synthetic bird images that qualitatively appear
+at least as good as those in ref. [1] generated with 9X more input data.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/input_bird_chips.png)
 *Fig. 1.  Tensorboard display of sample images from the
-Caltech-UCSD Birds data set.*
-
+2011 Caltech-UCSD birds dataset.*
 
 ## Bird imagery synthesis
 
@@ -267,13 +285,22 @@ A. Courville and Y. Bengio, "Generative Adversarial Nets," Advances in
 Neural Information Processing Systems
 $\small{(2014)}$.](https://arxiv.org/pdf/1406.2661.pdf)
 
-3.  [C. Metz and K. Collins, "How an A.I. 'Cat-and-Mouse Game' Generates
+3. [Z. Liu, P. Luo, X. Wang and W. Tang, "Large-scale CelebFaces Attributes
+$($CelebA$)$ Dataset,"
+$\small{(2015)}$.](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
+
+4.  [C. Metz and K. Collins, "How an A.I. 'Cat-and-Mouse Game' Generates
 Believable Fake Photos", New York Times
 $\small{(2018)}.$](https://www.nytimes.com/interactive/2018/01/02/technology/ai-generated-photos.html)
 
+5.  [F. Yu, A. Seff, Y. Zhang, S. Song, T. Funkhouser and J. Xiao, "LSUN:
+Construction of a Large-Scale Image Dataset using Deep Learning with Humans
+in the Loop", $\small{(2015)}.](https://arxiv.org/pdf/1506.03365.pdf)
 
+6.  [T. Salimans, I. Goodfellow, W. Zaremba, V. Cheung, A. Radford and X.
+Chen, "Improved Techniques for Training GANs", NIPS $\small{(2016)}$.](https://arxiv.org/pdf/1606.03498.pdf)
 
-4. [C. Wah, S. Branson, P. Welinder, P. Perona, and S. Belongie. “The
+7. [C. Wah, S. Branson, P. Welinder, P. Perona, and S. Belongie. “The
 Caltech-UCSD Birds-200-2011 Dataset.” Computation & Neural Systems
 Technical Report, CNS-TR-2011-001.](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html)
 
