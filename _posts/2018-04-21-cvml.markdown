@@ -1,18 +1,40 @@
 ---
 layout: post
-title:  "Synthesizing Bird Images via Gradually Increasing Resolution GAN Training"
+title:  "Gradually Increasing Image Resolution During GAN Training"
 date:   2018-04-21 12:00:00
 categories: Deep Learning
 use_math: true
 ---
 
-## Progressive GANs
+## Progressive GAN training
 
-## Bird image generation
+In October 2017, Karras, Aila, Laine and Lehtinen published a paper
+entitled "Progressive Growing of GANS for Improved Quality, Stability and
+Variation" which presented new high-resolution results for synthetically
+generated imagery [1].  These authors described a novel progressive
+training methodology for generative adversarial networks [2].  They start
+by training shallow discriminator and generator networks on low resolution
+inputs.  New layers in both networks are subsequently introduced and
+trained in order to model higher resolution details.  The "PGGAN" generated
+1024 x 1024 face images of Karras et al are so stunning that their work was
+soon featured in the New York Times [3].
+
+Inspired by ref. [1], we explore in this blog posting an alternative
+approach to increasing image resolution during GAN training.  Unlike Karras
+et al, we keep the discriminator and generator network architectures fixed
+throughout training.  But the resolution of images fed into the
+discriminator gradually increases as training proceeds.  As we shall
+demonstrate, our simple approach yields synthetic images for at least one
+nontrivial class of objects which are qualitatively similar to those
+presented in ref. [1].
+
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/input_bird_chips.png)
-*Fig. 1.  Tensorboard display of representative bird images from the
+*Fig. 1.  Tensorboard display of sample images from the
 Caltech-UCSD Birds data set.*
+
+
+## Bird imagery synthesis
 
 The DCGAN architecture we adopted closely follows that of Radford et al
 [4].  The particular "super layer" combinations of convolutions,
@@ -29,42 +51,42 @@ activation in the WGAN discriminator.
 <table style="width:100%">
   <thead>
     <tr>
-      <th style="text-align: left">DCGAN discriminator super layer</th>
-      <th style="text-align: center">Output shape [width x height x channels] </th>
+      <th style="text-align: left">GAN discriminator super layer</th>
+      <th style="text-align: center">Output shape [width $\times$ height $\times$ channels] </th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td style="text-align: left">Input image</td>
-      <td style="text-align: center">192 x 192 x 3</td>
+      <td style="text-align: center">192 $\times$ 192 $\times$ 3</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
-      <td style="text-align: center">96 x 96 x 32</td>
+      <td style="text-align: center">96 $\times$ 96 $\times$ 32</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
-      <td style="text-align: center">48 x 48 x 64</td>
+      <td style="text-align: center">48 $\times$ 48 $\times$ 64</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
-      <td style="text-align: center">24 x 24 x 128</td>
+      <td style="text-align: center">24 $\times$ 24 $\times$ 128</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 1</td>
-      <td style="text-align: center">24 x 24 x 256</td>
+      <td style="text-align: center">24 $\times$ 24 $\times$ 256</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 2</td>
-      <td style="text-align: center">12 x 12 x 256</td>
+      <td style="text-align: center">12 $\times$ 12 $\times$ 256</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 1</td>
-      <td style="text-align: center">12 x 12 x 512</td>
+      <td style="text-align: center">12 $\times$ 12 $\times$ 512</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 2</td>
-      <td style="text-align: center">6 x 6 x 512</td>
+      <td style="text-align: center">6 $\times$ 6 $\times$ 512</td>
     </tr>
     <tr>
       <td style="text-align: left">Linear proj</td>
@@ -87,8 +109,8 @@ activation in the WGAN discriminator.
 <table style="width:100%">
   <thead>
     <tr>
-      <th style="text-align: left">DCGAN generator super layer</th>
-      <th style="text-align: center">Output shape [width x height x channels] </th>
+      <th style="text-align: left">GAN generator super layer</th>
+      <th style="text-align: center">Output shape [width $\times$ height $\times$ channels] </th>
     </tr>
   </thead>
   <tbody>
@@ -98,35 +120,35 @@ activation in the WGAN discriminator.
     </tr>
     <tr>
       <td style="text-align: left">Linear proj, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">6 x 6 x 512</td>
+      <td style="text-align: center">6 $\times$ 6 $\times$ 512</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">6 x 6 x 256</td>
+      <td style="text-align: center">6 $\times$ 6 $\times$ 256</td>
     </tr>
     <tr>
       <td style="text-align: left">Transposed conv3, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">12 x 12 x 256</td>
+      <td style="text-align: center">12 $\times$ 12 $\times$ 256</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">12 x 12 x 128</td>
+      <td style="text-align: center">12 $\times$ 12 $\times$ 128</td>
     </tr>
     <tr>
       <td style="text-align: left">Transposed conv3, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">24 x 24 x 128</td>
+      <td style="text-align: center">24 $\times$ 24 $\times$ 128</td>
     </tr>
     <tr>
       <td style="text-align: left">Transposed conv5, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">48 x 48 x 64</td>
+      <td style="text-align: center">48 $\times$ 48 $\times$ 64</td>
     </tr>
     <tr>
       <td style="text-align: left">Transposed conv5, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">96 x 96 x 32</td>
+      <td style="text-align: center">96 $\times$ 96 $\times$ 32</td>
     </tr>
     <tr>
       <td style="text-align: left">Transposed conv5, No norm, Tanh</td>
-      <td style="text-align: center">192 x 192 x 3</td>
+      <td style="text-align: center">192 $\times$ 192 $\times$ 3</td>
     </tr>
 
     <!---  Add empty line in final table row -->
@@ -138,7 +160,8 @@ activation in the WGAN discriminator.
 </tbody>
 </table>
 
-*Table 1.  DCGAN discriminator and generator architectures.*
+*Table 1.  Discriminator and generator architectures used to synthesize
+bird images.*
 
 
 
@@ -146,7 +169,7 @@ The three types of GANs with which we work depend upon a sizable set of
 hyperparameters.  Some hyperparameters are particular to only one of the
 GANs.  For example, the diversity ratio $\gamma$ regulates the BEGAN
 discriminator's balance between autoencoding real images and distinguishing
-synthetic from genuine images.  But others like those listed in Table 3
+synthetic from genuine images.  But others like those listed in Table 2
 influence all DCGAN, WGAN and BEGAN training experiments.  We settled upon
 the tabulated hyperparameter values via trial and error.
 
@@ -161,6 +184,10 @@ the tabulated hyperparameter values via trial and error.
     <tr>
       <td style="text-align: left">Number of training images</td>
       <td style="text-align: center"> 11013 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Number of training epochs</td>
+      <td style="text-align: center"> 500 </td>
     </tr>
     <tr>
       <td style="text-align: left">Minibatch size</td>
@@ -194,45 +221,63 @@ the tabulated hyperparameter values via trial and error.
 </tbody>
 </table>
 
-*Table 3.  Hyperparameter values employed for bird GAN training.*
-
-![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/learning_curves_annot.png)
-*Fig. XX.  Discriminator and generator losses plotted as functions of training iteration.*
+*Table 2.  Hyperparameter values employed for GAN training.*
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/discrim_in_gen_out.png)
-*Fig. XX.  Top: Blur kernel radius linearly decreases from a maximal
-starting value to zero during the first 200 training epochs.  No low-pass
-blurring is subsequently performed on input images during GAN training.
-Bottom: Representative examples of discriminator inputs and generator
-outputs at training epochs 0, 125, 250, 375 and 500.*
+*Fig. 2.  $($Top row$)$: Discriminator's blurring kernel radius linearly
+decreases from its maximal starting value to zero during the first 200
+training epochs.  No low-pass blurring is subsequently performed on input
+discriminator images.  $($Middle and bottom rows$)$: Example discriminator
+inputs and generator outputs at training epochs 0, 125, 250, 375 and 500.*
+
+
+![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/learning_curves_annot.png)
+*Fig. 3.  Tensorboard display of discriminator and generator losses plotted
+as functions of training iteration.*
+
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/expt_325_output_270_birds.png)
-*Fig. XX.  Examples of 192 x 192 generated bird images.*
+*Fig. 4.  Examples of 192 $\times$ 192 generated bird images.*
 
-## Classification of synthetic bird images
+## Binary classification of synthetic bird images
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/labeled_chips.png)
-*Fig. XX.  Representative generator outputs manually labeled as acceptable and
-unacceptable.*
+*Fig. 5.  Sample generator outputs manually labeled as acceptable $($top row$)$ and
+unacceptable $($bottom row$)$.*
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/decent_generated_birds.png)
-*Fig. XX.  Inference examples of 192x192 bird with binary classifier
+*Fig. 6.  Inference 192 $\times$ 192 bird images with binary classifier
 softmax scores exceeding 0.95.*
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/bird_morphings.png)
-*Fig. XX.  Linear descriptor interpolation induces smooth transitions
+*Fig. 7.  Linear descriptor interpolation induces smooth transitions
 between starting and ending synthetic bird images.*
 
 ## References
 
-1. [I. Goodfellow, J.P.-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair,
+1. [T. Karras, T. Aila, S. Laine and J. Lehtinen, "Progressive Growing of
+GANs for Improved Quality, Stability and Variation", ICLR $\small{(2018)}$.](https://arxiv.org/pdf/1710.10196.pdf)
+
+2. [I. Goodfellow, J.P.-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair,
 A. Courville and Y. Bengio, "Generative Adversarial Nets," Advances in
 Neural Information Processing Systems
 $\small{(2014)}$.](https://arxiv.org/pdf/1406.2661.pdf)
+
+3.  [C. Metz and K. Collins, "How an A.I. 'Cat-and-Mouse Game' Generates
+Believable Fake Photos", New York Times
+$\small{(2018)}.$](https://www.nytimes.com/interactive/2018/01/02/technology/ai-generated-photos.html)
+
+
+
+4. [C. Wah, S. Branson, P. Welinder, P. Perona, and S. Belongie. “The
+Caltech-UCSD Birds-200-2011 Dataset.” Computation & Neural Systems
+Technical Report, CNS-TR-2011-001.](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html)
+
+
 
 4. [A. Radford, L. Metz and S. Chintala, "Unsupervised Representation
 Learning with Deep Convolutional Generative Adversarial Networks," ICLR
@@ -252,10 +297,3 @@ Learning," arXiv:1603.07285 v1 $\small{(2016)}$.](https://ai2-s2-pdfs.s3.amazona
 
 15. [J. L. Ba, J. R. Kiros and G.E. Hinton, "Layer Normalization,"
 arXiv:1607.06450 $\small{(2016)}$.](https://arxiv.org/abs/1607.06450.pdf)
-
-XX. [C. Wah, S. Branson, P. Welinder, P. Perona, and S. Belongie. “The
-Caltech-UCSD Birds-200-2011 Dataset.” Computation & Neural Systems
-Technical Report, CNS-TR-2011-001.](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html)
-
-XX. [T. Karras, T. Aila, S. Laine and J. Lehtinen, "Progressive Growing of
-GANs for Improved Quality, Stability and Variation", ICLR $\small{(2018)}$.](https://arxiv.org/pdf/1710.10196.pdf)
