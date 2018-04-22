@@ -301,7 +301,7 @@ $\small{(2018)}.$](https://www.nytimes.com/interactive/2018/01/02/technology/ai-
 
 5.  [F. Yu, A. Seff, Y. Zhang, S. Song, T. Funkhouser and J. Xiao, "LSUN:
 Construction of a Large-Scale Image Dataset using Deep Learning with Humans
-in the Loop", $\small{(2015)}.](https://arxiv.org/pdf/1506.03365.pdf)
+in the Loop", $\small{(2015)}.$](https://arxiv.org/pdf/1506.03365.pdf)
 
 6.  [T. Salimans, I. Goodfellow, W. Zaremba, V. Cheung, A. Radford and X.
 Chen, "Improved Techniques for Training GANs", NIPS $\small{(2016)}$.](https://arxiv.org/pdf/1606.03498.pdf)
@@ -321,12 +321,9 @@ Network Training by Reducing Internal Covariate Shift," 32nd ICML
 $\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
 
 6.  [A.L. Maas, A.Y. Hannun and A.Y. Ng, "Rectifier Nonlinearities Improve
-Neural Network Acoustic Models", 50th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
+Neural Network Acoustic Models", 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
 
-12.  [See TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+12.  [TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
 
 13.  [V. Dumoulin and F. Visin, "A Guide to Convolution Arithmetic for Deep
 Learning," arXiv:1603.07285 v1 $\small{(2016)}$.](https://ai2-s2-pdfs.s3.amazonaws.com/7918/2aab186f0b68a8432540d8695e1646338479.pdf)
-
-15. [J. L. Ba, J. R. Kiros and G.E. Hinton, "Layer Normalization,"
-arXiv:1607.06450 $\small{(2016)}$.](https://arxiv.org/abs/1607.06450.pdf)

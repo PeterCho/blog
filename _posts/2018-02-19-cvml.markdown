@@ -596,7 +596,7 @@ Network Training by Reducing Internal Covariate Shift," 32nd ICML
 $\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
 
 6.  [A.L. Maas, A.Y. Hannun and A.Y. Ng, "Rectifier Nonlinearities Improve
-Neural Network Acoustic Models", 50th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
+Neural Network Acoustic Models", 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
 
 7. [M. Arjovsky, S. Chintala and L. Bottou, "Wasserstein GAN,"
 arXiv:1701.07875 $\small{(2017})$.](https://arxiv.org/pdf/1701.07875.pdf)

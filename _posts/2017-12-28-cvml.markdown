@@ -346,7 +346,7 @@ Network Training by Reducing Internal Covariate Shift," 32nd ICML
 $\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
 
 6.  [A.L. Maas, A.Y. Hannun and A.Y. Ng, "Rectifier Nonlinearities Improve
-Neural Network Acoustic Models", 50th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
+Neural Network Acoustic Models", 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
 
 7.  [G. Huang, Z. Liu, K.Q. Weinberger, L. van der Maaten, "Densely
 Connected Convolutional Networks," CVPR $\small{(2017)}$.](https://arxiv.org/abs/https://arxiv.org/abs/1608.06993)
