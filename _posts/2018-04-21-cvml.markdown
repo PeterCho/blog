@@ -160,33 +160,33 @@ the tabulated hyperparameter values via trial and error.
   <tbody>
     <tr>
       <td style="text-align: left">Number of training images</td>
-      <td style="text-align: center"> 202599 </td>
+      <td style="text-align: center"> 11013 </td>
     </tr>
     <tr>
       <td style="text-align: left">Minibatch size</td>
-      <td style="text-align: center">128 $($DCGAN & WGAN$)$; 48 $($BEGAN$)$</td>
+      <td style="text-align: center">64</td>
     </tr>
     <tr>
       <td style="text-align: left">Adam optimizer $\beta_1$</td>
-      <td style="text-align: center">0.5 $($DCGAN & BEGAN$)$; 0.0 $($WGAN$)$ </td>
+      <td style="text-align: center">0.0 </td>
     </tr>
     <tr>
       <td style="text-align: left">Adam optimizer $\beta_2$</td>
-      <td style="text-align: center">0.999 $($DCGAN & BEGAN$)$; 0.9 $($WGAN$)$ </td>
+      <td style="text-align: center">0.99</td>
     </tr>
     <tr>
       <td style="text-align: left">Base learning rate</td>
-      <td style="text-align: center">0.0002 $($DCGAN$)$; 0.0001 $($WGAN, BEGAN$)$ </td>
+      <td style="text-align: center">0.0001 </td>
     </tr>
     <tr>
       <td style="text-align: left">Descriptor dimension $Z_{dim}$</td>
-      <td style="text-align: center">128 $($DCGAN & WGAN$)$; 64 $($BEGAN$)$ </td>
+      <td style="text-align: center">128 </td>
     </tr>
     <tr>
       <td style="text-align: left">Standard deviation for weight-initializing gaussian</td>
       <td style="text-align: center">0.02 </td>
     <tr>
-      <td style="text-align: left">Leaky ReLU slope coefficient</td>
+      <td style="text-align: left">Leaky Relu slope coefficient</td>
       <td style="text-align: center">0.2</td>
     </tr>
   </tr>
@@ -194,7 +194,7 @@ the tabulated hyperparameter values via trial and error.
 </tbody>
 </table>
 
-*Table 3.  Hyperparameter values employed for bird synthesis.*
+*Table 3.  Hyperparameter values employed for bird GAN training.*
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/learning_curves_annot.png)
 *Fig. XX.  Discriminator and generator losses plotted as functions of training iteration.*
@@ -211,6 +211,12 @@ outputs at training epochs 0, 125, 250, 375 and 500.*
 *Fig. XX.  Examples of 192 x 192 generated bird images.*
 
 ## Classification of synthetic bird images
+
+
+![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/labeled_chips.png)
+*Fig. XX.  Representative generator outputs manually labeled as acceptable and
+unacceptable.*
+
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/decent_generated_birds.png)
 *Fig. XX.  Inference examples of 192x192 bird with binary classifier

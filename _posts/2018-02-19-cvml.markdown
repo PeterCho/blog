@@ -398,7 +398,7 @@ the tabulated hyperparameter values via trial and error.
       <td style="text-align: left">Standard deviation for weight-initializing gaussian</td>
       <td style="text-align: center">0.02 </td>
     <tr>
-      <td style="text-align: left">Leaky ReLU slope coefficient</td>
+      <td style="text-align: left">Leaky Relu slope coefficient</td>
       <td style="text-align: center">0.2</td>
     </tr>
   </tr>
