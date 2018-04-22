@@ -258,21 +258,27 @@ as functions of training iteration.*
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/expt_325_output_270_birds.png)
 *Fig. 4.  Examples of 192 $\times$ 192 generated bird images.*
 
+
+![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/PGGAN_birds.png)
+*Fig. 5.  Screenshot of 256 $\times$ 256 generated bird images from figure
+12 of ref. [1].*
+
+
 ## Binary classification of synthetic bird images
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/labeled_chips.png)
-*Fig. 5.  Sample generator outputs manually labeled as acceptable $($top row$)$ and
+*Fig. 6.  Sample generator outputs manually labeled as acceptable $($top row$)$ and
 unacceptable $($bottom row$)$.*
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/decent_generated_birds.png)
-*Fig. 6.  Inference 192 $\times$ 192 bird images with binary classifier
+*Fig. 7.  Inference 192 $\times$ 192 bird images with binary classifier
 softmax scores exceeding 0.95.*
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/bird_morphings.png)
-*Fig. 7.  Linear descriptor interpolation induces smooth transitions
+*Fig. 8.  Linear descriptor interpolation induces smooth transitions
 between starting and ending synthetic bird images.*
 
 ## References
