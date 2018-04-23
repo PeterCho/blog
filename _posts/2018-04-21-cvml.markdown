@@ -54,17 +54,16 @@ at least as good as those in ref. [1] generated with 9X more input data.
 
 ## Bird imagery synthesis
 
-The DCGAN architecture we adopted closely follows that of Radford et al
-[4].  The particular "super layer" combinations of convolutions,
-normalizations and nonlinearities in our DCGAN discriminator and generator
-networks for synthesizing 64x64 images are listed in Table 1.  The
-receptive fields of these networks equals 61, and they contain O$($36.6M$)$
-trainable parameters.  We employed similar discriminator and generator
-architectures for WGAN experiments.  But following [8], we utilized a
-gradient penalty term within the loss function rather than weight clipping
-as in the original WGAN paper [7].  Moreover, we replaced batch
-normalization with layer normalization and dispensed with a final sigmoid
-activation in the WGAN discriminator.
+We conducted an empirical search for neural network designs and training
+procedures which yield promising GAN results for synthetic bird pictures.
+Our initial attempts started with the DCGAN architecture of Radford *et
+al.* that outputs 64 $\times$ 64 images [8].  Over the course of O$($100$)$
+experiments, our neural networks' forms and training schedules evolved
+towards more stable configurations which could accommodate images with
+larger pixel sizes.  Table 1 lists the best "super layer" combinations of
+linear projections, convolutions, transposed convolutions, normalizations
+and nonlinearities we found for a GAN that synthesizes 192 $\times$ 192
+images.
 
 <table style="width:100%">
   <thead>
@@ -178,8 +177,34 @@ activation in the WGAN discriminator.
 </tbody>
 </table>
 
-*Table 1.  Discriminator and generator architectures used to synthesize
-bird images.*
+*Table 1.  Discriminator and generator network architectures used to
+synthesize 192 $\times$ 192 images.*
+
+Several points about this particular GAN architecture are worth noting:
+
+i.  The receptive field size equals 125 for both the discriminator and
+generator networks.
+
+ii.  The discriminator [generator] network contains 7.1M [4.9M] trainable
+variables.
+
+iii.  The discriminator's final sigmoid nonlinearity yields "real vs fake"
+probabilities within the interval [0,1].  The generator's final tanh
+nonlinearity yields synthetic images values within the interval [-1,1]
+
+iv.  After trying out Relu, leaky Relu [Maas], exponential linear unit
+[ELU] and tanh functions for all other nonlinear superlayer activations, we
+found leaky Relu activations yielded the best GAN results.
+
+v.  Pixelwise normalization [1] replaces batch normalization [BN] and
+stabilizes GAN training.  Loss curves do not exhibit large discontinuous
+jumps, and catastrophic mode collapse is avoided.
+
+
+![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/learning_curves_annot.png)
+*Fig. 2.  Tensorboard display of discriminator and generator losses plotted
+as functions of training iteration.*
+
 
 
 
@@ -242,16 +267,12 @@ the tabulated hyperparameter values via trial and error.
 *Table 2.  Hyperparameter values employed for GAN training.*
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/discrim_in_gen_out.png)
-*Fig. 2.  $($Top row$)$: Discriminator's blurring kernel radius linearly
+*Fig. 3.  $($Top row$)$: Discriminator's blurring kernel radius linearly
 decreases from its maximal starting value to zero during the first 200
 training epochs.  No low-pass blurring is subsequently performed on input
 discriminator images.  $($Middle and bottom rows$)$: Example discriminator
 inputs and generator outputs at training epochs 0, 125, 250, 375 and 500.*
 
-
-![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/learning_curves_annot.png)
-*Fig. 3.  Tensorboard display of discriminator and generator losses plotted
-as functions of training iteration.*
 
 
 
@@ -310,11 +331,11 @@ Chen, "Improved Techniques for Training GANs", NIPS $\small{(2016)}$.](https://a
 Caltech-UCSD Birds-200-2011 Dataset.” Computation & Neural Systems
 Technical Report, CNS-TR-2011-001.](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html)
 
-
-
-4. [A. Radford, L. Metz and S. Chintala, "Unsupervised Representation
+8. [A. Radford, L. Metz and S. Chintala, "Unsupervised Representation
 Learning with Deep Convolutional Generative Adversarial Networks," ICLR
 $\small{(2016)}$.](https://arxiv.org/pdf/1511.06434.pdf)
+
+
 
 5.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
 Network Training by Reducing Internal Covariate Shift," 32nd ICML 
