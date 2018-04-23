@@ -210,16 +210,23 @@ catastrophic mode collapse.
 *Fig. 2.  Tensorboard plots of discriminator and generator losses as
 functions of training iteration.*
 
+In ref. [1], Karras *et al.* describe a training methodology for GANs which
+starts with 4 $\times$ 4 input pictures and progressively increases image
+size while adding layers to the networks.  These authors persuasively argue
+that such incremental training enables a GAN to first discover large-scale
+structure within an image distribution.  The GAN then allowed to slowly
+learn finer scale detail rather than having to handle all-scale content at
+once.
 
-
-
-The three types of GANs with which we work depend upon a sizable set of
-hyperparameters.  Some hyperparameters are particular to only one of the
-GANs.  For example, the diversity ratio $\gamma$ regulates the BEGAN
-discriminator's balance between autoencoding real images and distinguishing
-synthetic from genuine images.  But others like those listed in Table 2
-influence all DCGAN, WGAN and BEGAN training experiments.  We settled upon
-the tabulated hyperparameter values via trial and error.
+We explore an alternative approach to such gradual GAN training in which
+image pixel size and network architectures are kept fixed.  Instead, we
+blur input images with a gaussian kernel whose radius is a function of
+training epoch.  As the GAN training hyperparameters listed in Table 2
+indicate, we take the kernel's initial radius to equal 10% of the training
+image pixel size.  During the first 200 epochs, the blur kernel linearly
+ramps down to zero.  No blurring of input imagery is subsequently performed
+during the last 300 training epochs.  Figure 3 plots this low-pass
+filtering schedule.
 
 <table style="width:100%">
   <thead>
@@ -240,6 +247,14 @@ the tabulated hyperparameter values via trial and error.
     <tr>
       <td style="text-align: left">Minibatch size</td>
       <td style="text-align: center">64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Square image pixel size</td>
+      <td style="text-align: center">192</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Initial blur kernel radius in pixels</td>
+      <td style="text-align: center">19.2</td>
     </tr>
     <tr>
       <td style="text-align: left">Adam optimizer $\beta_1$</td>
@@ -270,6 +285,12 @@ the tabulated hyperparameter values via trial and error.
 </table>
 
 *Table 2.  Hyperparameter values employed for GAN training.*
+
+
+
+
+
+
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/discrim_in_gen_out.png)
 *Fig. 3.  $($Top row$)$: Discriminator's blurring kernel radius linearly
