@@ -54,15 +54,16 @@ at least as good as those in ref. [1] generated with 9X more input data.
 
 ## Bird imagery synthesis
 
-We conducted an empirical search for GAN designs and training procedures
-which yield good synthetic bird pictures.  Our initial attempts started
-with the DCGAN architecture of Radford *et al.* that outputs 64 $\times$ 64
-images [8].  Over the course of O$($100$)$ experiments, our neural
-networks' forms and training schedules evolved towards more stable
-configurations which could accommodate images with larger pixel sizes.
-Table 1 lists the best "super layer" combinations of linear projections,
-convolutions, transposed convolutions, normalizations and nonlinearities we
-found for a GAN that synthesizes 192 $\times$ 192 images.
+We conducted an empirical search for GAN designs and training techniques
+which yield qualitatively good synthetic bird pictures.  Our initial
+attempts started with the DCGAN architecture of Radford *et al.* that
+outputs 64 $\times$ 64 images [8].  Over the course of O$($100$)$
+experiments performed within the Tensorflow deep learning framework [9],
+our neural networks' forms and training schedules evolved towards more
+stable configurations which could accommodate images with larger pixel
+sizes.  Table 1 lists the best "super layer" combinations of linear
+projections, convolutions, transposed convolutions, normalizations and
+nonlinearities we found for a GAN that synthesizes 192 $\times$ 192 images.
 
 <table style="width:100%">
   <thead>
@@ -191,11 +192,11 @@ synthetic" probabilities within the interval [0,1].  The generator's final
 Tanh nonlinearity yields synthetic images values within the interval
 [-1,1].
 
-iv.  After trying out Relu, Leaky Relu [9], Exponential Linear Unit [10]
+iv.  After trying out Relu, Leaky Relu [10], Exponential Linear Unit [11]
 and Tanh functions for all other nonlinear superlayer activations, we found
 Leaky Relu activations led to the best GAN performance.
 
-v.  After trying out batch normalization [11], layer normalization [12] and
+v.  After trying out batch normalization [12], layer normalization [13] and
 pixelwise feature vector normalization [1] within the networks'
 superlayers, we observed that pixelwise normalization dramatically improved
 GAN training stabilization.  As figure 2 illustrates, loss curves are well
@@ -210,23 +211,23 @@ catastrophic mode collapse.
 *Fig. 2.  Tensorboard plots of discriminator and generator losses as
 functions of training iteration.*
 
-In ref. [1], Karras *et al.* describe a training methodology for GANs which
-starts with 4 $\times$ 4 input pictures and progressively increases image
-size while adding layers to the networks.  These authors persuasively argue
-that such incremental training enables a GAN to first discover large-scale
-structure within an image distribution.  The GAN then allowed to slowly
-learn finer scale detail rather than having to handle all-scale content at
-once.
+In ref. [1], Karras *et al.* describe a GAN training methodology which
+starts with 4 $\times$ 4 input pictures and one convolutional superlayer in
+both the discriminator and generator networks.  These authors progressively
+increase image size and numbers of network superlayers.  Karras *et al.*
+persuasively argue that such incremental training enables a GAN to first
+discover large-scale structure within an image distribution and slowly
+learn finer scale detail.  Such progressive training yields better
+performance than requiring a GAN to learn content from all scales at once.
 
-We explore an alternative approach to such gradual GAN training in which
-image pixel size and network architectures are kept fixed.  Instead, we
-blur input images with a gaussian kernel whose radius is a function of
-training epoch.  As the GAN training hyperparameters listed in Table 2
-indicate, we take the kernel's initial radius to equal 10% of the training
-image pixel size.  During the first 200 epochs, the blur kernel linearly
-ramps down to zero.  No blurring of input imagery is subsequently performed
-during the last 300 training epochs.  Figure 3 plots this low-pass
-filtering schedule.
+We explore an alternative approach to gradual GAN training in which image
+pixel size and network architectures are kept fixed.  Instead, we blur
+input images with a gaussian kernel whose radius is a function of training
+epoch.  As the GAN hyperparameters listed in Table 2 indicate, we take the
+kernel's initial radius to equal 10% of the training image pixel size.
+During the first 200 epochs, the blur kernel linearly ramps down to zero.
+No blurring of input imagery is performed during the last 300 training
+epochs.  Figure 3 plots this low-pass filtering schedule.
 
 <table style="width:100%">
   <thead>
@@ -284,30 +285,29 @@ filtering schedule.
 </tbody>
 </table>
 
-*Table 2.  Hyperparameter values employed for GAN training.*
+*Table 2.  GAN hyperparameter values.*
 
 
-
-
-
+![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/blur_schedule.png)
+*Fig. 3.  Discriminator's blurring kernel radius linearly
+decreases from its maximal starting value to zero during the first 200
+training epochs.  No low-pass blurring is subsequently performed on input
+discriminator images.*
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/discrim_in_gen_out.png)
-*Fig. 3.  $($Top row$)$: Discriminator's blurring kernel radius linearly
-decreases from its maximal starting value to zero during the first 200
-training epochs.  No low-pass blurring is subsequently performed on input
-discriminator images.  $($Middle and bottom rows$)$: Example discriminator
-inputs and generator outputs at training epochs 0, 125, 250, 375 and 500.*
+*Fig. 4.  Example discriminator inputs $($top row$)$ and generator outputs
+$($bottom row$)$ at training epochs 0, 125, 250, 375 and 500.*
 
 
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/expt_325_output_270_birds.png)
-*Fig. 4.  Examples of 192 $\times$ 192 generated bird images.*
+*Fig. 5.  Examples of 192 $\times$ 192 generated bird images.*
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/PGGAN_birds.png)
-*Fig. 5.  Screenshot of 256 $\times$ 256 generated bird images from figure
+*Fig. 6.  Screenshot of 256 $\times$ 256 generated bird images from figure
 12 of ref. [1].*
 
 
@@ -315,17 +315,17 @@ inputs and generator outputs at training epochs 0, 125, 250, 375 and 500.*
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/labeled_chips.png)
-*Fig. 6.  Sample generator outputs manually labeled as acceptable $($top row$)$ and
+*Fig. 7.  Sample generator outputs manually labeled as acceptable $($top row$)$ and
 unacceptable $($bottom row$)$.*
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/decent_generated_birds.png)
-*Fig. 7.  Inference 192 $\times$ 192 bird images with binary classifier
+*Fig. 8.  Inference 192 $\times$ 192 bird images with binary classifier
 softmax scores exceeding 0.95.*
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/bird_morphings.png)
-*Fig. 8.  Linear descriptor interpolation induces smooth transitions
+*Fig. 9.  Linear descriptor interpolation induces smooth transitions
 between starting and ending synthetic bird images.*
 
 ## References
@@ -361,22 +361,24 @@ Technical Report, CNS-TR-2011-001.](http://www.vision.caltech.edu/visipedia/CUB-
 Learning with Deep Convolutional Generative Adversarial Networks," ICLR
 $\small{(2016)}$.](https://arxiv.org/pdf/1511.06434.pdf)
 
-9.  [A.L. Maas, A.Y. Hannun and A.Y. Ng, "Rectifier Nonlinearities Improve
+9.  [TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+
+10.  [A.L. Maas, A.Y. Hannun and A.Y. Ng, "Rectifier Nonlinearities Improve
 Neural Network Acoustic Models", 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
 
-10. [D.-A. Clevert, T. Unterthiner and S. Hochreiter, "Fast and Accurate
+11. [D.-A. Clevert, T. Unterthiner and S. Hochreiter, "Fast and Accurate
 Deep Network Learning by Exponential Linear Units," arXiv:1511.07289 $\small{(2016)}$.](
 https://arxiv.org/pdf/1511.07289.pdf)
 
-11.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
+12.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
 Network Training by Reducing Internal Covariate Shift," 32nd ICML 
 $\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
 
-12. [J. L. Ba, J. R. Kiros and G.E. Hinton, "Layer Normalization,"
+13. [J. L. Ba, J. R. Kiros and G.E. Hinton, "Layer Normalization,"
 arXiv:1607.06450 $\small{(2016)}$.](https://arxiv.org/abs/1607.06450.pdf)
 
 
-13.  [TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+
 
 13.  [V. Dumoulin and F. Visin, "A Guide to Convolution Arithmetic for Deep
 Learning," arXiv:1603.07285 v1 $\small{(2016)}$.](https://ai2-s2-pdfs.s3.amazonaws.com/7918/2aab186f0b68a8432540d8695e1646338479.pdf)
