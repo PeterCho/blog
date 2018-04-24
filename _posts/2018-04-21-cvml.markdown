@@ -17,8 +17,8 @@ discriminator and generator networks on low resolution imagery inputs.  New
 layers in both networks are subsequently introduced and trained in order to
 model higher resolution details.  Working with an enhanced version of the
 popular CelebA dataset [3], Karras *et al.* taught their "Progressive GAN"
-$\small{\rm (PGGAN)}$ to output 1024 $\times$ 1024 facial images.  Their
-stunning synthesized faces were soon featured in the New York Times [4].
+to output 1024 $\times$ 1024 facial images.  Their stunning synthesized
+faces were soon featured in the New York Times [4].
 
 Inspired by ref. [1], we explore in this blog posting an alternative
 approach to increasing image resolution during GAN training.  Unlike Karras
@@ -27,26 +27,26 @@ fixed throughout training.  But the resolution of images fed into the
 discriminator gradually increases as training proceeds.  So our GAN
 initially learns gross object shapes, colors and textures from
 intentionally blurred input imagery.  It later refines object parts and
-details as low-pass filtering is diminished and training proceeds to
+details as low-pass filtering is diminished and training runs to
 completion.
 
-In Appendix G of ref. [1], generated 256 $\times$ 256 views are displayed
-of other objects besides faces based upon 30 LSUN categories [5].  Karras
-*et al.* trained separate networks for each object class using at least
-100K images.  Though the overall quality of the synthetic pictures is
-impressive, several exhibit obvious flaws.  Distortions within generated
-animal images are particularly noticeable.  Other investigators have
-previously noted that GANs often fail to reproduce basic animal anatomy
-[6].
+Appendix G of ref. [1] displays generated 256 $\times$ 256 views of other
+objects besides faces based upon 30 LSUN categories [5].  Karras *et al.*
+trained separate networks for each object class using at least 100K images.
+Though the overall quality of their non-face pictures is impressive,
+several exhibit obvious flaws.  Distortions within synthetic animal images
+are particularly noticeable.  Other investigators have previously noted
+that GANs often fail to reproduce basic animal anatomy [6].
 
 Motivated by this animal synthesis challenge, we focus upon bird rather
 than face imagery in our investigation.  We work with a 2011 Caltech-UCSD
 dataset containing 11K+ bird images [7].  As the representative examples in
 figure 1 illustrate, bird pictures from this corpus exhibit much greater
 variety in 3D pose, foreground color and background content than do
-pre-aligned CelebA photos.  As we shall demonstrate, our simple approach to
-gradual GAN training yields synthetic bird images qualitatively similar to
-those in ref. [1].
+pre-aligned CelebA photos.  It consequently represents a more challenging
+dataset.  But as we shall demonstrate, our simple approach to gradual GAN
+training coupled with bad generated image rejection yields synthetic bird
+pictures qualitatively similar to those in figure 1.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/input_bird_chips.png)
 *Fig. 1.  Tensorboard display of sample images from the
