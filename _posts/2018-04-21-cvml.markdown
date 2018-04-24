@@ -54,16 +54,15 @@ pictures qualitatively similar to those in figure 1.
 
 ## Bird imagery synthesis
 
-We conducted an empirical search for GAN designs and training techniques
-which yield qualitatively good synthetic bird pictures.  Our initial
-attempts started with the DCGAN architecture of Radford *et al.* that
-outputs 64 $\times$ 64 images [8].  Over the course of O$($100$)$
-experiments performed within the Tensorflow deep learning framework [9],
-our neural networks' forms and training schedules evolved towards more
-stable configurations which could accommodate images with larger pixel
-sizes.  Table 1 lists the best "super layer" combinations of linear
-projections, convolutions, transposed convolutions, normalizations and
-nonlinearities we found for a GAN that synthesizes 192 $\times$ 192 images.
+We conducted a search over GAN designs and training techniques which create
+bird pictures.  Our initial attempts started with the DCGAN architecture of
+Radford *et al.* that outputs 64 $\times$ 64 images [8].  Over the course
+of O$($100$)$ experiments performed within the Tensorflow deep learning
+framework [9], our neural networks' forms and training procedures evolved
+towards more stable configurations which could accommodate larger images.
+Table 1 lists the best "super layer" combinations of linear projections,
+convolutions, transposed convolutions, normalizations and nonlinearities we
+found for a GAN that produces 192 $\times$ 192 images.
 
 <table style="width:100%">
   <thead>
@@ -180,23 +179,29 @@ nonlinearities we found for a GAN that synthesizes 192 $\times$ 192 images.
 *Table 1.  Discriminator and generator network architectures used to
 synthesize 192 $\times$ 192 images.*
 
-Several points about this particular GAN architecture are worth noting:
+Several points about this particular GAN's architecture are worth noting:
 
 i.  The discriminator [generator] network contains 7.1M [4.9M] trainable
 variables.
 
 ii.  The receptive field size equals 125 pixels for both neural networks.
 
-iii.  The discriminator's final Sigmoid nonlinearity yields "real vs
+iii.  Rather than feeding descriptors into the generator drawn from random
+distributions during training, we chose instead to import descriptors
+coming from the discriminator's next-to-last superlayer.  During inference,
+the generator may be supplied noise inputs originating from random uniform
+or gaussian distributions.
+
+iv.  The discriminator's final Sigmoid nonlinearity yields "real versus
 synthetic" probabilities within the interval [0,1].  The generator's final
 Tanh nonlinearity yields synthetic images values within the interval
 [-1,1].
 
-iv.  After trying out Relu, Leaky Relu [10], Exponential Linear Unit [11]
-and Tanh functions for all other nonlinear superlayer activations, we found
-Leaky Relu activations led to the best GAN performance.
+v.  After trying out Relu, Leaky Relu [10], Exponential Linear Unit [11]
+and Tanh functions for activations in all non-final superlayers, we found
+Leaky Relu nonlinearities led to the best GAN performance.
 
-v.  After trying out batch normalization [12], layer normalization [13] and
+vi.  After trying out batch normalization [12], layer normalization [13] and
 pixelwise feature vector normalization [1] within the networks'
 superlayers, we observed that pixelwise normalization dramatically improved
 GAN training stabilization.  As figure 2 illustrates, loss curves are well
