@@ -54,15 +54,15 @@ pictures qualitatively similar to those in figure 1.
 
 ## Bird imagery synthesis
 
-We conducted a search over GAN designs and training techniques which create
-bird pictures.  Our initial attempts started with the DCGAN architecture of
-Radford *et al.* that outputs 64 $\times$ 64 images [8].  Over the course
-of O$($100$)$ experiments performed within the Tensorflow deep learning
-framework [9], our neural networks' forms and training procedures evolved
-towards more stable configurations which could accommodate larger images.
-Table 1 lists the best "super layer" combinations of linear projections,
-convolutions, transposed convolutions, normalizations and nonlinearities we
-found for a GAN that produces 192 $\times$ 192 images.
+We conducted an empirical search over GAN designs and training techniques for
+those which optimize bird picture creation.  Our initial attempts started with
+the DCGAN architecture of Radford *et al.* that outputs 64 $\times$ 64 images
+[8].  Over the course of O$($100$)$ experiments performed within the Tensorflow
+deep learning framework [9], our neural networks' forms and training procedures
+evolved towards more stable configurations which could accommodate larger
+images.  Table 1 lists the best "super layer" combinations of linear
+projections, convolutions, transposed convolutions, normalizations and
+nonlinearities we found for a GAN that produces 192 $\times$ 192 images.
 
 <table style="width:100%">
   <thead>
@@ -187,21 +187,21 @@ variables.
 ii.  The receptive field size equals 125 pixels for both neural networks.
 
 iii.  Rather than feeding descriptors into the generator drawn from random
-distributions during training, we chose instead to import descriptors
-coming from the discriminator's next-to-last superlayer.  During inference,
-the generator may be supplied noise inputs originating from random uniform
-or gaussian distributions.
+distributions during training, we chose instead to import descriptors coming
+from the discriminator's next-to-last superlayer.  During inference, the
+generator may be supplied with noise inputs originating from random uniform or
+gaussian distributions.
 
 iv.  The discriminator's final Sigmoid nonlinearity yields "real versus
 synthetic" probabilities within the interval [0,1].  The generator's final
 Tanh nonlinearity yields synthetic images values within the interval
 [-1,1].
 
-v.  After trying out Relu, Leaky Relu [10], Exponential Linear Unit [11]
-and Tanh functions for activations in all non-final superlayers, we found
-Leaky Relu nonlinearities led to the best GAN performance.
+v.  After trying out Relu, Leaky Relu [10], Exponential Linear Unit [11] and
+Tanh functions for activations in all non-final superlayers, we found Leaky Relu
+nonlinearities yielded the best GAN performance.
 
-vi.  After trying out batch normalization [12], layer normalization [13] and
+vi.  After trying batch normalization [12], layer normalization [13] and
 pixelwise feature vector normalization [1] within the networks'
 superlayers, we observed that pixelwise normalization dramatically improved
 GAN training stabilization.  As figure 2 illustrates, loss curves are well
@@ -218,22 +218,21 @@ functions of training iteration.*
 
 In ref. [1], Karras *et al.* describe a GAN training methodology which
 starts with 4 $\times$ 4 input pictures and one convolutional superlayer in
-both the discriminator and generator networks.  These authors progressively
+both the discriminator and generator networks.  These authors slowly
 increase image size and numbers of network superlayers.  Karras *et al.*
-persuasively argue that such incremental training enables a GAN to first
-discover large-scale structure within an image distribution and slowly
-learn finer scale detail.  Such progressive training yields better
-performance than requiring a GAN to learn content from all scales at once.
+persuasively argue that incrementally training a GAN allows it to first
+discover large-scale structure in an image distribution and later learn
+fine scale detail.  Such progressive training yields better performance
+from a GAN than requiring it to learn content from all scales at once.
 
-We explore an alternative approach to gradual GAN training in which image
-pixel size and network architectures are kept fixed.  Instead, we blur
-discriminator input images with a gaussian kernel whose radius is a
-function of training epoch.  As the GAN hyperparameters listed in Table 2
-indicate, we take the kernel's initial radius to equal 10% of the training
-image pixel size.  During the first 200 epochs, the blur kernel linearly
-ramps down to zero.  No blurring of input imagery is performed for the last
-300 training epochs.  This low-pass filtering schedule is plotted in figure
-3.
+We explore an alternative approach to gradual GAN training in which image pixel
+size and network architectures are kept fixed.  Instead, we blur discriminator
+input images with a gaussian kernel whose radius is a function of training
+epoch.  As the GAN hyperparameters listed in Table 2 indicate, we take the
+kernel's initial radius to equal 10% of training image pixel size.  During the
+first 200 epochs, the blur kernel linearly ramps down to zero.  No blurring of
+input imagery is performed for the last 300 training epochs.  This low-pass
+filtering schedule is plotted in figure 3.
 
 <table style="width:100%">
   <thead>
@@ -302,15 +301,15 @@ decreases from its maximal starting value to zero during the first 200
 training epochs.  No low-pass blurring is subsequently performed on input
 discriminator images.*
 
-The impact of tapered input image blurring upon output image generation is
-qualitatively exhibited in figure 4.  Example discriminator inputs and
-generator outputs at equally spaced training epochs along the low-pass
-filtering schedule are displayed in the figure's top and bottom rows.
-Since the GAN must learn to respond to input imagery with different
-resolutions, we observe a delay of approximately 125 epochs between input
-and output pictures with comparable bluriness.  But after training for 500
-epochs, 192 $\times$ 192 bird images exported by the GAN are grossly
-comparable their import counterparts.
+The impact of tapered input image blurring upon output image generation can
+be seen in figure 4.  Example discriminator inputs and generator outputs at
+equally spaced training epochs along the low-pass filtering schedule are
+displayed in the figure's top and bottom rows.  The GAN needs time to learn
+how to respond to input imagery with different resolutions.  There is
+consequently a delay of approximately 125 epochs between input and output
+pictures with comparable bluriness.  But after training for 500 epochs, the
+GAN exports 192 $\times$ 192 bird images which are grossly comparable to
+their import counterparts.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/discrim_in_gen_out.png)
 *Fig. 4.  Example 192 $\times$ 192 discriminator inputs $($top row$)$ and
@@ -319,27 +318,28 @@ generator outputs $($bottom row$)$ at training epochs 0, 125, 250, 375 and
 
 Figure 5 displays 64 examples of synthetic bird images.  These results
 exhibit notable strengths and weaknesses.  We regard approximately
-one-third of the generated bird pictures to be successful.  Among these
-good instances, bird beaks, wings and tails look realistic, and plumage
-coloring is highly detailed.  Moreover, the successful synthetic pictures
-in the figure exhibit nontrivial variety in their foreground and background
-contents.  Most birds appear to be sitting on tree branches or walking on
-the ground in figure 5.  But we have also observed other cases where birds
-appear to be standing near or floating on bodies of water.  The remaining
-two-thirds of the generated birds within figure 5 range from mediocre to
-horrible.
+one-third of the bird pictures as reasonable generation products.  Bird
+beaks, wings and tails look realistic, and plumage coloring is detailed
+among the good instances.  Moreover, the successful synthetics exhibit
+nontrivial variety in their foreground and background contents.  In figure
+5, most birds appear to be sitting on tree branches or walking on the
+ground.  But we have observed other cases where birds are standing near or
+floating on bodies of water.  So the GAN has learned to produce water foul
+in addition to tree dwellers and ground walkers.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/expt_325_output_270_birds.png)
 *Fig. 5.  Examples of synthesized 192 $\times$ 192 bird images.*
 
-We take some consolation in observing that bird results presented in
-ref. [1] exhibit qualitatively similar strengths and weaknesses to ours.
-We further note that Kerras *et al.* trained their bird GAN with 9 times
-more images than we used.  Among the bird pictures copied from ref. [1] and
-reproduced here in figure 6, roughly one-third look reasonable.  But the
-remaining two-thirds range suffer from significant distortions.  So
-consistently generating photo-realistic bird pictures with O$($200 $\times$
-200$)$ pixels remains an outstanding challenge.
+Unfortunately, the qualitative appearances of the remaining two-thirds of
+pictures in figure 5 range from mediocre to horrible.  We take some
+consolation in observing that bird results presented in ref. [1] exhibit
+qualitatively similar strengths and weaknesses to ours.  We further note
+that Kerras *et al.* trained their bird GAN with 9 times more images than
+we used.  Among the bird pictures copied from ref. [1] and reproduced here
+in figure 6, roughly one-third look reasonable.  But the remaining
+two-thirds suffer from significant distortions.  So *consistently* generating
+photo-realistic bird pictures with O$($200 $\times$ 200$)$ pixels remains
+an outstanding challenge.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/PGGAN_birds.png)
 *Fig. 6.  Screenshot of generated 256 $\times$ 256 bird images from figure
@@ -351,9 +351,9 @@ Automated systems which make mistakes can still be useful if they provide
 reasonable confidence measures of their performance.  For our bird image
 synthesizer, we explored a few different options for quantitatively
 assessing its renderings.  We began with discriminator probability outputs
-which the GAN itself provides.  But we saw no obvious correlation between
-output generator images and their corresponding discriminator scores.
-We next tried passing generator results through a trained autoencoder with
+which the GAN itself provides.  But surprisingly, no correlation between
+generator image quality and corresponding discriminator score was evident.
+We next tried passing generated pictures through a trained autoencoder with
 the hope that it could distinguish between highly distorted versus
 reasonable bird renderings.  This autoencoder approach to GAN quality
 assessment also did not pan out.
@@ -361,9 +361,9 @@ assessment also did not pan out.
 So we resorted to manually labeling synthesized bird pictures and training
 a binary classifier.  Representative examples of 4000 GAN outputs which we
 labeled as either "acceptable" or "unacceptable" are pictured in figure 7.
-The former category contained 1308 members, while the latter had 2692.
-This labeled data was next used to train a CNN whose architecture resembles
-that of the first deep network described in ref. [14].  We subsequently
+The former category contains 1308 members, while the latter has 2692.  The
+labeled data was next used to train a CNN whose architecture resembles that
+of the first deep network described in ref. [14].  We subsequently
 confirmed that the trained CNN's softmax scores provide a useful means for
 ranking synthetic bird images.
 
@@ -374,14 +374,14 @@ unacceptable $($bottom row$)$.*
 Figure 8 displays GAN generated pictures whose CNN softmax scores exceed
 0.95.  While a few of the bird examples which survive the binary classifier
 filter exhibit distortions, most look quite realistic.  It is also
-instructive to compare the variety of final system outputs in figure 8 with
-their system input counterparts' in figure 1.  For instance, we note that
-no pictures of flying birds survive the classifier stage.  Perhaps a GAN
-could be taught to generate quasi-realistic flying bird pictures if the
-number of such training examples were significantly increased.  But the
-overall distributions of bird shapes, colorings and textures in the two
-figures are qualitatively similar.  We leave quantitatively comparing GAN
-input and output image distributions for future work.
+instructive to compare the variety of our final system outputs in figure 8
+with their input counterparts' in figure 1.  For instance, no pictures of
+flying birds survive the classifier stage.  Perhaps a GAN could be taught
+to generate quasi-realistic airborne birds if the number of such training
+examples were significantly increased.  Nevertheless, the distributions of
+bird shapes, colorings and textures within the two figures appear
+qualitatively similar.  We leave quantitative comparison between GAN input
+and output image distributions for future work.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/decent_generated_birds.png)
 *Fig. 8.  Inference 192 $\times$ 192 bird images with binary classifier
@@ -391,14 +391,14 @@ In closing, we consider one last example of bird image generation for fun.
 Given two synthetic images which both have high softmax classification
 scores, we can linearly interpolate between their descriptors to produce a
 smooth transition sequence from the first picture to the second [8].
-Examples of such induced bird morphings are provided in figure 9.  It is
-interesting to note that rendered birds at intermediate points in the
-transitions can exhibit qualitatively new attributes such as head colorings
-and tail feathers not seen within the beginning or ending pictures.
-Moreover, intermediate views between left-facing and right-facing birds
-often look distorted.  But as the last row in figure 9 illustrates,
-sometimes a bird's beak can plausibly morph into another bird's tail.  Such
-distinct bird body part morphings are amusing to see.
+Figure 9 shows three examples of such induced bird morphings.  It is
+interesting that rendered birds at intermediate transition stages can
+exhibit new attributes like head colorings and tail feathers which are not
+present in either the beginning or ending pictures.  We further note that
+intermediate views between left-facing and right-facing birds often look
+distorted.  But sometimes one bird's beak plausibly transforms into another
+bird's tail as the last row in figure 9 demonstrates.  Such distinct bird
+body part morphings are amusing to watch.
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/bird_morphings.png)
