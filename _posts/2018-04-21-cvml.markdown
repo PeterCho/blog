@@ -303,29 +303,28 @@ discriminator images.*
 
 The impact of tapered input image blurring upon output image generation can
 be seen in figure 4.  Example discriminator inputs and generator outputs at
-equally spaced training epochs along the low-pass filtering schedule are
+equally spaced epoch intervals along the low-pass filtering schedule are
 displayed in the figure's top and bottom rows.  The GAN needs time to learn
 how to respond to input imagery with different resolutions.  There is
 consequently a delay of approximately 125 epochs between input and output
 pictures with comparable bluriness.  But after training for 500 epochs, the
-GAN exports 192 $\times$ 192 bird images which are grossly comparable to
-their import counterparts.
+GAN exports bird images which are grossly comparable to their import
+counterparts.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/discrim_in_gen_out.png)
-*Fig. 4.  Example 192 $\times$ 192 discriminator inputs $($top row$)$ and
-generator outputs $($bottom row$)$ at training epochs 0, 125, 250, 375 and
-500.*
+*Fig. 4.  Discriminator inputs $($top row$)$ and generator outputs
+$($bottom row$)$ at training epochs 0, 125, 250, 375 and 500.*
 
 Figure 5 displays 64 examples of synthetic bird images.  These results
 exhibit notable strengths and weaknesses.  We regard approximately
-one-third of the bird pictures as reasonable generation products.  Bird
-beaks, wings and tails look realistic, and plumage coloring is detailed
-among the good instances.  Moreover, the successful synthetics exhibit
-nontrivial variety in their foreground and background contents.  In figure
-5, most birds appear to be sitting on tree branches or walking on the
-ground.  But we have observed other cases where birds are standing near or
-floating on bodies of water.  So the GAN has learned to produce water foul
-in addition to tree dwellers and ground walkers.
+one-third of the 192 $\times$ 192 pictures as reasonable generation
+products.  Bird beaks, wings and tails look realistic, and plumage coloring
+is detailed among the good instances.  Moreover, the successful synthetics
+exhibit nontrivial variety in their foreground and background contents.  In
+figure 5, most birds appear to be sitting on tree branches or walking on
+the ground.  But we have observed other cases where birds are standing near
+or floating on bodies of water.  So the GAN has learned to produce water
+foul in addition to tree dwellers and ground walkers.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/expt_325_output_270_birds.png)
 *Fig. 5.  Examples of synthesized 192 $\times$ 192 bird images.*
@@ -333,13 +332,13 @@ in addition to tree dwellers and ground walkers.
 Unfortunately, the qualitative appearances of the remaining two-thirds of
 pictures in figure 5 range from mediocre to horrible.  We take some
 consolation in observing that bird results presented in ref. [1] exhibit
-qualitatively similar strengths and weaknesses to ours.  We further note
-that Kerras *et al.* trained their bird GAN with 9 times more images than
-we used.  Among the bird pictures copied from ref. [1] and reproduced here
-in figure 6, roughly one-third look reasonable.  But the remaining
-two-thirds suffer from significant distortions.  So *consistently* generating
-photo-realistic bird pictures with O$($200 $\times$ 200$)$ pixels remains
-an outstanding challenge.
+similar strengths and weaknesses to ours.  We further note that Kerras *et
+al.* trained their bird GAN with 9 times more images than we used.  Among
+the bird pictures copied from ref. [1] and reproduced here in figure 6,
+roughly one-third look reasonable.  But the remaining two-thirds suffer
+from significant distortions.  So *consistently* generating photo-realistic
+bird pictures with O$($200 $\times$ 200$)$ pixels remains an outstanding
+challenge.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/PGGAN_birds.png)
 *Fig. 6.  Screenshot of generated 256 $\times$ 256 bird images from figure
@@ -350,20 +349,20 @@ an outstanding challenge.
 Automated systems which make mistakes can still be useful if they provide
 reasonable confidence measures of their performance.  For our bird image
 synthesizer, we explored a few different options for quantitatively
-assessing its renderings.  We began with discriminator probability outputs
-which the GAN itself provides.  But surprisingly, no correlation between
-generator image quality and corresponding discriminator score was evident.
-We next tried passing generated pictures through a trained autoencoder with
-the hope that it could distinguish between highly distorted versus
-reasonable bird renderings.  This autoencoder approach to GAN quality
-assessment also did not pan out.
+evaluating its renderings.  We began with discriminator probabilities which
+the GAN itself outputs.  But surprisingly, no correlation between generator
+image quality and corresponding discriminator score was evident.  We next
+tried passing generated pictures through a trained autoencoder with the
+hope that it could distinguish between highly distorted versus reasonable
+bird renderings.  This autoencoder approach to GAN quality assessment also
+did not pan out.
 
 So we resorted to manually labeling synthesized bird pictures and training
 a binary classifier.  Representative examples of 4000 GAN outputs which we
 labeled as either "acceptable" or "unacceptable" are pictured in figure 7.
 The former category contains 1308 members, while the latter has 2692.  The
-labeled data was next used to train a CNN whose architecture resembles that
-of the first deep network described in ref. [14].  We subsequently
+labeled data were next used to train a CNN whose architecture resembles
+that of the first deep network described in ref. [14].  We subsequently
 confirmed that the trained CNN's softmax scores provide a useful means for
 ranking synthetic bird images.
 
@@ -376,8 +375,8 @@ Figure 8 displays GAN generated pictures whose CNN softmax scores exceed
 filter exhibit distortions, most look quite realistic.  It is also
 instructive to compare the variety of our final system outputs in figure 8
 with their input counterparts' in figure 1.  For instance, no pictures of
-flying birds survive the classifier stage.  Perhaps a GAN could be taught
-to generate quasi-realistic airborne birds if the number of such training
+flying birds pass the classifier stage.  Perhaps a GAN could be taught to
+generate real-looking birds in flight if the number of such training
 examples were significantly increased.  Nevertheless, the distributions of
 bird shapes, colorings and textures within the two figures appear
 qualitatively similar.  We leave quantitative comparison between GAN input
@@ -396,9 +395,9 @@ interesting that rendered birds at intermediate transition stages can
 exhibit new attributes like head colorings and tail feathers which are not
 present in either the beginning or ending pictures.  We further note that
 intermediate views between left-facing and right-facing birds often look
-distorted.  But sometimes one bird's beak plausibly transforms into another
-bird's tail as the last row in figure 9 demonstrates.  Such distinct bird
-body part morphings are amusing to watch.
+distorted.  But as the last row in figure 9 demonstrates, one bird's beak
+sometimes plausibly transforms into another bird's tail.  Such morphings of
+distinct bird body parts into each other are amusing to observe.
 
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/bird_morphings.png)
