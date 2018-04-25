@@ -23,11 +23,12 @@ faces were soon featured in the New York Times [4].
 Inspired by ref. [1], we explore in this blog posting an alternative
 approach to increasing GAN image resolution.  Unlike Karras *et al.*, we
 keep the discriminator and generator network architectures fixed throughout
-training.  But the sharpness of images fed into the discriminator starts
-out low and gradually increases as training proceeds.  So the GAN initially
-learns gross object shapes, colors and textures from intentionally blurred
-input imagery.  It later refines object parts and details as low-pass
-filtering is diminished and training runs to completion.
+training.  But the sharpness of images we feed into the discriminator
+starts out low and gradually increases as training proceeds.  So the GAN
+initially learns gross object shapes, colors and textures from
+intentionally blurred input imagery.  It later refines object parts and
+details as low-pass filtering is diminished and training runs to
+completion.
 
 Appendix G of ref. [1] displays generated 256 $\times$ 256 views of other
 objects besides faces based upon 30 LSUN categories [5].  Karras *et al.*
@@ -216,13 +217,13 @@ catastrophic mode collapse.
 functions of training iteration.*
 
 In ref. [1], Karras *et al.* describe a GAN training methodology which
-starts with 4 $\times$ 4 input pictures and one convolutional superlayer in
-both the discriminator and generator networks.  The authors slowly increase
-image size and numbers of network superlayers.  Karras *et al.*
-persuasively argue that incrementally training a GAN allows it to first
-discover large-scale structure in an image distribution and later learn
-fine scale detail.  Such progressive training yields better performance
-from a GAN than requiring it to learn content from all scales at once.
+starts with 4 $\times$ 4 input pictures and a single convolutional
+superlayer in both the discriminator and generator networks.  The authors
+slowly increase image size and numbers of network superlayers.  Karras *et
+al.* persuasively argue that incrementally training a GAN allows it to
+first discover large-scale structure in an image distribution and later
+learn fine details.  Such progressive training yields better performance
+than requiring a GAN to learn content from all scales at once.
 
 We explore an alternative approach to gradual GAN training in which image
 size and network architectures are kept fixed.  Instead, we blur
@@ -230,8 +231,8 @@ discriminator input images with a gaussian kernel whose radius is a
 function of training epoch.  As the GAN hyperparameters listed in Table 2
 indicate, we take the kernel's initial radius to equal 10% of training
 image pixel size.  During the first 200 epochs, the blur kernel linearly
-ramps down to zero.  No blurring of input imagery is performed for the last
-300 epochs.  This low-pass filtering schedule is plotted in figure 3.
+ramps down to zero.  No blurring of input imagery is performed during the
+last 300 epochs.  This low-pass filtering schedule is plotted in figure 3.
 
 <table style="width:100%">
   <thead>
@@ -302,13 +303,12 @@ discriminator images.*
 
 The impact of tapered input image blurring upon output image generation can
 be seen in figure 4.  Example discriminator inputs and generator outputs at
-equally spaced epoch intervals along the low-pass filtering schedule are
-displayed in the figure's top and bottom rows.  The GAN needs time to learn
-how to respond to input imagery with different resolutions.  There is
-consequently a delay of approximately 125 epochs between input and output
-pictures with comparable bluriness.  But after training for 500 epochs, the
-GAN exports bird images which are grossly comparable to their import
-counterparts.
+equally spaced epoch intervals are displayed in the figure's top and bottom
+rows.  The GAN needs time to learn how to respond to input imagery with
+different resolutions.  There is consequently a delay of approximately 125
+epochs between input and output pictures with comparable bluriness.  But
+after training for 500 epochs, the GAN exports bird images which are
+grossly comparable to their import counterparts.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/discrim_in_gen_out.png)
 *Fig. 4.  Discriminator inputs $($top row$)$ and generator outputs
@@ -345,7 +345,7 @@ challenge.
 
 ## Binary classification of synthetic bird images
 
-Automated systems which make mistakes can still be useful if they provide
+Automated systems which make mistakes can be useful if they provide
 reasonable confidence measures of their performance.  For our bird image
 synthesizer, we explored a few different options for quantitatively
 evaluating its renderings.  We began with discriminator probabilities which
