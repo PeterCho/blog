@@ -8,11 +8,11 @@ use_math: true
 
 ## Progressive GAN training
 
-In October 2017, Karras, Aila, Laine and Lehtinen published a paper
-entitled "Progressive Growing of GANS for Improved Quality, Stability and
-Variation" which presented new high-resolution results for synthetically
-generated images [1].  These authors described a novel training methodology
-for generative adversarial networks [2].  It begins by training shallow
+In October 2017, Karras, Aila, Laine and Lehtinen wrote a paper entitled
+"Progressive Growing of GANS for Improved Quality, Stability and Variation"
+which presented new high-resolution results for synthetically generated
+images [1].  These authors described a novel training methodology for
+generative adversarial networks [2].  It begins by training shallow
 discriminator and generator networks on low resolution imagery inputs.  New
 layers in both networks are subsequently introduced and trained in order to
 model higher resolution details.  Working with an enhanced version of the
@@ -24,7 +24,7 @@ Inspired by ref. [1], we explore in this blog posting an alternative
 approach to increasing image resolution during GAN training.  Unlike Karras
 *et al.*, we keep the discriminator and generator network architectures
 fixed throughout training.  But the resolution of images fed into the
-discriminator gradually increases as training proceeds.  So our GAN
+discriminator gradually increases as training proceeds.  So the GAN
 initially learns gross object shapes, colors and textures from
 intentionally blurred input imagery.  It later refines object parts and
 details as low-pass filtering is diminished and training runs to
@@ -43,14 +43,14 @@ than face imagery in our investigation.  We work with a 2011 Caltech-UCSD
 dataset containing 11K+ bird images [7].  As the representative examples in
 figure 1 illustrate, bird pictures from this corpus exhibit much greater
 variety in 3D pose, foreground color and background content than do
-pre-aligned CelebA photos.  It consequently represents a more challenging
+pre-aligned CelebA photos.  It consequently represents a challenging
 dataset.  But as we shall demonstrate, our simple approach to gradual GAN
 training coupled with bad generated image rejection yields synthetic bird
-pictures qualitatively similar to those in figure 1.
+pictures qualitatively similar to those appearing in figure 1.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/input_bird_chips.png)
-*Fig. 1.  Tensorboard display of sample images from the
-2011 Caltech-UCSD birds dataset resized to 192 $\times$ 192 pixels.*
+*Fig. 1.  Tensorboard display of images from the 2011 Caltech-UCSD birds
+dataset resized to 192 $\times$ 192 pixels.*
 
 ## Bird imagery synthesis
 
@@ -60,14 +60,14 @@ the DCGAN architecture of Radford *et al.* that outputs 64 $\times$ 64 images
 [8].  Over the course of O$($100$)$ experiments performed within the Tensorflow
 deep learning framework [9], our neural networks' forms and training procedures
 evolved towards more stable configurations which could accommodate larger
-images.  Table 1 lists the best "super layer" combinations of linear
+images.  Table 1 lists the best "superlayer" combinations of linear
 projections, convolutions, transposed convolutions, normalizations and
 nonlinearities we found for a GAN that produces 192 $\times$ 192 images.
 
 <table style="width:100%">
   <thead>
     <tr>
-      <th style="text-align: left">GAN discriminator super layer</th>
+      <th style="text-align: left">GAN discriminator superlayer</th>
       <th style="text-align: center">Output shape [width $\times$ height $\times$ channels] </th>
     </tr>
   </thead>
@@ -125,7 +125,7 @@ nonlinearities we found for a GAN that produces 192 $\times$ 192 images.
 <table style="width:100%">
   <thead>
     <tr>
-      <th style="text-align: left">GAN generator super layer</th>
+      <th style="text-align: left">GAN generator superlayer</th>
       <th style="text-align: center">Output shape [width $\times$ height $\times$ channels] </th>
     </tr>
   </thead>
@@ -186,11 +186,11 @@ variables.
 
 ii.  The receptive field size equals 125 pixels for both neural networks.
 
-iii.  Rather than feeding descriptors into the generator drawn from random
-distributions during training, we chose instead to import descriptors coming
-from the discriminator's next-to-last superlayer.  During inference, the
-generator may be supplied with noise inputs originating from random uniform or
-gaussian distributions.
+iii.  Rather than feeding pure noise into the generator drawn from random
+distributions during training, we chose instead to import descriptors
+tapped from the discriminator's next-to-last superlayer.  During inference,
+the generator may be supplied with inputs originating from random uniform
+or gaussian distributions.
 
 iv.  The discriminator's final Sigmoid nonlinearity yields "real versus
 synthetic" probabilities within the interval [0,1].  The generator's final
@@ -201,8 +201,8 @@ v.  After trying out Relu, Leaky Relu [10], Exponential Linear Unit [11] and
 Tanh functions for activations in all non-final superlayers, we found Leaky Relu
 nonlinearities yielded the best GAN performance.
 
-vi.  After trying batch normalization [12], layer normalization [13] and
-pixelwise feature vector normalization [1] within the networks'
+vi.  After incorporating batch normalization [12], layer normalization [13]
+and pixelwise feature vector normalization [1] into the networks'
 superlayers, we observed that pixelwise normalization dramatically improved
 GAN training stabilization.  As figure 2 illustrates, loss curves are well
 behaved throughout training when discriminator and generator superlayers
@@ -218,21 +218,21 @@ functions of training iteration.*
 
 In ref. [1], Karras *et al.* describe a GAN training methodology which
 starts with 4 $\times$ 4 input pictures and one convolutional superlayer in
-both the discriminator and generator networks.  These authors slowly
-increase image size and numbers of network superlayers.  Karras *et al.*
+both the discriminator and generator networks.  The authors slowly increase
+image size and numbers of network superlayers.  Karras *et al.*
 persuasively argue that incrementally training a GAN allows it to first
 discover large-scale structure in an image distribution and later learn
 fine scale detail.  Such progressive training yields better performance
 from a GAN than requiring it to learn content from all scales at once.
 
-We explore an alternative approach to gradual GAN training in which image pixel
-size and network architectures are kept fixed.  Instead, we blur discriminator
-input images with a gaussian kernel whose radius is a function of training
-epoch.  As the GAN hyperparameters listed in Table 2 indicate, we take the
-kernel's initial radius to equal 10% of training image pixel size.  During the
-first 200 epochs, the blur kernel linearly ramps down to zero.  No blurring of
-input imagery is performed for the last 300 training epochs.  This low-pass
-filtering schedule is plotted in figure 3.
+We explore an alternative approach to gradual GAN training in which image
+size and network architectures are kept fixed.  Instead, we blur
+discriminator input images with a gaussian kernel whose radius is a
+function of training epoch.  As the GAN hyperparameters listed in Table 2
+indicate, we take the kernel's initial radius to equal 10% of training
+image pixel size.  During the first 200 epochs, the blur kernel linearly
+ramps down to zero.  No blurring of input imagery is performed for the last
+300 epochs.  This low-pass filtering schedule is plotted in figure 3.
 
 <table style="width:100%">
   <thead>
@@ -368,8 +368,8 @@ confirmed that the trained CNN's softmax scores provide a useful means for
 ranking synthetic bird images.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/labeled_chips.png)
-*Fig. 7.  Sample generator outputs manually labeled as acceptable $($top row$)$ and
-unacceptable $($bottom row$)$.*
+*Fig. 7.  Generator outputs manually labeled as acceptable $($top row$)$
+and unacceptable $($bottom row$)$.*
 
 Figure 8 displays GAN generated pictures whose CNN softmax scores exceed
 0.95.  While a few of the bird examples which survive the binary classifier
@@ -384,7 +384,7 @@ qualitatively similar.  We leave quantitative comparison between GAN input
 and output image distributions for future work.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/decent_generated_birds.png)
-*Fig. 8.  Inference 192 $\times$ 192 bird images with binary classifier
+*Fig. 8.  Synthetic 192 $\times$ 192 bird images with binary classifier
 softmax scores exceeding 0.95.*
 
 In closing, we consider one last example of bird image generation for fun.
@@ -411,8 +411,7 @@ between starting and ending synthetic bird images.*
 GANs for Improved Quality, Stability and Variation", ICLR $\small{(2018)}$.](https://arxiv.org/pdf/1710.10196.pdf)
 
 2. [I. Goodfellow, J.P.-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair,
-A. Courville and Y. Bengio, "Generative Adversarial Nets," Advances in
-Neural Information Processing Systems
+A. Courville and Y. Bengio, "Generative Adversarial Nets," NIPS
 $\small{(2014)}$.](https://arxiv.org/pdf/1406.2661.pdf)
 
 3. [Z. Liu, P. Luo, X. Wang and W. Tang, "Large-scale CelebFaces Attributes
