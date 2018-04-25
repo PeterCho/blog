@@ -8,7 +8,7 @@ use_math: true
 
 ## Progressive GAN training
 
-In October 2017, Karras, Aila, Laine and Lehtinen wrote a paper entitled
+In October 2017, Karras, Aila, Laine and Lehtinen posted a paper entitled
 "Progressive Growing of GANS for Improved Quality, Stability and Variation"
 which presented new high-resolution results for synthetically generated
 images [1].  These authors described a novel training methodology for
@@ -21,14 +21,13 @@ to output 1024 $\times$ 1024 facial images.  Their stunning synthesized
 faces were soon featured in the New York Times [4].
 
 Inspired by ref. [1], we explore in this blog posting an alternative
-approach to increasing image resolution during GAN training.  Unlike Karras
-*et al.*, we keep the discriminator and generator network architectures
-fixed throughout training.  But the resolution of images fed into the
-discriminator gradually increases as training proceeds.  So the GAN
-initially learns gross object shapes, colors and textures from
-intentionally blurred input imagery.  It later refines object parts and
-details as low-pass filtering is diminished and training runs to
-completion.
+approach to increasing GAN image resolution.  Unlike Karras *et al.*, we
+keep the discriminator and generator network architectures fixed throughout
+training.  But the sharpness of images fed into the discriminator starts
+out low and gradually increases as training proceeds.  So the GAN initially
+learns gross object shapes, colors and textures from intentionally blurred
+input imagery.  It later refines object parts and details as low-pass
+filtering is diminished and training runs to completion.
 
 Appendix G of ref. [1] displays generated 256 $\times$ 256 views of other
 objects besides faces based upon 30 LSUN categories [5].  Karras *et al.*
@@ -45,8 +44,8 @@ figure 1 illustrate, bird pictures from this corpus exhibit much greater
 variety in 3D pose, foreground color and background content than do
 pre-aligned CelebA photos.  It consequently represents a challenging
 dataset.  But as we shall demonstrate, our simple approach to gradual GAN
-training coupled with bad generated image rejection yields synthetic bird
-pictures qualitatively similar to those appearing in figure 1.
+training coupled with bad generated image rejection yields synthetic
+pictures qualitatively similar to the genuine photos appearing in figure 1.
 
 ![BIRDGAN]({{site.url}}/blog/images/bird_dcgan/input_bird_chips.png)
 *Fig. 1.  Tensorboard display of images from the 2011 Caltech-UCSD birds
