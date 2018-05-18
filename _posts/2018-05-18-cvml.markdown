@@ -15,8 +15,9 @@ images [1].
 
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/five_flower_classes_montage.png)
-*Fig. 1.  Tensorboard display of images from the 2011 Caltech-UCSD birds
-dataset resized to 192 $\times$ 192 pixels.*
+*Fig. 1.  Representative examples of flower training images.  Five different flower
+classes are grouped within separate columns.*
+
 
 ## Conditional GAN
 
@@ -139,7 +140,7 @@ those which optimize bird picture creation.
 synthesize 192 $\times$ 192 images.*
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/learning_curves.png)
-*Fig. 2.  Tensorboard plots of discriminator and generator losses as
+*Fig. 2.  Tensorboard plots of Conditional GAN's discriminator and generator losses as
 functions of training iteration.*
 
 <table style="width:100%">
@@ -210,14 +211,24 @@ training epochs.  No low-pass blurring is subsequently performed on input
 discriminator images.*
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/discrim_gen_io.png)
-*Fig. 4.  XX.*
+
+*Fig. 4.  Representative examples of discriminator inputs at equally spaced
+intervals during training are pictured within the top row.  Representative
+examples of generator outputs conditioned upon different flower classes appear
+within the bottom 5 rows.  Columns in this figure correspond to training epochs
+0, 170, 340, 510 and 680.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/gen_1class.png)
-*Fig. 5.  XX.*
+
+*Fig. 5.  Representative examples of discriminator inputs and generator outputs
+at equally-spaced training intervals are presented in the top and bottom rows.
+No conditioning upon flower classes was performed for this experiment's results.*
+
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/binary_classified_5flowers_montage.png)
-*Fig. 6.  XX.*
-
+*Fig. 6.  Representative examples of conditionally generated flowers with binary
+classification softmax scores exceeding 0.99.  Each row in this figure
+corresponds to a single descriptor input to the CGAN generator.*
 
 ## Data augmentation
 
@@ -233,8 +244,8 @@ bird renderings.  This autoencoder approach to GAN quality assessment also
 did not pan out.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/cnn_accur_vs_gan_augmentation.png)
-*Fig. 7.  Conditional GAN data augmentation enhancement of CNN
-classification accuracy.*
+*Fig. 7.  Flower CNN classification accuracy plotted as a function of
+Conditional GAN data augmentation.*
 
 
 ## References
