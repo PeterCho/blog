@@ -1,0 +1,289 @@
+---
+layout: post
+title:  "Improving Flower Image Classification via Conditional GAN Data Augmentation"
+date:   2018-05-18 12:00:00
+categories: Deep Learning
+use_math: true
+---
+
+## Flower classification
+
+In October 2017, Karras, Aila, Laine and Lehtinen posted a paper entitled
+"Progressive Growing of GANS for Improved Quality, Stability and Variation"
+which presented new high-resolution results for synthetically generated
+images [1].
+
+
+![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/five_flower_classes_montage.png)
+*Fig. 1.  Tensorboard display of images from the 2011 Caltech-UCSD birds
+dataset resized to 192 $\times$ 192 pixels.*
+
+## Conditional GAN
+
+We conducted an empirical search over GAN designs and training techniques for
+those which optimize bird picture creation.
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">GAN discriminator superlayer</th>
+      <th style="text-align: center">Output shape [width $\times$ height $\times$ channels] </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Input image</td>
+      <td style="text-align: center">192 $\times$ 192 $\times$ 3</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">96 $\times$ 96 $\times$ 32</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">48 $\times$ 48 $\times$ 64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">24 $\times$ 24 $\times$ 128</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 1</td>
+      <td style="text-align: center">24 $\times$ 24 $\times$ 256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">12 $\times$ 12 $\times$ 256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 1</td>
+      <td style="text-align: center">12 $\times$ 12 $\times$ 512</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">6 $\times$ 6 $\times$ 512</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Linear proj</td>
+      <td style="text-align: center">$Z_{dim}$</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Linear proj, Sigmoid</td>
+      <td style="text-align: center">1</td>
+    </tr>
+
+    <!---  Add empty line in final table row -->
+
+    <tr>
+      <td style="text-align: left">$ $</td>
+      <td style="text-align: center">$ $</td>
+    </tr>
+</tbody>
+</table>
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">GAN generator superlayer</th>
+      <th style="text-align: center">Output shape [width $\times$ height $\times$ channels] </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Input descriptor</td>
+      <td style="text-align: center">$Z_{dim}$</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Linear proj, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">6 $\times$ 6 $\times$ 512</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">6 $\times$ 6 $\times$ 256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Transposed conv3, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">12 $\times$ 12 $\times$ 256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">12 $\times$ 12 $\times$ 128</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Transposed conv3, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">24 $\times$ 24 $\times$ 128</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Transposed conv5, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">48 $\times$ 48 $\times$ 64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Transposed conv5, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">96 $\times$ 96 $\times$ 32</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Transposed conv5, No norm, Tanh</td>
+      <td style="text-align: center">192 $\times$ 192 $\times$ 3</td>
+    </tr>
+
+    <!---  Add empty line in final table row -->
+
+    <tr>  
+      <td style="text-align: left">$ $</td>
+      <td style="text-align: center">$ $</td>
+    </tr>
+</tbody>
+</table>
+
+*Table 1.  Discriminator and generator network architectures used to
+synthesize 192 $\times$ 192 images.*
+
+![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/learning_curves.png)
+*Fig. 2.  Tensorboard plots of discriminator and generator losses as
+functions of training iteration.*
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">Hyperparameter description</th>
+      <th style="text-align: center">Value    </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Number of training images</td>
+      <td style="text-align: center"> 11013 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Training image augmentation</td>
+      <td style="text-align: center"> Random horizontal flipping </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Number of training epochs</td>
+      <td style="text-align: center"> 500 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Minibatch size</td>
+      <td style="text-align: center">64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Image pixel size</td>
+      <td style="text-align: center">192 $\times$ 192</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Initial blur kernel radius in pixels</td>
+      <td style="text-align: center">19.2</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Adam optimizer $\beta_1$</td>
+      <td style="text-align: center">0.0 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Adam optimizer $\beta_2$</td>
+      <td style="text-align: center">0.99</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Base learning rate</td>
+      <td style="text-align: center">0.0001 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Descriptor dimension $Z_{dim}$</td>
+      <td style="text-align: center">128 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Standard deviation for weight-initializing gaussian</td>
+      <td style="text-align: center">0.02 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Leaky Relu slope coefficient</td>
+      <td style="text-align: center">0.2</td>
+    </tr>
+  </tbody> 
+</table>
+
+*Table 2.  GAN hyperparameters.*
+
+![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/blur_schedule.png)
+*Fig. 3.  Discriminator's blurring kernel radius linearly
+decreases from its maximal starting value to zero during the first 250
+training epochs.  No low-pass blurring is subsequently performed on input
+discriminator images.*
+
+![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/discrim_gen_io.png)
+*Fig. 4.  XX.*
+
+![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/gen_1class.png)
+*Fig. 5.  XX.*
+
+![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/binary_classified_5flowers_montage.png)
+*Fig. 6.  XX.*
+
+
+## Data augmentation
+
+Automated systems which make mistakes can be useful if they provide
+reasonable confidence measures of their performance.  For our bird image
+synthesizer, we explored a few different options for quantitatively
+evaluating its renderings.  We began with discriminator probabilities which
+the GAN itself outputs.  But surprisingly, no correlation between generator
+image quality and corresponding discriminator score was evident.  We next
+tried passing generated pictures through a trained autoencoder with the
+hope that it could distinguish between highly distorted versus reasonable
+bird renderings.  This autoencoder approach to GAN quality assessment also
+did not pan out.
+
+![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/cnn_accur_vs_gan_augmentation.png)
+*Fig. 7.  Conditional GAN data augmentation enhancement of CNN
+classification accuracy.*
+
+
+## References
+
+1. [T. Karras, T. Aila, S. Laine and J. Lehtinen, "Progressive Growing of
+GANs for Improved Quality, Stability and Variation", ICLR $\small{(2018)}$.](https://arxiv.org/pdf/1710.10196.pdf)
+
+2. [I. Goodfellow, J.P.-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair,
+A. Courville and Y. Bengio, "Generative Adversarial Nets," NIPS
+$\small{(2014)}$.](https://arxiv.org/pdf/1406.2661.pdf)
+
+3. [Z. Liu, P. Luo, X. Wang and W. Tang, "Large-scale CelebFaces Attributes
+$($CelebA$)$ Dataset,"
+$\small{(2015)}$.](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
+
+4.  [C. Metz and K. Collins, "How an A.I. 'Cat-and-Mouse Game' Generates
+Believable Fake Photos", New York Times
+$\small{(2018)}.$](https://www.nytimes.com/interactive/2018/01/02/technology/ai-generated-photos.html)
+
+5.  [F. Yu, A. Seff, Y. Zhang, S. Song, T. Funkhouser and J. Xiao, "LSUN:
+Construction of a Large-Scale Image Dataset using Deep Learning with Humans
+in the Loop", $\small{(2015)}.$](https://arxiv.org/pdf/1506.03365.pdf)
+
+6.  [T. Salimans, I. Goodfellow, W. Zaremba, V. Cheung, A. Radford and X.
+Chen, "Improved Techniques for Training GANs", NIPS $\small{(2016)}$.](https://arxiv.org/pdf/1606.03498.pdf)
+
+7. [C. Wah, S. Branson, P. Welinder, P. Perona, and S. Belongie. “The
+Caltech-UCSD Birds-200-2011 Dataset.” Computation & Neural Systems
+Technical Report, CNS-TR-2011-001.](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html)
+
+8. [A. Radford, L. Metz and S. Chintala, "Unsupervised Representation
+Learning with Deep Convolutional Generative Adversarial Networks," ICLR
+$\small{(2016)}$.](https://arxiv.org/pdf/1511.06434.pdf)
+
+9.  [TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+
+10.  [A.L. Maas, A.Y. Hannun and A.Y. Ng, "Rectifier Nonlinearities Improve
+Neural Network Acoustic Models", 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
+
+11. [D.-A. Clevert, T. Unterthiner and S. Hochreiter, "Fast and Accurate
+Deep Network Learning by Exponential Linear Units," arXiv:1511.07289 $\small{(2016)}$.](
+https://arxiv.org/pdf/1511.07289.pdf)
+
+12.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
+Network Training by Reducing Internal Covariate Shift," 32nd ICML 
+$\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
+
+13. [J. L. Ba, J. R. Kiros and G.E. Hinton, "Layer Normalization,"
+arXiv:1607.06450 $\small{(2016)}$.](https://arxiv.org/abs/1607.06450.pdf)
+
+14.  [See "Classifying Cat and Dog Images via an Ensemble of CNNs" post in
+this blog series $\small{(2017)}$.](https://petercho.github.io/blog//deep/learning/2017/11/25/cvml.html)
