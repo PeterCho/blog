@@ -8,18 +8,82 @@ use_math: true
 
 ## Flower classification
 
-In October 2017, Karras, Aila, Laine and Lehtinen posted a paper entitled
-"Progressive Growing of GANS for Improved Quality, Stability and Variation"
-which presented new high-resolution results for synthetically generated
-images [1].
+Deep neural networks employed for supervised learning problems are data
+hungry.  They commonly involve millions of parameters whose values must be
+fit to training data.  Obtaining high quality labels to feed deep networks
+is generally labor-intensive and expensive.  In the absence of vast
+quantities of labels, neural nets are prone to overfitting.
 
+Data augmentation represents a standard technique for readily enlarging a
+training set's volume [1].  For example, input images may be geometrically
+modified via translations, rotations, scalings and flips which leave class
+labels invariant.  Alternatively, imagery color contents and/or noise
+levels can be altered to some extent.  But these simple augmentations are
+constrained by the distribution characteristics of inference imagery which
+the training corpus should match.
+
+In this blog posting, we focus upon flower classification as an instructive
+laboratory in which to investigate different forms of data augmentation.
+We start with an imagery corpus of daisy, dandelion, rose, sunflower and
+tulip pictures available from a TensorFlow tutorial [2].  We are primarily
+interested in classifying views of individual flowers that fill most of the
+image plane.  So photos of flower bunches, flower fields and flower artwork
+are discarded from the original corpus.  We next gather additional internet
+pictures to form a varied training set containing 800 images of each flower
+category.  Moreover, we withold an additional 500+ photos to serve as an
+independent test set.  Representative examples of daisy, dandelion, rose,
+sunflower and tulip pictures with which we work are presented in figure 1.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/five_flower_classes_montage.png)
-*Fig. 1.  Representative examples of flower training images.  Five different flower
-classes are grouped within separate columns.*
+*Fig. 1.  Examples of 208 $\times$ 208 images for five classes of flowers.
+The different flower types are grouped by column.*
+
+Looking at the flowers in the figure, we observe that gravity's direction
+vector often points vertically downward.  Since significant 2D rotations or
+horizontal flips would yield pictures with gravity oriented in odd
+directions unlikely to be matched in the test set, we avoid these
+particular forms of data augmentation.  Similarly, we choose not to perform
+color or noise modulations since they would likely disrupt useful features
+for distinguishing between the five flower classes.  The only significant
+remaining data augmentation is vertical flipping.  We randomly flip every
+input training flower image with 50% probability.
+
+The training set of 5 $\times$ 800 = 4000 flower images becomes input to a
+Convolutional Neural Network $($CNN$)$ comprised of multiple
+"super-layers".  Combinations of convolutions with 5 $\times$ 5 kernels,
+batch normalization [3], leaky ReLU activation [4], 2 $\times$ 2 pooling,
+Dropout [5], fully connected and softmax layers form useful CNN building
+blocks:
+
+$\qquad$ CBLPD: Conv5, Batch norm, Leaky ReLU, Pool, Dropout
+
+$\qquad$ CBLD: Conv5, Batch norm, Leaky ReLU, Dropout
+
+$\qquad$ FBLD: Fully connected, Batch norm, Leaky ReLU, Dropout
+
+$\qquad$ SOFT:  Fully connected, Softmax.
+
+We choose these super-layers' parameters and numbers in a deep network
+configuration so that the CNN's receptive field size R=221 [ref] is
+comparable to input image 208 $\times$ 208 pixel dimensions.
+
+$\qquad$ 3 $\times$ [CBLPD], 6 $\times$ [CBLD], 2 $\times$ [FBLD], SOFT
+
+We work within the TensorFlow framework [ref] to train this particular
+network's 3.2M parameters.  The CNN is subsequently used to perform
+inference on the withheld test set containing 81 daisy, 110 dandelion, 120
+rose, 83 sunflower and 110 tulip pictures.  Since the networks' weights are
+initialized with random values, inference accuracy fluctuates depending
+upon training experiment and terminal epoch number.  But on average, the
+CNN classifies the five flower types with 87.7% accuracy for the test set.
 
 
 ## Conditional GAN
+
+A number of authors have recently started investigating whether more
+substantial data augmentation via Generative Adversarial Network (GAN)
+imagery synthesis can quantitatively improve supervised learning.  
+
 
 We conducted an empirical search over GAN designs and training techniques for
 those which optimize bird picture creation.
@@ -212,11 +276,11 @@ discriminator images.*
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/discrim_gen_io.png)
 
-*Fig. 4.  Representative examples of discriminator inputs at equally spaced
+*Fig. 4. Representative examples of discriminator inputs at equally spaced
 intervals during training are pictured within the top row.  Representative
 examples of generator outputs conditioned upon different flower classes appear
 within the bottom 5 rows.  Columns in this figure correspond to training epochs
-0, 170, 340, 510 and 680.
+0, 170, 340, 510 and 680.*
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/gen_1class.png)
 
@@ -250,31 +314,36 @@ Conditional GAN data augmentation.*
 
 ## References
 
-1. [T. Karras, T. Aila, S. Laine and J. Lehtinen, "Progressive Growing of
-GANs for Improved Quality, Stability and Variation", ICLR $\small{(2018)}$.](https://arxiv.org/pdf/1710.10196.pdf)
+
+1.  [A. Krizhevsky, I. Sutskever and G.E. Hinton, "Imagenet Classification
+with Deep Convolutional Neural Networks," NIPS
+$\small{(2012)}$.](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+
+2. [See TensorFlow tutorial "How to Retrain an Image Classifier for New Categories"](https://www.tensorflow.org/tutorials/image_retraining)
+
+3.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
+Network Training by Reducing Internal Covariate Shift," 32nd ICML 
+$\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
+
+4.  [A.L. Maas, A.Y. Hannun and A.Y. Ng, "Rectifier Nonlinearities Improve
+Neural Network Acoustic Models", 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
+
+5.  [N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
+R. Salakhutdinov, "Dropout: A Simple Way to Prevent Neural Networks from
+Overfitting," Journal of Machine Learning Research {\bf 15} 
+$\small{(2014)}$.](https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf)
+
+
+
+
+
 
 2. [I. Goodfellow, J.P.-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair,
 A. Courville and Y. Bengio, "Generative Adversarial Nets," NIPS
 $\small{(2014)}$.](https://arxiv.org/pdf/1406.2661.pdf)
 
-3. [Z. Liu, P. Luo, X. Wang and W. Tang, "Large-scale CelebFaces Attributes
-$($CelebA$)$ Dataset,"
-$\small{(2015)}$.](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
-
-4.  [C. Metz and K. Collins, "How an A.I. 'Cat-and-Mouse Game' Generates
-Believable Fake Photos", New York Times
-$\small{(2018)}.$](https://www.nytimes.com/interactive/2018/01/02/technology/ai-generated-photos.html)
-
-5.  [F. Yu, A. Seff, Y. Zhang, S. Song, T. Funkhouser and J. Xiao, "LSUN:
-Construction of a Large-Scale Image Dataset using Deep Learning with Humans
-in the Loop", $\small{(2015)}.$](https://arxiv.org/pdf/1506.03365.pdf)
-
 6.  [T. Salimans, I. Goodfellow, W. Zaremba, V. Cheung, A. Radford and X.
 Chen, "Improved Techniques for Training GANs", NIPS $\small{(2016)}$.](https://arxiv.org/pdf/1606.03498.pdf)
-
-7. [C. Wah, S. Branson, P. Welinder, P. Perona, and S. Belongie. “The
-Caltech-UCSD Birds-200-2011 Dataset.” Computation & Neural Systems
-Technical Report, CNS-TR-2011-001.](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html)
 
 8. [A. Radford, L. Metz and S. Chintala, "Unsupervised Representation
 Learning with Deep Convolutional Generative Adversarial Networks," ICLR
@@ -282,19 +351,28 @@ $\small{(2016)}$.](https://arxiv.org/pdf/1511.06434.pdf)
 
 9.  [TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
 
-10.  [A.L. Maas, A.Y. Hannun and A.Y. Ng, "Rectifier Nonlinearities Improve
-Neural Network Acoustic Models", 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
-
-11. [D.-A. Clevert, T. Unterthiner and S. Hochreiter, "Fast and Accurate
-Deep Network Learning by Exponential Linear Units," arXiv:1511.07289 $\small{(2016)}$.](
-https://arxiv.org/pdf/1511.07289.pdf)
-
-12.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
-Network Training by Reducing Internal Covariate Shift," 32nd ICML 
-$\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
-
-13. [J. L. Ba, J. R. Kiros and G.E. Hinton, "Layer Normalization,"
-arXiv:1607.06450 $\small{(2016)}$.](https://arxiv.org/abs/1607.06450.pdf)
-
 14.  [See "Classifying Cat and Dog Images via an Ensemble of CNNs" post in
 this blog series $\small{(2017)}$.](https://petercho.github.io/blog//deep/learning/2017/11/25/cvml.html)
+
+*.  [M. Mirza and S. Osindero, "Conditional Generative Adversarial Nets,"
+arXiv:1411.1784v1 $\small{(2014)}$.](https://arxiv.org/pdf/1411.1784.pdf)
+
+*.  [I. Goodfellow, "NIPS 2016 Tutorial: Generative Adversarial Networks,"
+arXiv:1701.001604v4 $\small{(2017)}$.](https://arxiv.org/pdf/1701.00160.pdf)
+
+*.  [A. Odena, C. Olah and J. Shlens, "Conditional Image Synthesis with
+Auxiliary Classifier GANs,"
+arXiv:1610.09585v4 $\small{(2017)}$.](https://arxiv.org/pdf/1610.09585.pdf)
+
+*.  [A. Antoniou, A. Storkey and H. Edwards, "Data Augmentation Generative
+Adversarial Networks," 
+arXiv:1711.043040v3 $\small{(2018)}$.](https://arxiv.org/pdf/1711.04340.pdf)
+
+*.  [G. Mariani, F. Scheidegger, R. Istrate, C. Bekas and C. Malossi,
+"BAGAN: Data Augmentation with Balancing GAN,"
+arXiv:1803.09655v1 $\small{(2018)}$.](https://arxiv.org/pdf/1803.09655.pdf)
+
+*.  [M. Frid-Adar, E. Klang, M. Amitai, J. Goldberger and H. Greenspan,
+"Synthetic Data Augmentation using GAN for Improved Liver Lesion
+Classification," arXiv:1801.02385v1
+$\small{(2018)}$.](https://arxiv.org/pdf/1801.02385.pdf)
