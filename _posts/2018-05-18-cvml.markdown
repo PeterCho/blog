@@ -398,12 +398,11 @@ Five different flower types are grouped by column.*
 The secondary binary classifier successfully rejects grossly distorted CGAN
 outputs.  But it also diminishes overall variety among synthesized
 pictures.  To measure diversity within image sets, we follow ref. [16] and
-adopt multi-scale structure similarity $($MS-SSIM$)$ scores as an
-approximate but useful perceptual metric.  MS-SSIM evalutes the similarity
-between two images on a scale between 0 [radically different] to 1
-[completely identical].  For each flower class, we compute the median
-MS-SSIM score for 500 random pairs of images as a measure of intra-class
-diversity.
+adopt multi-scale structure similarity $($MS-SSIM$)$ as an approximate but
+useful perceptual metric.  MS-SSIM evalutes the similarity between two
+images on a scale between 0 [radically different] to 1 [completely
+identical].  For each flower class, we compute the median MS-SSIM score for
+500 random pairs of images as a measure of intra-class diversity.
 
 Table 2a lists median MS-SSIM values for our five flower classes among
 genuine images as well as synthetic images before and after binary
@@ -413,8 +412,8 @@ progenitors.  Table 2b lists averaged flower classifier accuracies for the
 same three categories of images.  Not surprisingly, its scores indicate
 CGAN images filtered by the secondary binary classifier are more
 photo-realistic than their pre-filter progenitors.  The generative and
-discriminative figures of merit in these two tables represent measures
-analogous to recall and precision.
+discriminative figures of merit in these two tables provide quantitative
+measures analogous to recall and precision.
 
 <table style="width:100%">
   <thead>
@@ -468,47 +467,63 @@ analogous to recall and precision.
   </tbody> 
 </table>
 
-*Table 2a. Median MS-SSIM scores calculated from 500 random pairs of images
-per flower class.*
-
-
-
+*Table 2a. Median MS-SSIM scores calculated from genuine and synthetic
+imagery per flower class.*
 
 <table style="width:100%">
   <thead>
     <tr>
-      <th style="text-align: left"> $ $ </th>
-	<th style="text-align: center">Genuine images <br/> $ $ </th>
+      <th style="text-align: left">Flower class <br/> $ $</th>
+	<th style="text-align: center">Genuine images <br/> $ $</th>
         <th style="text-align: center">Synthetic images <br/>
                                        before binary classification </th>
         <th style="text-align: center">Synthetic images <br/>
                                        after binary classification </th>
     </tr>
   </thead>
- <tbody>
+  <tbody>
     <tr>
-      <td style="text-align: left">Average  accuracy  </td>
-      <td style="text-align: center"> 0.877 $\pm$ 0.020     </td>
-      <td style="text-align: center"> 0.728 $\pm$ 0.055  </td>
-      <td style="text-align: center"> 0.851 $\pm$ 0.053   </td>
+      <td style="text-align: left">Daisy</td>
+      <td style="text-align: center"> 0.889 </td>
+      <td style="text-align: center"> 0.723 </td>
+      <td style="text-align: center"> 0.871 </td>
     </tr>
-
-  </tbody> 
-
+    <tr>
+      <td style="text-align: left">Dandelion</td>
+      <td style="text-align: center"> 0.964 </td>
+      <td style="text-align: center"> 0.948 </td>
+      <td style="text-align: center"> 0.974 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Rose</td>
+      <td style="text-align: center"> 0.865 </td>
+      <td style="text-align: center"> 0.613 </td>
+      <td style="text-align: center"> 0.741 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Sunflower</td>
+      <td style="text-align: center"> 0.910 </td>
+      <td style="text-align: center"> 0.676 </td>
+      <td style="text-align: center"> 0.858 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Tulip</td>
+      <td style="text-align: center"> 0.791 </td>
+      <td style="text-align: center"> 0.675 </td>
+      <td style="text-align: center"> 0.817 </td>
+    </tr>
 
     <!---  Add empty line in final table row -->
 
     <tr>  
       <td style="text-align: left">$ $</td>
       <td style="text-align: center">$ $</td>
-      <td style="text-align: center">$ $</td>
     </tr>
+  </tbody> 
 </table>
 
 *Table 2b. Flower classifier accuracies calculated from genuine and
-synthetic imagery.*
-
-
+synthetic imagery per flower class.*
 
 
 ## Flower classification based on genuine plus generated imagery
@@ -593,19 +608,3 @@ Auxiliary Classifier GANs,"
 arXiv:1610.09585v4 $\small{(2017)}$.](https://arxiv.org/pdf/1610.09585.pdf)
 
 
-
-
-2. [I. Goodfellow, J.P.-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair,
-A. Courville and Y. Bengio, "Generative Adversarial Nets," NIPS
-$\small{(2014)}$.](https://arxiv.org/pdf/1406.2661.pdf)
-
-6.  [T. Salimans, I. Goodfellow, W. Zaremba, V. Cheung, A. Radford and X.
-Chen, "Improved Techniques for Training GANs", NIPS $\small{(2016)}$.](https://arxiv.org/pdf/1606.03498.pdf)
-
-8. [A. Radford, L. Metz and S. Chintala, "Unsupervised Representation
-Learning with Deep Convolutional Generative Adversarial Networks," ICLR
-$\small{(2016)}$.](https://arxiv.org/pdf/1511.06434.pdf)
-
-
-14.  [See "Classifying Cat and Dog Images via an Ensemble of CNNs" post in
-this blog series $\small{(2017)}$.](https://petercho.github.io/blog//deep/learning/2017/11/25/cvml.html)
