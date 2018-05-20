@@ -300,7 +300,7 @@ abrupt spikes that often plague GANs with other normalizations.
 
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/learning_curves.png)
-*Fig. 2.  Tensorboard plots of discriminator and generator losses as
+*Fig. 2.  Tensorboard plots of generator and discriminator losses as
 functions of training iteration.*
 
 
@@ -323,9 +323,9 @@ flower classes.  Columns in this figure correspond to training epochs 0,
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/flower_1class.png)
 
-*Fig. 5.  Representative examples of discriminator inputs and generator outputs
-at equally-spaced training intervals are presented in the top and bottom rows.
-No conditioning upon flower classes was performed for this experiment's results.*
+*Fig. 5.  Representative examples of discriminator inputs [top row] and
+generator outputs [bottom row] at train epochs 0, 170, 340, 510 and 680.
+No conditioning upon flower class was performed for this GAN experiment.*
 
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/binary_classified_5flowers_montage.png)
