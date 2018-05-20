@@ -371,9 +371,7 @@ dandelion, rose, sunflower and tulip pictures corresponding to a common
 $Z_{dim}$ descriptor into a single image.  Next we label 4000 such CGAN
 combinations as either acceptable or unacceptable depending upon their
 degree of distortion.  Figure 6 displays a few synthesized montages and
-their manually assigned labels.  Finally, we use these labels to train a
-binary classifier which assigns a softmax score to synthetic flower
-montages.
+their manually assigned labels.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/acceptable_unacceptable.png)
 
@@ -381,23 +379,52 @@ montages.
 pictures manually labeled as acceptable [top 2 rows] and unacceptable
 [bottom 2 rows] CGAN outputs.*
 
-
-
+The labels are used to train a binary classifier which assigns a softmax
+score to synthetic flower montages.  To minimize distortions in synthesized
+outputs, we reject any montage with softmax score less than 0.99.  Examples
+of CGAN-generated flowers passing this threshold cut are shown in figure 7.
+Each row in the figure corresponds to a single $Z_{dim}$ descriptor input
+to the CGAN generator.  Generated daisy, dandelion, rose, sunflower and
+tulip pictures associated with the same descriptor exhibit noticeable
+similarities in their gross shapes, background contents and even foreground
+colorings.  Each input noise vector to a CGAN consequently yields a
+meaningful "family" of conditional output views.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/binary_classified_5flowers_montage.png)
-*Fig. 7.  Representative examples of conditionally generated flowers with binary
-classification softmax scores exceeding 0.99.  Each row in this figure
-corresponds to a single descriptor input to the CGAN generator.*
+*Fig. 7.  Representative examples of conditionally generated 208 $\times$
+208 flower images with binary classification softmax scores exceeding 0.99.
+Five different flower types are grouped by column.*
 
+The secondary binary classifier successfully rejects grossly distorted CGAN
+outputs.  But it also diminishes overall variety among synthesized
+pictures.  To measure diversity within image sets, we follow ref. [16] and
+adopt multi-scale structure similarity $($MS-SSIM$)$ scores as an
+approximate but useful perceptual metric.  MS-SSIM evalutes the similarity
+between two images on a scale between 0 [radically different] to 1
+[completely identical].  For each flower class, we compute the median
+MS-SSIM score for 500 random pairs of images as a measure of intra-class
+diversity.
 
+Table 2a lists median MS-SSIM values for our five flower classes among
+genuine images as well as synthetic images before and after binary
+classification.  Not surprisingly, its scores indicate CGAN images filtered
+by the secondary binary classifier are less diverse than their pre-filter
+progenitors.  Table 2b lists averaged flower classifier accuracies for the
+same three categories of images.  Not surprisingly, its scores indicate
+CGAN images filtered by the secondary binary classifier are more
+photo-realistic than their pre-filter progenitors.  The generative and
+discriminative figures of merit in these two tables represent measures
+analogous to recall and precision.
 
 <table style="width:100%">
   <thead>
     <tr>
-      <th style="text-align: left">Flower class</th>
-	<th style="text-align: center">Training images    </th>
-	<th style="text-align: center">Synthetic images before binary classification </th>
-	<th style="text-align: center">Synthetic images after binary classification </th>
+      <th style="text-align: left">Flower class <br/> $ $</th>
+	<th style="text-align: center">Genuine images <br/> $ $</th>
+        <th style="text-align: center">Synthetic images <br/>
+                                       before binary classification </th>
+        <th style="text-align: center">Synthetic images <br/>
+                                       after binary classification </th>
     </tr>
   </thead>
   <tbody>
@@ -441,8 +468,45 @@ corresponds to a single descriptor input to the CGAN generator.*
   </tbody> 
 </table>
 
-*Table 2. Median MS-SSIM scores for 500 random pairs of images per flower class.*
+*Table 2a. Median MS-SSIM scores calculated from 500 random pairs of images
+per flower class.*
 
+
+
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left"> $ $ </th>
+	<th style="text-align: center">Genuine images <br/> $ $ </th>
+        <th style="text-align: center">Synthetic images <br/>
+                                       before binary classification </th>
+        <th style="text-align: center">Synthetic images <br/>
+                                       after binary classification </th>
+    </tr>
+  </thead>
+ <tbody>
+    <tr>
+      <td style="text-align: left">Average  accuracy  </td>
+      <td style="text-align: center"> 0.877 $\pm$ 0.020     </td>
+      <td style="text-align: center"> 0.728 $\pm$ 0.055  </td>
+      <td style="text-align: center"> 0.851 $\pm$ 0.053   </td>
+    </tr>
+
+  </tbody> 
+
+
+    <!---  Add empty line in final table row -->
+
+    <tr>  
+      <td style="text-align: left">$ $</td>
+      <td style="text-align: center">$ $</td>
+      <td style="text-align: center">$ $</td>
+    </tr>
+</table>
+
+*Table 2b. Flower classifier accuracies calculated from genuine and
+synthetic imagery.*
 
 
 
@@ -524,9 +588,7 @@ $\small{(2018)}$.](https://petercho.github.io/blog//deep/learning/2018/04/21/cvm
 15.  [I. Goodfellow, "NIPS 2016 Tutorial: Generative Adversarial Networks,"
 arXiv:1701.001604v4 $\small{(2017)}$.](https://arxiv.org/pdf/1701.00160.pdf)
 
-
-
-*.  [A. Odena, C. Olah and J. Shlens, "Conditional Image Synthesis with
+16.  [A. Odena, C. Olah and J. Shlens, "Conditional Image Synthesis with
 Auxiliary Classifier GANs,"
 arXiv:1610.09585v4 $\small{(2017)}$.](https://arxiv.org/pdf/1610.09585.pdf)
 
