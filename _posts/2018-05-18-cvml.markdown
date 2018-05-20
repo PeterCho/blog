@@ -359,9 +359,27 @@ are consistent with Goodfellow's assertion.
 
 *Fig. 5.  Representative examples of discriminator inputs [top row] and
 generator outputs [bottom row] at train epochs 0, 170, 340, 510 and 680.
-No conditioning upon flower class was performed for this GAN experiment.*
+No conditioning upon flower class was performed for these GAN experiment
+results.*
 
+While the CGAN outputs in figure 4 do not suffer from mode collapse, a
+sizable fraction are noticeably distorted.  So just as we utilized a
+secondary binary classifier to identify badly synthesized bird images in
+our previous posting [14], here we similarly classify five flower-class
+montages to cull poor CGAN results.  We first combine generated daisy,
+dandelion, rose, sunflower and tulip pictures corresponding to a common
+$Z_{dim}$ descriptor into a single image.  Next we label 4000 such CGAN
+combinations as either acceptable or unacceptable depending upon their
+degree of distortion.  Figure 6 displays a few synthesized montages and
+their manually assigned labels.  Finally, we use these labels to train a
+binary classifier which assigns a softmax score to synthetic flower
+montages.
 
+![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/acceptable_unacceptable.png)
+
+*Fig. 6.  Montages of synthetic daisy, dandelion, rose, sunflower and tulip
+pictures manually labeled as acceptable [top 2 rows] and unacceptable
+[bottom 2 rows] CGAN outputs.*
 
 
 
@@ -370,6 +388,64 @@ No conditioning upon flower class was performed for this GAN experiment.*
 *Fig. 7.  Representative examples of conditionally generated flowers with binary
 classification softmax scores exceeding 0.99.  Each row in this figure
 corresponds to a single descriptor input to the CGAN generator.*
+
+
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">Flower class</th>
+	<th style="text-align: center">Training images    </th>
+	<th style="text-align: center">Synthetic images before binary classification </th>
+	<th style="text-align: center">Synthetic images after binary classification </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Daisy</td>
+      <td style="text-align: center"> 0.119 </td>
+      <td style="text-align: center"> 0.175 </td>
+      <td style="text-align: center"> 0.309 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Dandelion</td>
+      <td style="text-align: center"> 0.141 </td>
+      <td style="text-align: center"> 0.211 </td>
+      <td style="text-align: center"> 0.339 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Rose</td>
+      <td style="text-align: center"> 0.132 </td>
+      <td style="text-align: center"> 0.178 </td>
+      <td style="text-align: center"> 0.293 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Sunflower</td>
+      <td style="text-align: center"> 0.143 </td>
+      <td style="text-align: center"> 0.178 </td>
+      <td style="text-align: center"> 0.331 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Tulip</td>
+      <td style="text-align: center"> 0.119 </td>
+      <td style="text-align: center"> 0.169 </td>
+      <td style="text-align: center"> 0.270 </td>
+    </tr>
+
+    <!---  Add empty line in final table row -->
+
+    <tr>  
+      <td style="text-align: left">$ $</td>
+      <td style="text-align: center">$ $</td>
+    </tr>
+  </tbody> 
+</table>
+
+*Table 2. Median MS-SSIM scores for 500 random pairs of images per flower class.*
+
+
+
+
 
 ## Flower classification based on genuine plus generated imagery
 
