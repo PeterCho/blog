@@ -298,20 +298,28 @@ significantly improves GAN training stabilization [12].  As figure 2
 illustrates, our CGAN's loss curves are well-behaved and do not exhibit
 abrupt spikes that often plague GANs with other normalizations.
 
-
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/learning_curves.png)
 *Fig. 2.  Tensorboard plots of generator and discriminator losses as
 functions of training iteration.*
 
-
-
-
+GAN generator networks struggle to produce large output images that appear
+photo-realistic when trained from scratch.  Researchers have recently found
+that training generators to first yield small pictures and then
+progressively grow their pixel size and higher spatial frequency contents
+represents a much better strategy for synthesizing large images [12, 13].
+In order to generate 208 x 208 images, we follow the gradual resolution
+enhancement approach we developed in our previous blog posting [14].
+Training inputs to the discriminator are blurred with a gaussian kernel
+whose radius initially equals 10% of the images' pixel size.  As the
+blurring schedule in figure 3 illustrates, the kernal radius linearly ramps
+down to zero during the first third of training.  No low-pass blurring is
+subsequently performed on input discriminator images during the last
+two-thirds of training.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/blur_schedule.png)
-*Fig. 3.  Discriminator's blurring kernel radius linearly
-decreases from its maximal starting value to zero during the first 250
-training epochs.  No low-pass blurring is subsequently performed on input
-discriminator images.*
+*Fig. 3.  Discriminator's blurring kernel radius linearly decreases from
+its maximal starting value to zero during the first 250 epochs of CGAN
+training.*
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/discrim_gen_io.png)
 
@@ -398,7 +406,12 @@ $\small{(2016)}$.](https://distill.pub/2016/deconv-checkerboard/)
 12. [T. Karras, T. Aila, S. Laine and J. Lehtinen, "Progressive Growing of
 GANs for Improved Quality, Stability and Variation", ICLR $\small{(2018)}$.](https://arxiv.org/pdf/1710.10196.pdf)
 
-13.  [See "Synthesizing Bird Images via Gradual Resolution Enhancement
+13. [H. Zhang, T. Xu, H. Li, S. Zhang, X. Wang, X. Huang and D. Metaxas,
+"StackGAN: Text to Photo-realistic Image Synthesis with Stacked Generative
+Adversarial Networks," arXiv:1612.03242v2
+$\small{(2017)}$.](https://arxiv.org/pdf/1612.03242.pdf)
+
+14.  [See "Synthesizing Bird Images via Gradual Resolution Enhancement
 during GAN Training" post in this blog series
 $\small{(2018)}$.](https://petercho.github.io/blog//deep/learning/2018/04/21/cvml.html)
 
