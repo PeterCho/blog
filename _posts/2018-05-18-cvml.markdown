@@ -10,9 +10,10 @@ use_math: true
 
 Deep neural networks employed for supervised learning problems are data
 hungry.  They commonly involve millions of parameters whose values must be
-fit to training data.  Obtaining high quality labels to feed deep networks
-is generally labor-intensive and expensive.  In the absence of vast
-quantities of labels, neural nets are prone to overfitting.
+fit from limited numbers of training samples.  Obtaining high quality
+labels to feed deep networks is generally labor-intensive and expensive.
+In the absence of vast quantities of labels, neural nets are prone to
+overfitting.
 
 Data augmentation represents a standard technique for readily enlarging a
 training set's volume [1].  For example, input images may be geometrically
@@ -23,14 +24,14 @@ constrained by the distribution characteristics of inference imagery which
 the training corpus should match.
 
 In this blog posting, we focus upon flower classification as an instructive
-laboratory in which to investigate different forms of data augmentation.
-We start with an imagery corpus of daisy, dandelion, rose, sunflower and
-tulip pictures available from a TensorFlow tutorial [2].  We are primarily
+laboratory in which to investigate training data augmentation.  We start
+with an imagery corpus of daisy, dandelion, rose, sunflower and tulip
+pictures available from a TensorFlow tutorial [2].  We are primarily
 interested in classifying views of individual flowers that fill most of the
 image plane.  So photos of flower bunches, flower fields and flower artwork
 are discarded from the original corpus.  We next gather additional internet
 pictures to form a varied training set containing 800 images of each flower
-category.  Moreover, we withold an additional 500+ photos to serve as an
+category.  Moreover, we withold an extra 500+ photos to serve as an
 independent test set.  Representative examples of daisy, dandelion, rose,
 sunflower and tulip pictures with which we work are presented in figure 1.
 
@@ -40,13 +41,13 @@ The different flower types are grouped by column.*
 
 Looking at the flowers in the figure, we observe that gravity's direction
 vector often points vertically downward.  Since significant 2D rotations or
-horizontal flips would yield pictures with gravity oriented in odd
-directions unlikely to be matched in the test set, we avoid these
-particular forms of data augmentation.  Similarly, we choose not to perform
-color or noise modulations since they would likely disrupt useful features
-for distinguishing between the five flower classes.  The only significant
-remaining data augmentation is vertical flipping.  We randomly flip every
-input training flower image with 50% probability.
+vertical flips would yield pictures with gravity oriented in odd directions
+unlikely to be matched in the test set, we avoid these particular forms of
+data augmentation.  Similarly, we choose not to perform color or noise
+modulations since they would likely disrupt useful features for
+distinguishing between the five flower classes.  The only significant
+remaining data augmentation is horizontal flipping.  We randomly flip every
+training flower image with 50% probability.
 
 The training set of 5 $\times$ 800 = 4000 flower images becomes input to a
 Convolutional Neural Network $($CNN$)$ comprised of multiple
@@ -63,19 +64,20 @@ $\qquad$ FBLD: Fully connected, Batch norm, Leaky ReLU, Dropout
 
 $\qquad$ SOFT:  Fully connected, Softmax.
 
-We choose these super-layers' parameters and numbers in a deep network
-configuration so that the CNN's receptive field size R=221 [ref] is
-comparable to input image 208 $\times$ 208 pixel dimensions.
+We choose these super-layers' parameters and numbers within a deep network
+configuration so that the CNN's receptive field size R=221 [6] is
+comparable to input image 208 $\times$ 208 pixel dimensions.  The
+particular CNN architecture we adopt for flower classification is given
+schematically by 3 $\times$ [CBLPD], 6 $\times$ [CBLD], 2 $\times$ [FBLD],
+SOFT.
 
-$\qquad$ 3 $\times$ [CBLPD], 6 $\times$ [CBLD], 2 $\times$ [FBLD], SOFT
-
-We work within the TensorFlow framework [6] to train this particular
-network's 3.2M parameters.  The CNN is subsequently used to perform
-inference on the withheld test set containing 81 daisy, 110 dandelion, 120
-rose, 83 sunflower and 110 tulip pictures.  Since the networks' weights are
+We work within the TensorFlow framework [7] to train this network's 3.2M
+parameters.  The CNN is subsequently used to perform inference on the
+withheld test set containing 81 daisy, 110 dandelion, 120 rose, 83
+sunflower and 110 tulip pictures.  Since the networks' weights are
 initialized with random values, inference accuracy fluctuates depending
-upon training experiment and terminal epoch number.  But on average, the
-CNN classifies the five flower types with 87.7% accuracy for the test set.
+upon training experiment and terminal epoch number.  But on average, our
+CNN classifies the five flower types in the test set with 87.7% accuracy.
 
 ## Conditional GAN flower synthesis
 
@@ -83,21 +85,21 @@ Conventional data augmentation yields a relatively limited variety of new
 training samples.  As Generative Adversarial Networks $($GANs$)$ have grown
 more sophisticated and stable over the past few years, a number of
 researchers have recently started investigating whether more substantial
-data augmentation can be achieved via GAN imagery synthesis [7-9].  In this
+data augmentation can be achieved via GAN imagery synthesis [8-10].  In this
 section, we develop a GAN that produces daisy, dandelion, rose, sunflower
 and tulip pictures.  In the following section, we assess its utility for
 flower classification.
 
 We work with a Conditional GAN $($CGAN$)$ architecture in which class label
 metadata is supplied as inputs to both the generator and discriminator
-neural networks [10].  Flower labels are first converted into 5-dimensional
+networks [11].  Flower labels are first converted into 5-dimensional
 one-hot vectors.  For the generator network, the one-hot vector is simply
-appended onto the input descriptor vector.  For the discriminator network,
-the one-hot vector is promoted to a one-hot set of image planes.  The
-flower-class planes are subsequently concatenated with the three RGB planes
-for the input image along the channels axis.  As the GAN architecture in
-Table 1 illustrates, the conditional metadata flows through both the
-generator and discriminator networks:
+appended onto the input descriptor.  For the discriminator network, the
+one-hot vector is promoted to a one-hot set of image planes.  The
+flower-class planes are subsequently concatenated with the input image's
+three RGB planes along the channels axis.  The conditional metadata
+consequently flows through both the generator and discriminator networks as
+the GAN architecture in Table 1 illustrates:
 
 <table style="width:100%">
   <thead>
@@ -222,7 +224,7 @@ iii.  We experimented with two different types of "up"-convolution in the
 generator network.  We tried transposed convolution as well as upscaling
 via nearest neighbor interpolation followed by conventional convolution.
 Since the former yielded checkerboard artifacts in synthesized flower
-pictures, we adopted the latter approach [11].
+pictures, we adopted the latter approach [12].
 
 iv.  CGAN training depends upon several hyperparameters.
 Empirically-derived hyperparameter values are tabulated below:
@@ -294,7 +296,7 @@ Empirically-derived hyperparameter values are tabulated below:
 </table>
 
 v.  Pixelwise normalization within generator and discriminator superlayers
-significantly improves GAN training stabilization [12].  As figure 2
+significantly improves GAN training stabilization [13].  As figure 2
 illustrates, our CGAN's loss curves are well-behaved and do not exhibit
 abrupt spikes that often plague GANs with other normalizations.
 
@@ -305,16 +307,15 @@ functions of training iteration.*
 GAN generator networks struggle to produce large output images that appear
 photo-realistic when trained from scratch.  Researchers have recently found
 that training generators to first yield small pictures and then
-progressively grow their pixel size and higher spatial frequency contents
-provides a much better strategy for synthesizing large images [12, 13].  In
-order to generate 208 x 208 images, we follow the gradual resolution
-enhancement approach developed in our previous blog posting [14].  Training
-inputs to the discriminator are blurred with a gaussian kernel whose radius
-initially equals 10% of the images' pixel size.  As the blurring schedule
-in figure 3 illustrates, the kernal radius linearly ramps down to zero
-during the first third of training.  No low-pass blurring is subsequently
-performed on input discriminator images during the last two-thirds of
-training.
+progressively grow their pixel size and spatial frequency contents provides
+a much better strategy for synthesizing large images [13, 14].  In order to
+generate 208 x 208 images, we follow the gradual resolution enhancement
+approach developed in our previous blog posting [15].  Training inputs to
+the discriminator are blurred with a gaussian kernel whose radius initially
+equals 10% of the images' pixel size.  As the blurring schedule in figure 3
+illustrates, the kernal radius linearly ramps down to zero during the first
+third of training.  No low-pass blurring is subsequently performed on input
+discriminator images during the last two-thirds of training.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/blur_schedule.png)
 *Fig. 3.  Discriminator's blurring kernel radius linearly decreases from
@@ -341,19 +342,19 @@ training epochs 0, 170, 340, 510 and 680.*
 
 It is interesting to compare these Conditional GAN results with analogous
 outputs where no flower class labels are supplied to the GAN.  Our
-motivation to do so stems from a remark made by Goodfellow in his 2016 NIPS
-tutorial on Generative Adversarial Networks [15]: "Using labels in any way,
-shape or form almost always results in a dramatic improvement in the
+motivation for doing so stems from a remark made by Goodfellow in his 2016
+NIPS tutorial on Generative Adversarial Networks [16]: "Using labels in any
+way, shape or form almost always results in a dramatic improvement in the
 subjective quality of the samples generated by the model."  To check this
-comment, we ran four independent training experiments using the same
-network architectures and hyperparameters as described above.  But we
-suppressed the conditional metadata inputs to the generator and
-discriminator and effectively worked with one combined rather than five
-differentiated flower classes.  The learning curves from these four
-experiments looked qualitatively similar to those in figure 2.  But
-generator outputs from all four experiments exhibited catastrophic mode
-collapse after 750 training epochs $($see figure 5$)$.  So these findings
-are consistent with Goodfellow's assertion.
+comment, we ran four independent training experiments using the same GAN
+architectures and hyperparameters as described above.  But we suppressed
+the conditional metadata inputs to the generator and discriminator and
+effectively worked with one combined rather than five differentiated flower
+classes.  The learning curves from these four experiments looked
+qualitatively similar to those in figure 2.  But generator outputs from all
+four experiments exhibited catastrophic mode collapse after 750 training
+epochs $($see figure 5$)$.  So these findings are consistent with
+Goodfellow's assertion.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/flower_1class.png)
 
@@ -363,15 +364,15 @@ No conditioning upon flower class was performed for these GAN experiment
 results.*
 
 While the CGAN outputs in figure 4 do not suffer from mode collapse, a
-sizable fraction are noticeably distorted.  So just as we utilized a
+sizable fraction are significantly distorted.  So just as we utilized a
 secondary binary classifier to identify badly synthesized bird images in
-our previous posting [14], here we similarly classify five flower-class
-montages to cull poor CGAN results.  We first combine generated daisy,
-dandelion, rose, sunflower and tulip pictures corresponding to a common
-$Z_{dim}$ descriptor into a single image.  Next we label 4000 such CGAN
-combinations as either acceptable or unacceptable depending upon their
-degree of distortion.  Figure 6 displays a few synthesized montages and
-their manually assigned labels.
+our previous posting [14], here we similarly classify five-flower montages
+to cull poor CGAN results.  We first combine generated daisy, dandelion,
+rose, sunflower and tulip pictures corresponding to a common $Z_{dim}$
+descriptor into a single image.  Next we label 4000 such CGAN combinations
+as either acceptable or unacceptable depending upon their degree of
+distortion.  Figure 6 displays a few synthesized montages and their
+manually assigned labels.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/acceptable_unacceptable.png)
 
@@ -383,37 +384,38 @@ The labels are used to train a binary classifier which assigns a softmax
 score to synthetic flower montages.  To minimize distortions in synthesized
 outputs, we reject any montage with softmax score less than 0.99.  Examples
 of CGAN-generated flowers passing this threshold cut are shown in figure 7.
-Each row in the figure corresponds to a single $Z_{dim}$ descriptor input
-to the CGAN generator.  Generated daisy, dandelion, rose, sunflower and
-tulip pictures associated with the same descriptor exhibit noticeable
-similarities in their gross shapes, background contents and even foreground
-colorings.  Each input noise vector to a CGAN consequently yields a
-meaningful "family" of conditional output views.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/binary_classified_5flowers_montage.png)
 *Fig. 7.  Representative examples of conditionally generated 208 $\times$
 208 flower images with binary classification softmax scores exceeding 0.99.
 Five different flower types are grouped by column.*
 
+Each row in the figure corresponds to a single $Z_{dim}$ descriptor input
+to the CGAN generator.  Generated daisy, dandelion, rose, sunflower and
+tulip pictures associated with the same descriptor exhibit noticeable
+similarities in their gross shapes, background contents and even foreground
+colorings.  Individual noise vector inputs to a CGAN consequently yield
+meaningful "families" of conditional output views.
+
 The secondary binary classifier successfully rejects grossly distorted CGAN
 outputs.  But it also diminishes overall variety among synthesized
-pictures.  To measure diversity within image sets, we follow ref. [16] and
+pictures.  To measure diversity within image sets, we follow ref. [17] and
 adopt multi-scale structure similarity $($MS-SSIM$)$ as an approximate but
 useful perceptual metric.  MS-SSIM evalutes the similarity between two
-images on a scale between 0 [radically different] to 1 [completely
-identical].  For each flower class, we compute the median MS-SSIM score for
-500 random pairs of images as a measure of intra-class diversity.
+images on a scale from 0 [radically different] to 1 [completely identical].
+For each flower class, we compute the median MS-SSIM score for 500 random
+pairs of images as a measure of intra-class diversity.
 
 Table 2a lists median MS-SSIM values for our five flower classes among
-genuine images as well as synthetic images before and after binary
+genuine images as well as synthesized views before and after binary
 classification.  Not surprisingly, its scores indicate CGAN images filtered
 by the secondary binary classifier are less diverse than their pre-filter
 progenitors.  Table 2b lists averaged flower classifier accuracies for the
 same three categories of images.  Not surprisingly, its scores indicate
 CGAN images filtered by the secondary binary classifier are more
 photo-realistic than their pre-filter progenitors.  The generative and
-discriminative figures of merit in these two tables provide quantitative
-measures analogous to recall and precision.
+discriminative figures of merit in these two tables are analogous to recall
+and precision.
 
 <table style="width:100%">
   <thead>
@@ -530,37 +532,37 @@ synthetic imagery.*
 
 With a CGAN flower generator in hand, we have a new source of training
 imagery that requires no human effort to label.  CGAN-synthesized daisy,
-dandelion, rose, sunflower and tulip images may be combined with the
-original genuine pictures to train new flower classifiers.  Table 2b
-indicates that the discriminative value of synthetic pictures filtered by
-the secondary binary classifier is comparable to that of genuine views.
-But table 2a demonstrates that the diversity of CGAN flowers is
-significantly less than that of genuine flowers.  So we may reasonably
-expect CGAN data augmentation to initially improve classifier performance.
-But as artifical flowers overwhelm genuine flowers within enlarged training
-corpera, we anticipate further CGAN augmentation will hurt classification.
+dandelion, rose, sunflower and tulip pictures may be combined with the
+original genuine photos to train new flower classifiers.  Table 2b
+indicates that the discriminative value of synthetic images filtered by the
+secondary binary classifier is comparable to that of genuine views.  But
+table 2a demonstrates that the diversity of CGAN flowers is significantly
+less than that of genuine flowers.  So we may reasonably expect CGAN data
+augmentation to initially improve classifier performance.  But as artifical
+flowers overwhelm genuine flowers within enlarged training corpera, we
+anticipate further CGAN augmentation will eventually hurt classification.
 
 In order to find the point of diminishing returns, we form five distinct
 training corpera containing the original 4K genuine flower photos along
-with 0K, 4K, 8K, 12K and 16K synthetic images.  The CNN described in the
-first section of this blog posting is then trained with these different
-input sets.  Inference is performed on the withheld set of 500+ genuine
-test images for each trained CNN classifier.  Figure 8 displays individual
-and averaged flower classification accuracies as a function of CGAN data
-augmentation.
+with 0K, 4K, 8K, 12K and 16K synthetic images.  The flower classification
+CNN described within the first section of this blog posting is then trained
+with these different input sets.  Inference is performed on the withheld
+set of 500+ genuine test images for each trained CNN classifier.  Figure 8
+displays individual and averaged flower classification accuracies as a
+function of CGAN data augmentation.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/cnn_accur_vs_gan_augmentation.png)
 *Fig. 8.  Flower CNN classification accuracy plotted as a function of
 Conditional GAN data augmentation.*
 
-The classifier's accuracy significantly improves from 87.7% to 91.7% when
-the total number of training images is doubled via augmentation.  Modulo
-statistical fluctuations, it modestly continues to increase up to 92.9%
-when the training corpus is quadrupled in size.  But further augmentation
-with synthetic imagery leads to a decline in classification performance.
-So with our particular CNN operating on daisy, dandelion, rose, sunflower
-and tulip pictures, we find CGAN data augmentation improves flower
-classification accuracy by more than 5%.
+The flower classifier's accuracy significantly improves from 87.7% to 91.7%
+when the total number of training images is doubled via augmentation.
+Modulo statistical fluctuations, it continues to increase up to 92.9% when
+the training corpus is quadrupled in size.  But further augmentation with
+synthetic imagery leads to a decline in classification performance.  So for
+our particular CNN operating on 208 $\times$ 208 pictures of daisies,
+dandelions, roses, sunflowers and tulips, we find CGAN data augmentation
+improves flower classification accuracy by more than 5%.
 
 In closing, we note that "real-world" training sets are often imbalanced
 among different classes.  Practical problems can render some classifier
@@ -593,44 +595,47 @@ R. Salakhutdinov, "Dropout: A Simple Way to Prevent Neural Networks from
 Overfitting," Journal of Machine Learning Research $\bf {15}$
 $\small{(2014)}$.](https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf)
 
-6.  [TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+6.  [D.H.T Hien, "A guide to receptive field arithmetic for Convolutional
+Neural Networks," $\small{(2017)}$.](https://medium.com/@nikasa1889/a-guide-to-receptive-field-arithmetic-for-convolutional-neural-networks-e0f514068807)
 
-7.  [A. Antoniou, A. Storkey and H. Edwards, "Data Augmentation Generative
+7.  [TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+
+8.  [A. Antoniou, A. Storkey and H. Edwards, "Data Augmentation Generative
 Adversarial Networks," 
 arXiv:1711.043040v3 $\small{(2018)}$.](https://arxiv.org/pdf/1711.04340.pdf)
 
-8.  [G. Mariani, F. Scheidegger, R. Istrate, C. Bekas and C. Malossi,
+9.  [G. Mariani, F. Scheidegger, R. Istrate, C. Bekas and C. Malossi,
 "BAGAN: Data Augmentation with Balancing GAN,"
 arXiv:1803.09655v1 $\small{(2018)}$.](https://arxiv.org/pdf/1803.09655.pdf)
 
-9.  [M. Frid-Adar, E. Klang, M. Amitai, J. Goldberger and H. Greenspan,
+10.  [M. Frid-Adar, E. Klang, M. Amitai, J. Goldberger and H. Greenspan,
 "Synthetic Data Augmentation using GAN for Improved Liver Lesion
 Classification," arXiv:1801.02385v1
 $\small{(2018)}$.](https://arxiv.org/pdf/1801.02385.pdf)
 
-10.  [M. Mirza and S. Osindero, "Conditional Generative Adversarial Nets,"
+11.  [M. Mirza and S. Osindero, "Conditional Generative Adversarial Nets,"
 arXiv:1411.1784v1 $\small{(2014)}$.](https://arxiv.org/pdf/1411.1784.pdf)
 
-11. [A. Odena, V. Dumoulin and C. Olah, "Deconvolution and Checkerboard
+12. [A. Odena, V. Dumoulin and C. Olah, "Deconvolution and Checkerboard
 Artifacts," Distill
 $\small{(2016)}$.](https://distill.pub/2016/deconv-checkerboard/)
 
-12. [T. Karras, T. Aila, S. Laine and J. Lehtinen, "Progressive Growing of
+13. [T. Karras, T. Aila, S. Laine and J. Lehtinen, "Progressive Growing of
 GANs for Improved Quality, Stability and Variation", ICLR $\small{(2018)}$.](https://arxiv.org/pdf/1710.10196.pdf)
 
-13. [H. Zhang, T. Xu, H. Li, S. Zhang, X. Wang, X. Huang and D. Metaxas,
+14. [H. Zhang, T. Xu, H. Li, S. Zhang, X. Wang, X. Huang and D. Metaxas,
 "StackGAN: Text to Photo-realistic Image Synthesis with Stacked Generative
 Adversarial Networks," arXiv:1612.03242v2
 $\small{(2017)}$.](https://arxiv.org/pdf/1612.03242.pdf)
 
-14.  [See "Synthesizing Bird Images via Gradual Resolution Enhancement
+15.  [See "Synthesizing Bird Images via Gradual Resolution Enhancement
 during GAN Training" post in this blog series
 $\small{(2018)}$.](https://petercho.github.io/blog//deep/learning/2018/04/21/cvml.html)
 
-15.  [I. Goodfellow, "NIPS 2016 Tutorial: Generative Adversarial Networks,"
+16.  [I. Goodfellow, "NIPS 2016 Tutorial: Generative Adversarial Networks,"
 arXiv:1701.001604v4 $\small{(2017)}$.](https://arxiv.org/pdf/1701.00160.pdf)
 
-16.  [A. Odena, C. Olah and J. Shlens, "Conditional Image Synthesis with
+17.  [A. Odena, C. Olah and J. Shlens, "Conditional Image Synthesis with
 Auxiliary Classifier GANs,"
 arXiv:1610.09585v4 $\small{(2017)}$.](https://arxiv.org/pdf/1610.09585.pdf)
 
