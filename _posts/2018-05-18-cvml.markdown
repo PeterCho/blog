@@ -467,8 +467,8 @@ measures analogous to recall and precision.
   </tbody> 
 </table>
 
-*Table 2a. Median MS-SSIM scores calculated from genuine and synthetic
-imagery per flower class.*
+*Table 2a. Median MS-SSIM scores per flower class calculated from genuine and synthetic
+imagery.*
 
 <table style="width:100%">
   <thead>
@@ -522,27 +522,54 @@ imagery per flower class.*
   </tbody> 
 </table>
 
-*Table 2b. Flower classifier accuracies calculated from genuine and
-synthetic imagery per flower class.*
+*Table 2b. Flower classifier accuracies per flower class calculated from genuine and
+synthetic imagery.*
 
 
 ## Flower classification based on genuine plus generated imagery
 
-Automated systems which make mistakes can be useful if they provide
-reasonable confidence measures of their performance.  For our bird image
-synthesizer, we explored a few different options for quantitatively
-evaluating its renderings.  We began with discriminator probabilities which
-the GAN itself outputs.  But surprisingly, no correlation between generator
-image quality and corresponding discriminator score was evident.  We next
-tried passing generated pictures through a trained autoencoder with the
-hope that it could distinguish between highly distorted versus reasonable
-bird renderings.  This autoencoder approach to GAN quality assessment also
-did not pan out.
+With a CGAN flower generator in hand, we now have a new source of training
+imagery that requires no human effort to label.  We can use the CGAN to
+synthesize arbitrary numbers of daisy, dandelion, rose, sunflower and tulip
+images which may be combined with the original 4K genuine pictures to train
+new flower classifiers.  Table 2b indicates that the discriminative values
+of synthetic images filtered by the secondary binary classifier are
+comparable to those of genuine flower images.  However table 2a
+demonstrates that the diversity of the generated CGAN flowers is
+significantly less than that of the original genuine training imagery
+corpus.  So we may reasonably expect CGAN data augmentation to initially
+improve flower classification performance.  But as numbers of artifical
+flowers overwhelms numbers of genuine flowers within the training corpus,
+we anticipate CGAN data augmentation will hurt flower classification.
+
+In order to chart out the data augmentation landscape, we form five
+distinct training corpera containing the original 4K genuine flower photos
+along with 0K, 4K, 8K, 12K and 16K synthetic images.  The CNN described in
+the first section of this blog posting is then trained with these different
+inputs.  Inference is performed on the withheld set of 500+ genuine test
+images using each of the trained CNN classifiers.  Figure 8 displays
+individual and averaged flower classification accuracies as a function of
+CGAN data augmentation.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/cnn_accur_vs_gan_augmentation.png)
 *Fig. 8.  Flower CNN classification accuracy plotted as a function of
 Conditional GAN data augmentation.*
 
+The classifier's performance noticeably improves from 87.7% to 91.7% when
+the total number of training images is doubled via augmentation.  Modulo
+statistical fluctuations, it modestly continues to increase up to 92.9%
+when the training corpus is quadrupled in size.  But further augmentation
+with CGAN imagery leads to a decline in flower classification accuracy.  So
+with our particular CNN operating on daisy, dandelion, rose, sunflower and
+tulip pictures, we find CGAN data augmentation improves classification
+performance by more than 5%.
+
+In closing, we note that "real-world" training sets are often imbalanced
+among different classes.  Practical considerations can render some
+classifier data inputs more difficult to gather than others.  It would be
+interesting to study how well Conditional GAN data augmentation could help
+compensate for a priori unbalanced training sets.  We leave these questions
+to future work.
 
 ## References
 
