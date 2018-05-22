@@ -11,7 +11,7 @@ use_math: true
 Deep neural networks employed for supervised learning problems are data
 hungry.  They commonly involve millions of parameters whose values must be
 fit from limited numbers of training samples.  Obtaining high quality
-labels to feed deep networks is generally labor-intensive and expensive.
+labels to feed deep networks is typically labor-intensive and expensive.
 In the absence of vast quantities of labels, neural nets are prone to
 overfitting.
 
