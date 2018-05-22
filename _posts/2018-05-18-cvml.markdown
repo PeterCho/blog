@@ -32,8 +32,8 @@ image plane.  So photos of flower bunches, flower fields and flower artwork
 are discarded from the original corpus.  We next gather additional internet
 pictures to form a varied training set containing 800 images of each flower
 category.  Moreover, we withold an extra 500+ photos to serve as an
-independent test set.  Representative examples of daisy, dandelion, rose,
-sunflower and tulip pictures with which we work are presented in figure 1.
+independent test set.  Figure 1 presents representative examples of daisy,
+dandelion, rose, sunflower and tulip pictures with which we work.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/five_flower_classes_montage.png)
 *Fig. 1.  Examples of 208 $\times$ 208 images for five classes of flowers.
@@ -66,10 +66,9 @@ $\qquad$ SOFT:  Fully connected, Softmax.
 
 We choose these super-layers' parameters and numbers within a deep network
 configuration so that the CNN's receptive field size R=221 [6] is
-comparable to input image 208 $\times$ 208 pixel dimensions.  The
-particular CNN architecture we adopt for flower classification is given
-schematically by 3 $\times$ [CBLPD], 6 $\times$ [CBLD], 2 $\times$ [FBLD],
-SOFT.
+comparable to its input image 208 linear pixel size.  The particular CNN
+architecture we adopt for flower classification is schematically given by 3
+$\times$ [CBLPD], 6 $\times$ [CBLD], 2 $\times$ [FBLD], SOFT.
 
 We work within the TensorFlow framework [7] to train this network's 3.2M
 parameters.  The CNN is subsequently used to perform inference on the
@@ -97,9 +96,9 @@ one-hot vectors.  For the generator network, the one-hot vector is simply
 appended onto the input descriptor.  For the discriminator network, the
 one-hot vector is promoted to a one-hot set of image planes.  The
 flower-class planes are subsequently concatenated with the input image's
-three RGB planes along the channels axis.  The conditional metadata
-consequently flows through both the generator and discriminator networks as
-the GAN architecture in Table 1 illustrates:
+three RGB planes along the channels axis.  Conditional metadata
+consequently flows completely through the generator and discriminator
+networks as the GAN architecture in Table 1 illustrates:
 
 <table style="width:100%">
   <thead>
@@ -208,7 +207,7 @@ the GAN architecture in Table 1 illustrates:
 *Table 1.  Generator and discriminator network architectures used to
 synthesize five classes of 208 $\times$ 208 flower images.*
 
-A number of points about this conditional GAN are worth noting:
+A number of points about this Conditional GAN are worth noting:
 
 i.  The generator [discriminator] network contains 6.4M [6.7M] trainable
 variables.  The receptive field size equals 61 pixels for both neural
@@ -304,26 +303,26 @@ abrupt spikes that often plague GANs with other normalizations.
 *Fig. 2.  Tensorboard plots of generator and discriminator losses as
 functions of training iteration.*
 
-GAN generator networks struggle to produce large output images that appear
-photo-realistic when trained from scratch.  Researchers have recently found
-that training generators to first yield small pictures and then
-progressively grow their pixel size and spatial frequency contents provides
-a much better strategy for synthesizing large images [13, 14].  In order to
-generate 208 x 208 images, we follow the gradual resolution enhancement
-approach developed in our previous blog posting [15].  Training inputs to
-the discriminator are blurred with a gaussian kernel whose radius initially
-equals 10% of the images' pixel size.  As the blurring schedule in figure 3
-illustrates, the kernal radius linearly ramps down to zero during the first
-third of training.  No low-pass blurring is subsequently performed on input
-discriminator images during the last two-thirds of training.
+GAN generator networks struggle to produce large output images that look
+even remotely photo-realistic when trained from scratch.  Researchers have
+recently found that training generators to first yield small pictures and
+then progressively grow their pixel size and spatial frequency contents
+provides a much better strategy for synthesizing large images [13, 14].  In
+order to generate 208 x 208 images, we follow the gradual resolution
+enhancement approach developed in our previous blog posting [15].  Training
+inputs to the discriminator are blurred with a gaussian kernel whose radius
+initially equals 10% of the images' pixel size.  As the blurring schedule
+in figure 3 illustrates, the kernal radius linearly ramps down to zero
+during the first third of training.  No low-pass blurring is performed on
+input discriminator images during the last two-thirds of training.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/blur_schedule.png)
 *Fig. 3.  Discriminator's blurring kernel radius linearly decreases from
 its maximal starting value to zero during the first 250 epochs of CGAN
 training.*
 
-Representative examples of discriminator input images are displayed in
-figure 4 at equally spaced epochs during CGAN training.  Corresponding
+Representative examples of genuine image discriminator inputs are displayed
+in figure 4 at equally spaced epochs during CGAN training.  Corresponding
 generator output images are also presented in the figure.  The degree of
 focus of the latter lags behind the former since the generator requires
 training time to respond to the disciminator.  But after 750 epochs,
@@ -334,11 +333,11 @@ input.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/discrim_gen_io.png)
 
-*Fig. 4. [Top row]: Representative examples of discriminator inputs at
-equally spaced intervals during training.  [Bottom five rows]:
-Representative examples of generator outputs conditioned upon different
-flower classes within each row.  Columns in this figure correspond to
-training epochs 0, 170, 340, 510 and 680.*
+*Fig. 4. [Top row]: Representative examples of genuine picture inputs to
+the discriminator at equally spaced intervals during training.  [Bottom
+five rows]: Representative examples of synthetic picture generator outputs
+conditioned upon different flower classes within each row.  Columns in this
+figure correspond to training epochs 0, 170, 340, 510 and 680.*
 
 It is interesting to compare these Conditional GAN results with analogous
 outputs where no flower class labels are supplied to the GAN.  Our
@@ -349,8 +348,8 @@ subjective quality of the samples generated by the model."  To check this
 comment, we ran four independent training experiments using the same GAN
 architectures and hyperparameters as described above.  But we suppressed
 the conditional metadata inputs to the generator and discriminator and
-effectively worked with one combined rather than five differentiated flower
-classes.  The learning curves from these four experiments looked
+effectively worked with one aggregated rather than five differentiated
+flower classes.  The learning curves from these four experiments looked
 qualitatively similar to those in figure 2.  But generator outputs from all
 four experiments exhibited catastrophic mode collapse after 750 training
 epochs $($see figure 5$)$.  So these findings are consistent with
@@ -361,7 +360,7 @@ Goodfellow's assertion.
 *Fig. 5.  Representative examples of discriminator inputs [top row] and
 generator outputs [bottom row] at train epochs 0, 170, 340, 510 and 680.
 No conditioning upon flower class was performed for these GAN experiment
-results.*
+results.  The last two generator montages exhibit mode collapse.*
 
 While the CGAN outputs in figure 4 do not suffer from mode collapse, a
 sizable fraction are significantly distorted.  So just as we utilized a
@@ -410,12 +409,12 @@ Table 2a lists median MS-SSIM values for our five flower classes among
 genuine images as well as synthesized views before and after binary
 classification.  Not surprisingly, its scores indicate CGAN images filtered
 by the secondary binary classifier are less diverse than their pre-filter
-progenitors.  Table 2b lists averaged flower classifier accuracies for the
-same three categories of images.  Not surprisingly, its scores indicate
-CGAN images filtered by the secondary binary classifier are more
-photo-realistic than their pre-filter progenitors.  The generative and
-discriminative figures of merit in these two tables are analogous to recall
-and precision.
+progenitors.  Table 2b lists averaged flower classifier accuracies per
+class for the same three categories of images.  Not surprisingly, its
+scores indicate CGAN images filtered by the secondary binary classifier are
+more photo-realistic than their pre-filter progenitors.  These two tables'
+generative and discriminative figures of merit are analogous to recall and
+precision.
 
 <table style="width:100%">
   <thead>
@@ -571,7 +570,7 @@ interesting to see how well Conditional GAN data augmentation could help
 compensate for *a priori* unbalanced training sets.  In particular,
 training a CGAN from a highly skewed corpus and then using it to rebalance
 the object classes might improve classifier performance.  We leave studying
-such issues to future work.
+such class balancing issues to future work.
 
 ## References
 
