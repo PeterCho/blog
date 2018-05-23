@@ -214,7 +214,7 @@ variables.  The receptive field size equals 61 pixels for both neural
 networks.
 
 ii.  During training, we draw input descriptors for the generator network
-from a list of descriptors tapped from the discrminator's next-to-last
+from a list of descriptors tapped from the discriminator's next-to-last
 superlayer.  During inference, we sample input descriptors from a
 multivariate gaussian distribution whose mean vector and covariance matrix
 are calculated from the list of tapped descriptors.
