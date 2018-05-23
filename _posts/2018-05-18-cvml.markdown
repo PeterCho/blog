@@ -336,8 +336,8 @@ input.
 *Fig. 4. [Top row]: Representative examples of genuine picture inputs to
 the discriminator at equally spaced intervals during training.  [Bottom
 five rows]: Representative examples of synthetic picture generator outputs
-conditioned upon different flower classes within each row.  Columns in this
-figure correspond to training epochs 0, 170, 340, 510 and 680.*
+conditioned upon different flower class labels within each row.  Columns in
+this figure correspond to training epochs 0, 170, 340, 510 and 680.*
 
 It is interesting to compare these Conditional GAN results with analogous
 outputs where no flower class labels are supplied to the GAN.  Our
@@ -358,7 +358,7 @@ Goodfellow's assertion.
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/flower_1class.png)
 
 *Fig. 5.  Representative examples of discriminator inputs [top row] and
-generator outputs [bottom row] at train epochs 0, 170, 340, 510 and 680.
+generator outputs [bottom row] at training epochs 0, 170, 340, 510 and 680.
 No conditioning upon flower class was performed for these GAN experiment
 results.  The last two generator montages exhibit mode collapse.*
 
@@ -542,17 +542,17 @@ flowers overwhelm genuine flowers within enlarged training corpera, we
 anticipate further CGAN augmentation will eventually hurt classification.
 
 In order to find the point of diminishing returns, we form five distinct
-training corpera containing the original 4K genuine flower photos along
-with 0K, 4K, 8K, 12K and 16K synthetic images.  The flower classification
-CNN described within the first section of this blog posting is then trained
+training sets containing the original 4K genuine flower photos along with
+0K, 4K, 8K, 12K and 16K synthetic images.  The flower classification CNN
+described within the first section of this blog posting is then trained
 with these different input sets.  Inference is performed on the withheld
-set of 500+ genuine test images for each trained CNN classifier.  Figure 8
+500+ genuine test images for each trained CNN classifier.  Figure 8
 displays individual and averaged flower classification accuracies as a
 function of CGAN data augmentation.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/cnn_accur_vs_gan_augmentation.png)
 *Fig. 8.  Flower CNN classification accuracy plotted as a function of
-Conditional GAN data augmentation.*
+Conditional GAN data augmentation volume.*
 
 The flower classifier's accuracy significantly improves from 87.7% to 91.7%
 when the total number of training images is doubled via augmentation.
