@@ -167,7 +167,7 @@ networks as the GAN architecture in Table 1 illustrates:
       <td style="text-align: center">208 $\times$ 208 $\times$ $($3 + 5$)$</td>
     </tr>
     <tr>
-      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: left">Conv5, Leaky Relu, stride 2</td>
       <td style="text-align: center">104 $\times$ 104 $\times$ 32</td>
     </tr>
     <tr>
@@ -297,7 +297,8 @@ Empirically-derived hyperparameter values are tabulated below:
 v.  Pixelwise normalization within generator and discriminator superlayers
 significantly improves GAN training stabilization [13].  As figure 2
 illustrates, our CGAN's loss curves are well-behaved and do not exhibit
-abrupt spikes that often plague GANs with other normalizations.
+abrupt spikes that often plague GANs with other normalizations.  Note that
+no normalization is applied within the discrminator's first superlayer.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/learning_curves.png)
 *Fig. 2.  Tensorboard plots of generator and discriminator losses as
