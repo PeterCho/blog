@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Inpainting and Colorizing of Flower Pictures via Conditional Image
+title:  "Inpainting and Colorizing Flower Pictures via Conditional Image
 GANS"
 date:   2018-06-27 12:00:00
 categories: Deep Learning
@@ -8,7 +8,7 @@ use_math: true
 published: false
 ---
 
-## Image translation
+## Image-to-image translation
 
 ![INPAINT]({{site.url}}/blog/images/inpainting_colorization/originals_bboxes_greyscales_montage.png)
 *Fig. 1.  LEFT: Examples from 256 $\times$ 256 flower imagery corpus.
@@ -45,7 +45,9 @@ initialized with random values, inference accuracy fluctuates depending
 upon training experiment and terminal epoch number.  But on average, our
 CNN classifies the five flower types in the test set with 87.7% accuracy.
 
-## Image inpainting
+![INPAINT]({{site.url}}/blog/images/inpainting_colorization/Unet.jpg)
+*Fig. XX.  Schematic diagram for CGAN generator's Unet architecture.  This
+diagram is a minor variant of figure 3 from [Isola].*
 
 <table style="width:100%">
   <thead>
@@ -56,39 +58,117 @@ CNN classifies the five flower types in the test set with 87.7% accuracy.
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: left">Input descriptor + conditional one-hot vector</td>
-      <td style="text-align: center">1 $\times$ 1 $\times$ $(Z_{dim}$ + 5$)$</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Linear proj, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">13 $\times$ 13 $\times$ 256</td>
+      <td style="text-align: left">Input conditional image plane</td>
+      <td style="text-align: center">256 $\times$ 256 $\times$ $($1 or 3$)$</td>
     </tr>
 
     <tr>
-      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">13 $\times$ 13 $\times$ 128</td>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">256 $\times$ 256 $\times$ 16 </td>
     </tr>
     <tr>
-      <td style="text-align: left">Upscale, Conv3, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">26 $\times$ 26 $\times$ 128</td>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">128 $\times$ 128 $\times$ 16 </td>
     </tr>
 
     <tr>
-      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">26 $\times$ 26 $\times$ 64</td>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">128 $\times$ 128 $\times$ 24 </td>
     </tr>
     <tr>
-      <td style="text-align: left">Upscale, Conv3, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">52 $\times$ 52 $\times$ 64</td>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">64 $\times$ 64 $\times$ 24 </td>
     </tr>
 
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">64 $\times$ 64 $\times$ 32 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">32 $\times$ 32 $\times$ 32 </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">32 $\times$ 32 $\times$ 40 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">16 $\times$ 16 $\times$ 40 </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">16 $\times$ 16 $\times$ 48 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">8 $\times$ 8 $\times$ 48 </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">8 $\times$ 8 $\times$ 56 </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Linear projection</td>
+      <td style="text-align: center">1 $\times$ 1 $\times$ $Z_{dim}$ </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">8 $\times$ 8 $\times$ 56 </td>
+    </tr>
     <tr>
       <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">104 $\times$ 104 $\times$ 32</td>
+      <td style="text-align: center">16 $\times$ 16 $\times$ $($56 + 48$)$ </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">16 $\times$ 16 $\times$ 48 </td>
     </tr>
     <tr>
-      <td style="text-align: left">Upscale, Conv5, No norm, Tanh</td>
-      <td style="text-align: center">208 $\times$ 208 $\times$ 3</td>
+      <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">32 $\times$ 32 $\times$ $($48 + 40$)$ </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">32 $\times$ 32 $\times$ 40 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">64 $\times$ 64 $\times$ $($40 + 32$)$ </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">64 $\times$ 64 $\times$ 32 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">128 $\times$ 128 $\times$ $($32 + 24$)$ </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">128 $\times$ 128 $\times$ 24 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">256 $\times$ 256 $\times$ $($24 + 16$)$ </td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu </td>
+      <td style="text-align: center">256 $\times$ 256 $\times$ 16 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, No norm, Tanh</td>
+      <td style="text-align: center">256 $\times$ 256 $\times$ 3</td>
     </tr>
 
     <!---  Add empty line in final table row -->
@@ -100,7 +180,6 @@ CNN classifies the five flower types in the test set with 87.7% accuracy.
 </tbody>
 </table>
 
-
 <table style="width:100%">
   <thead>
     <tr>
@@ -110,28 +189,33 @@ CNN classifies the five flower types in the test set with 87.7% accuracy.
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: left">Input image + conditional image planes</td>
-      <td style="text-align: center">208 $\times$ 208 $\times$ $($3 + 5$)$</td>
+      <td style="text-align: left">Input image planes + conditional image planes</td>
+      <td style="text-align: center">256 $\times$ 256 $\times$ $($3 [input]
++ 1 or 3 [conditional] $)$</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv5, Leaky Relu, stride 2</td>
-      <td style="text-align: center">104 $\times$ 104 $\times$ 32</td>
+      <td style="text-align: center">128 $\times$ 128 $\times$ 16</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
-      <td style="text-align: center">52 $\times$ 52 $\times$ 64</td>
+      <td style="text-align: center">64 $\times$ 64 $\times$ 32</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
-      <td style="text-align: center">26 $\times$ 26 $\times$ 128</td>
+      <td style="text-align: center">32 $\times$ 32 $\times$ 64</td>
     </tr>
     <tr>
-      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 1</td>
-      <td style="text-align: center">26 $\times$ 26 $\times$ 256</td>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">16 $\times$ 16 $\times$ 128</td>
     </tr>
     <tr>
-      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 2</td>
-      <td style="text-align: center">13 $\times$ 13 $\times$ 256</td>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">8 $\times$ 8 $\times$ 256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">4 $\times$ 4 $\times$ 256</td>
     </tr>
     <tr>
       <td style="text-align: left">Linear proj</td>
@@ -152,13 +236,12 @@ CNN classifies the five flower types in the test set with 87.7% accuracy.
 </table>
 
 *Table 1.  Generator and discriminator network architectures used to
-synthesize five classes of 208 $\times$ 208 flower images.*
+synthesize and analyze 256 $\times$ 256 images.*
 
 A number of points about this Conditional GAN are worth noting:
 
-i.  The generator [discriminator] network contains 6.4M [6.7M] trainable
-variables.  The receptive field size equals 61 pixels for both neural
-networks.
+i.  The generator [discriminator] network contains 1.9M [3.8M] trainable
+variables.  
 
 ii.  During training, we draw input descriptors for the generator network
 from a list of descriptors tapped from the discriminator's next-to-last
@@ -185,27 +268,49 @@ Empirically-derived hyperparameter values are tabulated below:
   <tbody>
     <tr>
       <td style="text-align: left">Number of training images</td>
-      <td style="text-align: center"> 8000 </td>
+      <td style="text-align: center"> 41544 [inpainting]; 13848 [colorizing] </td>
     </tr>
     <tr>
       <td style="text-align: left">Training image augmentation</td>
       <td style="text-align: center"> Random horizontal flipping </td>
     </tr>
     <tr>
-      <td style="text-align: left">Number of training epochs</td>
-      <td style="text-align: center"> 750 </td>
+      <td style="text-align: left">Number of training batches</td>
+      <td style="text-align: center"> 75K [inpainting]; 50K [colorizing] </td>
     </tr>
     <tr>
       <td style="text-align: left">Minibatch size</td>
-      <td style="text-align: center">64</td>
+      <td style="text-align: center">36</td>
     </tr>
     <tr>
       <td style="text-align: left">Image pixel size</td>
-      <td style="text-align: center">208 $\times$ 208</td>
+      <td style="text-align: center">256 $\times$ 256</td>
     </tr>
     <tr>
       <td style="text-align: left">Initial blur kernel radius in pixels</td>
-      <td style="text-align: center">20.8</td>
+      <td style="text-align: center">25.6</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Final blur kernel radius in pixels</td>
+      <td style="text-align: center">0</td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Initial L1 loss term coefficient</td>
+      <td style="text-align: center">100.0</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Final L1 loss term coefficient</td>
+      <td style="text-align: center">85.0</td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Initial CGAN loss term coefficient</td>
+      <td style="text-align: center">0.0</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Final CGAN loss term coefficient</td>
+      <td style="text-align: center">0.15</td>
     </tr>
     <tr>
       <td style="text-align: left">Adam optimizer $\beta_1$</td>
@@ -246,6 +351,10 @@ significantly improves GAN training stabilization [13].  As figure 2
 illustrates, our CGAN's loss curves are well-behaved and do not exhibit
 abrupt spikes that often plague GANs with other normalizations.  Note that
 no normalization is applied within the discrminator's first superlayer.
+
+
+## Image inpainting
+
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/blur_schedule.jpg)
 *Fig. XX.  Blur schedule.*

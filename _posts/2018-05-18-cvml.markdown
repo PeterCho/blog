@@ -298,7 +298,7 @@ v.  Pixelwise normalization within generator and discriminator superlayers
 significantly improves GAN training stabilization [13].  As figure 2
 illustrates, our CGAN's loss curves are well-behaved and do not exhibit
 abrupt spikes that often plague GANs with other normalizations.  Note that
-no normalization is applied within the discrminator's first superlayer.
+no normalization is applied within the discriminator's first superlayer.
 
 ![FLOWERCGAN]({{site.url}}/blog/images/flower_cgan/learning_curves.png)
 *Fig. 2.  Tensorboard plots of generator and discriminator losses as
