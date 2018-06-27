@@ -1,0 +1,381 @@
+---
+layout: post
+title:  "Inpainting and Colorizing of Flower Pictures via Conditional Image
+GANS"
+date:   2018-06-27 12:00:00
+categories: Deep Learning
+use_math: true
+published: false
+---
+
+## Image translation
+
+![INPAINT]({{site.url}}/blog/images/inpainting_colorization/originals_bboxes_greyscales_montage.png)
+*Fig. 1.  LEFT: Examples from 256 $\times$ 256 flower imagery corpus.
+CENTER: Randomly sized and colored boxes superposed at random locations
+inside each flower picture.  RIGHT: Greyscale versions of original RGB
+images.*
+
+The training set of 5 $\times$ 800 = 4000 flower images becomes input to a
+Convolutional Neural Network $($CNN$)$ comprised of multiple
+"super-layers".  Combinations of convolutions with 5 $\times$ 5 kernels,
+batch normalization [3], leaky ReLU activation [4], 2 $\times$ 2 pooling,
+Dropout [5], fully connected and softmax layers form useful CNN building
+blocks:
+
+$\qquad$ CBLPD: Conv5, Batch norm, Leaky ReLU, Pool, Dropout
+
+$\qquad$ CBLD: Conv5, Batch norm, Leaky ReLU, Dropout
+
+$\qquad$ FBLD: Fully connected, Batch norm, Leaky ReLU, Dropout
+
+$\qquad$ SOFT:  Fully connected, Softmax.
+
+We choose these super-layers' parameters and numbers within a deep network
+configuration so that the CNN's receptive field size R=221 [6] is
+comparable to its input image 208 linear pixel size.  The particular CNN
+architecture we adopt for flower classification is schematically given by 3
+$\times$ [CBLPD], 6 $\times$ [CBLD], 2 $\times$ [FBLD], SOFT.
+
+We work within the TensorFlow framework [7] to train this network's 3.2M
+parameters.  The CNN is subsequently used to perform inference on the
+withheld test set containing 81 daisy, 110 dandelion, 120 rose, 83
+sunflower and 110 tulip pictures.  Since the networks' weights are
+initialized with random values, inference accuracy fluctuates depending
+upon training experiment and terminal epoch number.  But on average, our
+CNN classifies the five flower types in the test set with 87.7% accuracy.
+
+## Image inpainting
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">CGAN generator superlayer</th>
+      <th style="text-align: center">Output shape [width $\times$ height $\times$ channels] </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Input descriptor + conditional one-hot vector</td>
+      <td style="text-align: center">1 $\times$ 1 $\times$ $(Z_{dim}$ + 5$)$</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Linear proj, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">13 $\times$ 13 $\times$ 256</td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">13 $\times$ 13 $\times$ 128</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Upscale, Conv3, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">26 $\times$ 26 $\times$ 128</td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">26 $\times$ 26 $\times$ 64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Upscale, Conv3, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">52 $\times$ 52 $\times$ 64</td>
+    </tr>
+
+    <tr>
+      <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
+      <td style="text-align: center">104 $\times$ 104 $\times$ 32</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Upscale, Conv5, No norm, Tanh</td>
+      <td style="text-align: center">208 $\times$ 208 $\times$ 3</td>
+    </tr>
+
+    <!---  Add empty line in final table row -->
+
+    <tr>  
+      <td style="text-align: left">$ $</td>
+      <td style="text-align: center">$ $</td>
+    </tr>
+</tbody>
+</table>
+
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">CGAN discriminator superlayer</th>
+      <th style="text-align: center">Output shape [width $\times$ height $\times$ channels] </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Input image + conditional image planes</td>
+      <td style="text-align: center">208 $\times$ 208 $\times$ $($3 + 5$)$</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Leaky Relu, stride 2</td>
+      <td style="text-align: center">104 $\times$ 104 $\times$ 32</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">52 $\times$ 52 $\times$ 64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv5, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">26 $\times$ 26 $\times$ 128</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 1</td>
+      <td style="text-align: center">26 $\times$ 26 $\times$ 256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Conv3, Pixelwise norm, Leaky Relu, stride 2</td>
+      <td style="text-align: center">13 $\times$ 13 $\times$ 256</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Linear proj</td>
+      <td style="text-align: center">1 $\times$ 1 $\times$ $Z_{dim}$</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Linear proj, Sigmoid</td>
+      <td style="text-align: center">1 $\times$ 1 $\times$ 1</td>
+    </tr>
+
+    <!---  Add empty line in final table row -->
+
+    <tr>
+      <td style="text-align: left">$ $</td>
+      <td style="text-align: center">$ $</td>
+    </tr>
+</tbody>
+</table>
+
+*Table 1.  Generator and discriminator network architectures used to
+synthesize five classes of 208 $\times$ 208 flower images.*
+
+A number of points about this Conditional GAN are worth noting:
+
+i.  The generator [discriminator] network contains 6.4M [6.7M] trainable
+variables.  The receptive field size equals 61 pixels for both neural
+networks.
+
+ii.  During training, we draw input descriptors for the generator network
+from a list of descriptors tapped from the discriminator's next-to-last
+superlayer.  During inference, we sample input descriptors from a
+multivariate gaussian distribution whose mean vector and covariance matrix
+are calculated from the list of tapped descriptors.
+
+iii.  We experimented with two different types of "up"-convolution in the
+generator network.  We tried transposed convolution as well as upscaling
+via nearest neighbor interpolation followed by conventional convolution.
+Since the former yielded checkerboard artifacts in synthesized flower
+pictures, we adopted the latter approach [12].
+
+iv.  CGAN training depends upon several hyperparameters.
+Empirically-derived hyperparameter values are tabulated below:
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align: left">Hyperparameter description</th>
+      <th style="text-align: center">Value    </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Number of training images</td>
+      <td style="text-align: center"> 8000 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Training image augmentation</td>
+      <td style="text-align: center"> Random horizontal flipping </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Number of training epochs</td>
+      <td style="text-align: center"> 750 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Minibatch size</td>
+      <td style="text-align: center">64</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Image pixel size</td>
+      <td style="text-align: center">208 $\times$ 208</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Initial blur kernel radius in pixels</td>
+      <td style="text-align: center">20.8</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Adam optimizer $\beta_1$</td>
+      <td style="text-align: center">0.0 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Adam optimizer $\beta_2$</td>
+      <td style="text-align: center">0.99</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Base learning rate</td>
+      <td style="text-align: center">0.0001 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Descriptor dimension $Z_{dim}$</td>
+      <td style="text-align: center">128 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Standard deviation for weight-initializing gaussian</td>
+      <td style="text-align: center">0.02 </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Leaky Relu slope coefficient</td>
+      <td style="text-align: center">0.2</td>
+    </tr>
+
+    <!---  Add empty line in final table row -->
+
+    <tr>  
+      <td style="text-align: left">$ $</td>
+      <td style="text-align: center">$ $</td>
+    </tr>
+  </tbody> 
+</table>
+
+v.  Pixelwise normalization within generator and discriminator superlayers
+significantly improves GAN training stabilization [13].  As figure 2
+illustrates, our CGAN's loss curves are well-behaved and do not exhibit
+abrupt spikes that often plague GANs with other normalizations.  Note that
+no normalization is applied within the discrminator's first superlayer.
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/blur_schedule.jpg)
+*Fig. XX.  Blur schedule.*
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/loss_coeffs_schedule.jpg)
+*Fig. XX.  Time evolution of L1 and GAN loss term coefficients.*
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/learning_curves.jpg)
+*Fig. XX.  Generator and discriminator learning curves.*
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution.jpg)
+*Fig. XX.  Sample image inputs to discriminator and generator and
+corresponding generator outputs at equally spaced intervals during training.*
+
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/inpainting_five_frames_0328_1261.png)
+*Fig. AA.  COL 1: Randomly sized and colored boxes superposed on inference
+flower images.  COL 2: Images reconstructed via a pure autoencoder loss
+function.  COL 3: Images reconstructed via a pure GAN loss function. COL 4:
+Images reconstructed via a loss function with autoencoder and GAN terms
+whose coefficients follow the schedule in figure XX.  COL 5: Original
+flower images.*
+
+
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/decent_inpaintings_montage.png)
+*Fig. BB.  LEFT: Randomly sized and colored boxes superposed on various
+inference flower images.  CENTER: Images inpainted by the trained
+conditional image GAN generator.  RIGHT: Original images.*
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/bad_inpaintings_montage.png)
+*Fig. CC. Poor GAN inpainting results.  Columns in this figure follow the
+pattern of figure BB.*
+
+
+
+## Image colorizing
+
+In closing, we note that "real-world" training sets are often imbalanced
+among different classes.  Practical problems can render some classifier
+data inputs much more difficult to gather than others.  It would be
+interesting to see how well Conditional GAN data augmentation could help
+compensate for *a priori* unbalanced training sets.  In particular,
+training a CGAN from a highly skewed corpus and then using it to rebalance
+the object classes might improve classifier performance.  We leave studying
+such class balancing issues to future work.
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/qualitatively_similar_colorizations_montage.png)
+*Fig. DD.  LEFT COLS: Greyscale versions of various inference flower images.
+CENTER COLS: Images colorized by the trained conditional image GAN
+generator.  RIGHT COLS: Original images.*
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/nontrivially_different_colorizations_montage.png)
+*Fig. EE.  LEFT COLS: Greyscale versions of various inference flower images.
+CENTER COLS: Images colorized by the trained conditional image GAN
+generator.  RIGHT COLS: Original images.*
+
+
+
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/bad_colorizations_montage.png)
+*Fig. FF. Poor GAN colorizing results.  Columns in this figure follow the
+pattern of figures DD and EE.*
+
+
+
+## References
+
+
+1.  [A. Krizhevsky, I. Sutskever and G.E. Hinton, "Imagenet Classification
+with Deep Convolutional Neural Networks," NIPS
+$\small{(2012)}$.](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+
+2. [See TensorFlow tutorial "How to Retrain an Image Classifier for New
+Categories."](https://www.tensorflow.org/tutorials/image_retraining)
+
+3.  [S. Ioffe and C. Szegedy, "Batch Normalization: Accelerating Deep
+Network Training by Reducing Internal Covariate Shift," 32nd ICML 
+$\small{(2015)}$.](https://arxiv.org/abs/1502.03167)
+
+4.  [A.L. Maas, A.Y. Hannun and A.Y. Ng, "Rectifier Nonlinearities Improve
+Neural Network Acoustic Models", 30th ICML $\small{(2013)}$.](https://web.stanford.edu/~awni/papers/relu_hybrid_icml2013_final.pdf)
+
+5.  [N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever and
+R. Salakhutdinov, "Dropout: A Simple Way to Prevent Neural Networks from
+Overfitting," Journal of Machine Learning Research $\bf {15}$
+$\small{(2014)}$.](https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf)
+
+6.  [D.H.T Hien, "A guide to receptive field arithmetic for Convolutional
+Neural Networks," $\small{(2017)}$.](https://medium.com/@nikasa1889/a-guide-to-receptive-field-arithmetic-for-convolutional-neural-networks-e0f514068807)
+
+7.  [TensorFlow: An open-source software library for Machine Intelligence.](https://www.tensorflow.org/)
+
+8.  [A. Antoniou, A. Storkey and H. Edwards, "Data Augmentation Generative
+Adversarial Networks," 
+arXiv:1711.043040v3 $\small{(2018)}$.](https://arxiv.org/pdf/1711.04340.pdf)
+
+9.  [G. Mariani, F. Scheidegger, R. Istrate, C. Bekas and C. Malossi,
+"BAGAN: Data Augmentation with Balancing GAN,"
+arXiv:1803.09655v1 $\small{(2018)}$.](https://arxiv.org/pdf/1803.09655.pdf)
+
+10.  [M. Frid-Adar, E. Klang, M. Amitai, J. Goldberger and H. Greenspan,
+"Synthetic Data Augmentation using GAN for Improved Liver Lesion
+Classification," arXiv:1801.02385v1
+$\small{(2018)}$.](https://arxiv.org/pdf/1801.02385.pdf)
+
+11.  [M. Mirza and S. Osindero, "Conditional Generative Adversarial Nets,"
+arXiv:1411.1784v1 $\small{(2014)}$.](https://arxiv.org/pdf/1411.1784.pdf)
+
+12. [A. Odena, V. Dumoulin and C. Olah, "Deconvolution and Checkerboard
+Artifacts," Distill
+$\small{(2016)}$.](https://distill.pub/2016/deconv-checkerboard/)
+
+13. [T. Karras, T. Aila, S. Laine and J. Lehtinen, "Progressive Growing of
+GANs for Improved Quality, Stability and Variation", ICLR $\small{(2018)}$.](https://arxiv.org/pdf/1710.10196.pdf)
+
+14. [H. Zhang, T. Xu, H. Li, S. Zhang, X. Wang, X. Huang and D. Metaxas,
+"StackGAN: Text to Photo-realistic Image Synthesis with Stacked Generative
+Adversarial Networks," arXiv:1612.03242v2
+$\small{(2017)}$.](https://arxiv.org/pdf/1612.03242.pdf)
+
+15.  [See "Synthesizing Bird Images via Gradual Resolution Enhancement
+during GAN Training" post in this blog series
+$\small{(2018)}$.](https://petercho.github.io/blog//deep/learning/2018/04/21/cvml.html)
+
+16.  [I. Goodfellow, "NIPS 2016 Tutorial: Generative Adversarial Networks,"
+arXiv:1701.001604v4 $\small{(2017)}$.](https://arxiv.org/pdf/1701.00160.pdf)
+
+17.  [A. Odena, C. Olah and J. Shlens, "Conditional Image Synthesis with
+Auxiliary Classifier GANs,"
+arXiv:1610.09585v4 $\small{(2017)}$.](https://arxiv.org/pdf/1610.09585.pdf)
+
+
