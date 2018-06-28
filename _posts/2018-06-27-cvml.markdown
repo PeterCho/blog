@@ -31,8 +31,8 @@ blurring and loss-term coefficient modulation.  We find such temporal
 evolution improves inpainting results' quality.  Furthermore, we
 incorporate random noise descriptor inputs into the CGAN generator.  This
 source of non-determinism can lead to synthesized RGB outputs from
-greyscale inputs which may look more realistic than the original colored
-image progenitors.
+greyscale inputs which may look more realistic than the colored image
+progenitors.
 
 We work with a corpus of O$($15K$)$ 256 $\times$ 256 flower images
 aggregated from the Oxford 17 and Oxford 102 datasets [refs], the Jena 30
@@ -41,21 +41,21 @@ dataset [refs] and other pictures we manually harvested from the internet
 colors at random locations in each flower image.  This variable masking
 procedure is performed three times for every input picture.  For colorizing
 experiments, we convert each RGB image into a unique greyscale counterpart
-via a luminosity transformation.  Representative examples of original,
+via a luminosity transformation.  Representative examples of progenitor,
 partly masked and greyscale versions of flower images are displayed in
 figure 1.
 
 ![INPAINT]({{site.url}}/blog/images/inpainting_colorization/originals_bboxes_greyscales_montage.png)
-*Fig. 1.  LEFT: Examples from our 256 $\times$ 256 flower imagery corpus.
-CENTER: Randomly sized and colored boxes superposed at various locations
-inside each picture.  RIGHT: Greyscale versions of original RGB images.*
+*Fig. 1.  LEFT: Example 256 $\times$ 256 flower images.  CENTER: Randomly
+sized and colored boxes superposed at various locations inside each
+progenitor picture.  RIGHT: Greyscale versions of progenitor images.*
 
 
 The downgraded images become conditional inputs to a generator "U-net"
 which is schematically illustrated in figure 2.  This network's
 encoder-decoder architecture incorporates skip connections between
 corresponding layers before and after the middle bottleneck [Unet ref].
-Isola *et al.* found such skip connections lead to much higher quality
+Isola *et al.* found such skip connections yield much higher quality
 synthesized images.  Ideally, the generator should produce output pictures
 which look as realistic as the deformed inputs' progenitors.
 
@@ -206,9 +206,9 @@ are listed in Table 1a:
 *Table 1a.  Generator network used to conditionally synthesize 256 $\times$
 256 images for inpainting applications.*
 
-The CGAN's discriminator network has a relatively simple architecture that
-converts pairs of original and conditional images into probabilities that
-the progenitor picture is genuine rather than synthetic:
+The CGAN's discriminator network has a simpler architecture which converts
+pairs of progenitor and conditional images into probabilities that the
+progenitor is a genuine rather than synthetic picture:
 
 <table style="width:100%">
   <thead>
@@ -260,7 +260,7 @@ the progenitor picture is genuine rather than synthetic:
 </tbody>
 </table>
 
-*Table 1b.  Discriminator network used to analyze $($original,
+*Table 1b.  Discriminator network used to analyze $($progenitor,
 conditional$)$ image pairs for inpainting applications.*
 
 Several points about this Conditional GAN are worth noting:
@@ -268,24 +268,73 @@ Several points about this Conditional GAN are worth noting:
 i.  The generator [discriminator] network contains 1.9M [3.8M] trainable
 variables.  
 
-ii.  Pixelwise normalization within generator and discriminator superlayers
-significantly improves GAN training stabilization [ref].
+ii.  Pixelwise normalizations in the generator and discriminator
+superlayers significantly stabilize CGAN training [ref].  In particular, we
+never observed discriminator or generator learning curves exhibit
+discontinuous spikes when pixelwise normalizations are utilized.  
 
-iii. Skip connections indicated within generator superlayers are implemented
-by concatenating encoder tensors onto similarly-sized decoder tensors.
+iii. Skip connections between generator superlayers are implemented by
+concatenating encoder tensors onto similarly-sized decoder tensors.
 
 iv.  For colorizing applications, input conditional image planes have 1
 rather than 3 color channels.
 
 v.  Optional noise descriptors may be introduced into the CGAN generator
 via concatenation with the bottleneck layer.  For colorizing experiments,
-we choose to concatenate the bottleneck's $Z_{dim}$ tensor with a second
-random tensor with the same dimensions.  In this case, we double the number
-of channels following the bottleneck layer in Table 1a as needed.  
+we choose to combine the bottleneck's $Z_{dim}$ tensor and a second random
+tensor with the same dimensions.  In this case, channel numbers following
+the bottleneck layer in Table 1a are doubled as needed.
 
-We work within the TensorFlow framework [] to train this network's 5.6M
-parameters.  CGAN training depends upon several hyperparameters whose
-empirically-derived  values are listed below:
+We split the progenitor and deformed flower pictures into 90% training and
+10% testing subsets.  The CGAN network's parameters are then trained from
+scratch via the TensorFlow deep learning framework [ref].  To facilitate
+generation of relatively large 256 $\times$ 256 images, we employ the
+gradual resolution enhancement approach developed in a previous blog
+posting [ref].  Image inputs to the discriminator and generator are blurred
+with a gaussian kernel whose radius initially equals 10% of their pixel
+size.  As the blurring schedule in figure XX illustrates, the kernel radius
+ramps down to zero during the first 15% of training.  No low-pass blurring
+is subsequenty performed on input images.
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/blur_schedule.jpg)
+*Fig. XX.  Blurring kernel radius for discriminator and generator image
+inputs linearly decreases to zero during the first 15% of CGAN training.*
+
+Network training attempts to minimize a loss function containing distinct
+"photo-reconstruction" and "photo-realism" terms [1]:
+
+$$ {\cal{L}}_{total} = \lambda_{L1} {\cal L}_{L1} + \lambda_{CGAN} {\cal L}_{CGAN}. $$
+
+Minimization of the L1 loss
+
+$$ {\cal{L}}_{L1} = {\bf{E}}_{x, y, z} \bigl{|} x - G(y,z) \bigr{|} $$
+
+encourages the generator to capture low spatial frequency content within
+output imagery.  Minimization of the CGAN function
+
+$$ {\cal{L}}_{CGAN} = {\bf{E}}_{x, y} \bigl[ \log D(x,y) \bigr] +
+{\bf{E}}_{y, z} \bigl[ \log(1 - D(G(y,z), y) \bigr]$$
+
+encourages the generator to synthesize high spatial frequencies.  In these
+equations, $x$, $y$ and $z$ respectively represent the progenitor image,
+deformed image and random noise vector.  Our equations follow ref. [1].
+But our nomenclature conventions intentionally differ from those of Isola
+*et al.*
+
+It's useful to encourage the generator to first concentrate on recovering
+gross progenitor image content and to later fill in fine details.  So we
+take coefficients $\lambda_{L1}$ and $\lambda_{CGAN}$ to be functions of
+training fraction in which the L1 term initially dominates while the CGAN
+term grows over time.  After conducting several experiments, we empirically
+found the coefficient schedules displayed in fig XX to work well for
+inpainting and colorizing applications.  The starting and stopping values
+for $\lambda_{L1}$ and $\lambda_{CGAN}$ are listed in Table 2 along with
+several other CGAN training hyperparameters.
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/loss_coeffs_schedule.jpg)
+*Fig. XX.  The L1 and CGAN loss term coefficients remain fixed during the
+first 30% and last 20% of training.  $\lambda_{L1}$ diminishes while
+$\lambda_{CGAN}$ grows during the other 50% of training.*
 
 <table style="width:100%">
   <thead>
@@ -375,25 +424,7 @@ empirically-derived  values are listed below:
   </tbody> 
 </table>
 
-
-The original and deformed flower pictures are split 90%/10% into training
-and testing subsets.
-
-
-
-
-
-![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/blur_schedule.jpg)
-*Fig. XX.  Blur schedule.*
-
-![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/loss_coeffs_schedule.jpg)
-*Fig. XX.  Time evolution of L1 and GAN loss term coefficients.*
-
-![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/learning_curves.jpg)
-*Fig. XX.  Generator and discriminator learning curves.*
-
-
-
+*Table 2.  CGAN hyperparameters and their empirically-determined values.*
 
 ## Image inpainting results
 
@@ -409,7 +440,7 @@ corresponding generator outputs at equally spaced intervals during training.*
 flower images.  COL 2: Images reconstructed via a pure autoencoder loss
 function.  COL 3: Images reconstructed via a pure GAN loss function. COL 4:
 Images reconstructed via a loss function with autoencoder and GAN terms
-whose coefficients follow the schedule in figure XX.  COL 5: Original
+whose coefficients follow the schedule in figure XX.  COL 5: Progenitor
 flower images.*
 
 
@@ -417,7 +448,7 @@ flower images.*
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/decent_inpaintings_montage.png)
 *Fig. BB.  LEFT: Randomly sized and colored boxes superposed on various
 inference flower images.  CENTER: Images inpainted by the trained
-conditional image GAN generator.  RIGHT: Original images.*
+conditional image GAN generator.  RIGHT: Progenitor images.*
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/bad_inpaintings_montage.png)
 *Fig. CC. Poor GAN inpainting results.  Columns in this figure follow the
@@ -439,12 +470,12 @@ such class balancing issues to future work.
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/qualitatively_similar_colorizations_montage.png)
 *Fig. DD.  LEFT COLS: Greyscale versions of various inference flower images.
 CENTER COLS: Images colorized by the trained conditional image GAN
-generator.  RIGHT COLS: Original images.*
+generator.  RIGHT COLS: Progenitor images.*
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/nontrivially_different_colorizations_montage.png)
 *Fig. EE.  LEFT COLS: Greyscale versions of various inference flower images.
 CENTER COLS: Images colorized by the trained conditional image GAN
-generator.  RIGHT COLS: Original images.*
+generator.  RIGHT COLS: Progenitor images.*
 
 
 
