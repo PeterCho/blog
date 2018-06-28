@@ -10,6 +10,40 @@ published: false
 
 ## Image-to-image translation
 
+In November 2016, Isola, Zhu, Zhou and Efros posted a paper entitled
+"Image-to-Image Translation with Conditional Adversarial Networks" which
+demonstrated that conditional GANs can be used to transform an input image
+into a corresponding output image [1].  These authors persuasively argued
+that just as a single verbal concept can be expressed in multiple
+languages, so can a single visual concept be rendered in multiple views.
+Isola et al developed a common framework to translate between image pairs
+and applied it to several problems in computer vision and computer
+graphics.  Their results were stunning.
+
+In this blog posting, we build upon the work of ref. [1] while focusing
+upon image inpainting and colorizing applications.  In particular, we
+follow the basic strategy of Isola et al but modify several of their
+implementation details.  For instance, we introduce time-dependence into
+CGAN training via initial imagery blurring and loss-term coefficient
+modulation.  We observe such temporal evolution improves inpainting
+results' quality.  Furthermore, we incorporate random noise descriptor
+inputs into the CGAN generator.  We find this source of non-determinism can
+lead to synthesized RGB outputs from greyscale inputs which sometimes look
+more realistic than the original colored image progenitors.
+
+We work with a corpus of O(15K) flower images which come from Oxford 102,
+blah as well as others we manually harvested from the internet.  The input
+imagery set is split 85%/15% into training and testing subsets.  For
+inpainting experiments, we superpose randomly sized and randomly colored
+boxes at various locations within each flower image.  For colorizing
+experiments, we simply convert each RGB image into its greyscale
+counterpart via a luminosity transformation.  Representative examples of
+original, inpainting and colorizing versions of flower images are displayed
+in figure 1.
+
+
+
+
 ![INPAINT]({{site.url}}/blog/images/inpainting_colorization/originals_bboxes_greyscales_montage.png)
 *Fig. 1.  LEFT: Examples from 256 $\times$ 256 flower imagery corpus.
 CENTER: Randomly sized and colored boxes superposed at random locations
@@ -236,7 +270,7 @@ diagram is a minor variant of figure 3 from [Isola].*
 </table>
 
 *Table 1.  Generator and discriminator network architectures used to
-synthesize and analyze 256 $\times$ 256 images.*
+conditionally synthesize and analyze 256 $\times$ 256 images.*
 
 A number of points about this Conditional GAN are worth noting:
 
@@ -353,7 +387,7 @@ abrupt spikes that often plague GANs with other normalizations.  Note that
 no normalization is applied within the discrminator's first superlayer.
 
 
-## Image inpainting
+
 
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/blur_schedule.jpg)
@@ -364,6 +398,13 @@ no normalization is applied within the discrminator's first superlayer.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/learning_curves.jpg)
 *Fig. XX.  Generator and discriminator learning curves.*
+
+
+
+
+## Image inpainting
+
+
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution.jpg)
 *Fig. XX.  Sample image inputs to discriminator and generator and
@@ -422,6 +463,13 @@ pattern of figures DD and EE.*
 
 
 ## References
+
+
+1.  [P. Isola, J.-Y. Zhu, T. Zhou and A. A. Efros, "Image-to-Image
+Translation with Conditional Adversarial Networks," arXiv:1611.07004v2 $\small{(2017)}$.](https://arxiv.org/pdf/1611.07004.pdf)
+
+2.  [O. Ronneberger, P. Fischer and T. Brox, "U-Net: Convolutional Networks
+for Biomedical Image Segmentation," arXiv:1505.04597v1 $\small{(2015)}$.](https://arxiv.org/pdf/1505.04597.pdf)
 
 
 1.  [A. Krizhevsky, I. Sutskever and G.E. Hinton, "Imagenet Classification
