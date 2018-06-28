@@ -10,78 +10,67 @@ published: false
 
 ## Image-to-image translation
 
-In November 2016, Isola, Zhu, Zhou and Efros posted a paper entitled
+In November 2016, Isola, Zhu, Zhou and Efros posted an arXiv paper entitled
 "Image-to-Image Translation with Conditional Adversarial Networks" which
-demonstrated that conditional GANs can be used to transform an input image
-into a corresponding output image [1].  These authors persuasively argued
-that just as a single verbal concept can be expressed in multiple
+demonstrated that conditional GANs can be used to transform pictures in one
+domain into corresponding counterparts in another [1].  These authors
+argued that just as a single verbal concept can be expressed in multiple
 languages, so can a single visual concept be rendered in multiple views.
-Isola et al developed a common framework to translate between image pairs
-and applied it to several problems in computer vision and computer
-graphics.  Their results were stunning.
+Isola *et al.* developed a common framework to translate between image
+pairs.  They subsequently applied it to several problems in computer vision
+and computer graphics such as day-night, photo-map and edge-object image
+conversions.  Their results were stunning.
 
-In this blog posting, we build upon the work of ref. [1] while focusing
-upon image inpainting and colorizing applications.  In particular, we
-follow the basic strategy of Isola et al but modify several of their
-implementation details.  For instance, we introduce time-dependence into
-CGAN training via initial imagery blurring and loss-term coefficient
-modulation.  We observe such temporal evolution improves inpainting
-results' quality.  Furthermore, we incorporate random noise descriptor
-inputs into the CGAN generator.  We find this source of non-determinism can
-lead to synthesized RGB outputs from greyscale inputs which sometimes look
-more realistic than the original colored image progenitors.
+In this blog posting, we build upon the work of ref. [1] and focus upon
+image inpainting and colorizing applications.  In particular, we follow the
+basic strategy of Isola *et al.* but modify several of their implementation
+details.  For instance, we dispense with dropout and employ pixelwise
+rather than batch normalization following most convolution operations.  We
+also introduce time-dependence into CGAN training via initial image
+blurring and loss-term coefficient modulation.  We find such temporal
+evolution improves inpainting results' quality.  Furthermore, we
+incorporate random noise descriptor inputs into the CGAN generator.  This
+source of non-determinism can lead to synthesized RGB outputs from
+greyscale inputs which may look more realistic than the original colored
+image progenitors.
 
-We work with a corpus of O(15K) flower images which come from Oxford 102,
-blah as well as others we manually harvested from the internet.  The input
-imagery set is split 85%/15% into training and testing subsets.  For
-inpainting experiments, we superpose randomly sized and randomly colored
-boxes at various locations within each flower image.  For colorizing
-experiments, we simply convert each RGB image into its greyscale
-counterpart via a luminosity transformation.  Representative examples of
-original, inpainting and colorizing versions of flower images are displayed
-in figure 1.
-
-
-
+We work with a corpus of O$($15K$)$ 256 $\times$ 256 flower images
+aggregated from the Oxford 17 and Oxford 102 datasets [refs], the Jena 30
+dataset [refs] and other pictures we manually harvested from the internet
+[ref].  For inpainting experiments, we superpose boxes of various sizes and
+colors at random locations in each flower image.  This variable masking
+procedure is performed three times for every input picture.  For colorizing
+experiments, we convert each RGB image into a unique greyscale counterpart
+via a luminosity transformation.  Representative examples of original,
+partly masked and greyscale versions of flower images are displayed in
+figure 1.
 
 ![INPAINT]({{site.url}}/blog/images/inpainting_colorization/originals_bboxes_greyscales_montage.png)
-*Fig. 1.  LEFT: Examples from 256 $\times$ 256 flower imagery corpus.
-CENTER: Randomly sized and colored boxes superposed at random locations
-inside each flower picture.  RIGHT: Greyscale versions of original RGB
-images.*
+*Fig. 1.  LEFT: Examples from our 256 $\times$ 256 flower imagery corpus.
+CENTER: Randomly sized and colored boxes superposed at various locations
+inside each picture.  RIGHT: Greyscale versions of original RGB images.*
 
-The training set of 5 $\times$ 800 = 4000 flower images becomes input to a
-Convolutional Neural Network $($CNN$)$ comprised of multiple
-"super-layers".  Combinations of convolutions with 5 $\times$ 5 kernels,
-batch normalization [3], leaky ReLU activation [4], 2 $\times$ 2 pooling,
-Dropout [5], fully connected and softmax layers form useful CNN building
-blocks:
 
-$\qquad$ CBLPD: Conv5, Batch norm, Leaky ReLU, Pool, Dropout
+The downgraded images become conditional inputs to a generator "U-net"
+which is schematically illustrated in figure 2.  This network's
+encoder-decoder architecture incorporates skip connections between
+corresponding layers before and after the middle bottleneck [Unet ref].
+Isola *et al.* found such skip connections lead to much higher quality
+synthesized images.  Ideally, the generator should produce output pictures
+which look as realistic as the deformed inputs' progenitors.
 
-$\qquad$ CBLD: Conv5, Batch norm, Leaky ReLU, Dropout
 
-$\qquad$ FBLD: Fully connected, Batch norm, Leaky ReLU, Dropout
-
-$\qquad$ SOFT:  Fully connected, Softmax.
-
-We choose these super-layers' parameters and numbers within a deep network
-configuration so that the CNN's receptive field size R=221 [6] is
-comparable to its input image 208 linear pixel size.  The particular CNN
-architecture we adopt for flower classification is schematically given by 3
-$\times$ [CBLPD], 6 $\times$ [CBLD], 2 $\times$ [FBLD], SOFT.
-
-We work within the TensorFlow framework [7] to train this network's 3.2M
-parameters.  The CNN is subsequently used to perform inference on the
-withheld test set containing 81 daisy, 110 dandelion, 120 rose, 83
-sunflower and 110 tulip pictures.  Since the networks' weights are
-initialized with random values, inference accuracy fluctuates depending
-upon training experiment and terminal epoch number.  But on average, our
-CNN classifies the five flower types in the test set with 87.7% accuracy.
 
 ![INPAINT]({{site.url}}/blog/images/inpainting_colorization/Unet.jpg)
-*Fig. XX.  Schematic diagram for CGAN generator's Unet architecture.  This
-diagram is a minor variant of figure 3 from [Isola].*
+*Fig. 2.  Schematic diagram for CGAN generator's U-net architecture.  This
+diagram is a minor variant of figure 3 from [1].*
+
+The "superlayers" in the U-net diagram represent combinations of
+convolutions with 5 $\times$ 5 kernels, pixelwise normalizations [ref],
+leaky ReLU activations [ref], linear projections, stride 2 downsamplings
+and nearest-neighbor upscalings [ref].  The particular tensor combinations
+and shapes we employ inside the CGAN generator for inpainting applications
+are listed in Table 1a:
 
 <table style="width:100%">
   <thead>
@@ -93,7 +82,7 @@ diagram is a minor variant of figure 3 from [Isola].*
   <tbody>
     <tr>
       <td style="text-align: left">Input conditional image plane</td>
-      <td style="text-align: center">256 $\times$ 256 $\times$ $($1 or 3$)$</td>
+      <td style="text-align: center">256 $\times$ 256 $\times$ 3 </td>
     </tr>
 
     <tr>
@@ -157,7 +146,7 @@ diagram is a minor variant of figure 3 from [Isola].*
     </tr>
     <tr>
       <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">16 $\times$ 16 $\times$ $($56 + 48$)$ </td>
+      <td style="text-align: center">16 $\times$ 16 $\times$ $($56 + 48 [skip]$)$ </td>
     </tr>
 
     <tr>
@@ -166,7 +155,7 @@ diagram is a minor variant of figure 3 from [Isola].*
     </tr>
     <tr>
       <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">32 $\times$ 32 $\times$ $($48 + 40$)$ </td>
+      <td style="text-align: center">32 $\times$ 32 $\times$ $($48 + 40 [skip]$)$ </td>
     </tr>
 
     <tr>
@@ -175,7 +164,7 @@ diagram is a minor variant of figure 3 from [Isola].*
     </tr>
     <tr>
       <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">64 $\times$ 64 $\times$ $($40 + 32$)$ </td>
+      <td style="text-align: center">64 $\times$ 64 $\times$ $($40 + 32 [skip]$)$ </td>
     </tr>
 
     <tr>
@@ -184,7 +173,7 @@ diagram is a minor variant of figure 3 from [Isola].*
     </tr>
     <tr>
       <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">128 $\times$ 128 $\times$ $($32 + 24$)$ </td>
+      <td style="text-align: center">128 $\times$ 128 $\times$ $($32 + 24 [skip]$)$ </td>
     </tr>
 
     <tr>
@@ -193,7 +182,7 @@ diagram is a minor variant of figure 3 from [Isola].*
     </tr>
     <tr>
       <td style="text-align: left">Upscale, Conv5, Pixelwise norm, Leaky Relu</td>
-      <td style="text-align: center">256 $\times$ 256 $\times$ $($24 + 16$)$ </td>
+      <td style="text-align: center">256 $\times$ 256 $\times$ $($24 + 16 [skip]$)$ </td>
     </tr>
 
     <tr>
@@ -214,6 +203,13 @@ diagram is a minor variant of figure 3 from [Isola].*
 </tbody>
 </table>
 
+*Table 1a.  Generator network used to conditionally synthesize 256 $\times$
+256 images for inpainting applications.*
+
+The CGAN's discriminator network has a relatively simple architecture that
+converts pairs of original and conditional images into probabilities that
+the progenitor picture is genuine rather than synthetic:
+
 <table style="width:100%">
   <thead>
     <tr>
@@ -224,8 +220,7 @@ diagram is a minor variant of figure 3 from [Isola].*
   <tbody>
     <tr>
       <td style="text-align: left">Input image planes + conditional image planes</td>
-      <td style="text-align: center">256 $\times$ 256 $\times$ $($3 [input]
-+ 1 or 3 [conditional] $)$</td>
+      <td style="text-align: center">256 $\times$ 256 $\times$ $($3 + 3$)$</td>
     </tr>
     <tr>
       <td style="text-align: left">Conv5, Leaky Relu, stride 2</td>
@@ -252,10 +247,6 @@ diagram is a minor variant of figure 3 from [Isola].*
       <td style="text-align: center">4 $\times$ 4 $\times$ 256</td>
     </tr>
     <tr>
-      <td style="text-align: left">Linear proj</td>
-      <td style="text-align: center">1 $\times$ 1 $\times$ $Z_{dim}$</td>
-    </tr>
-    <tr>
       <td style="text-align: left">Linear proj, Sigmoid</td>
       <td style="text-align: center">1 $\times$ 1 $\times$ 1</td>
     </tr>
@@ -269,28 +260,32 @@ diagram is a minor variant of figure 3 from [Isola].*
 </tbody>
 </table>
 
-*Table 1.  Generator and discriminator network architectures used to
-conditionally synthesize and analyze 256 $\times$ 256 images.*
+*Table 1b.  Discriminator network used to analyze $($original,
+conditional$)$ image pairs for inpainting applications.*
 
-A number of points about this Conditional GAN are worth noting:
+Several points about this Conditional GAN are worth noting:
 
 i.  The generator [discriminator] network contains 1.9M [3.8M] trainable
 variables.  
 
-ii.  During training, we draw input descriptors for the generator network
-from a list of descriptors tapped from the discriminator's next-to-last
-superlayer.  During inference, we sample input descriptors from a
-multivariate gaussian distribution whose mean vector and covariance matrix
-are calculated from the list of tapped descriptors.
+ii.  Pixelwise normalization within generator and discriminator superlayers
+significantly improves GAN training stabilization [ref].
 
-iii.  We experimented with two different types of "up"-convolution in the
-generator network.  We tried transposed convolution as well as upscaling
-via nearest neighbor interpolation followed by conventional convolution.
-Since the former yielded checkerboard artifacts in synthesized flower
-pictures, we adopted the latter approach [12].
+iii. Skip connections indicated within generator superlayers are implemented
+by concatenating encoder tensors onto similarly-sized decoder tensors.
 
-iv.  CGAN training depends upon several hyperparameters.
-Empirically-derived hyperparameter values are tabulated below:
+iv.  For colorizing applications, input conditional image planes have 1
+rather than 3 color channels.
+
+v.  Optional noise descriptors may be introduced into the CGAN generator
+via concatenation with the bottleneck layer.  For colorizing experiments,
+we choose to concatenate the bottleneck's $Z_{dim}$ tensor with a second
+random tensor with the same dimensions.  In this case, we double the number
+of channels following the bottleneck layer in Table 1a as needed.  
+
+We work within the TensorFlow framework [] to train this network's 5.6M
+parameters.  CGAN training depends upon several hyperparameters whose
+empirically-derived  values are listed below:
 
 <table style="width:100%">
   <thead>
@@ -380,11 +375,9 @@ Empirically-derived hyperparameter values are tabulated below:
   </tbody> 
 </table>
 
-v.  Pixelwise normalization within generator and discriminator superlayers
-significantly improves GAN training stabilization [13].  As figure 2
-illustrates, our CGAN's loss curves are well-behaved and do not exhibit
-abrupt spikes that often plague GANs with other normalizations.  Note that
-no normalization is applied within the discrminator's first superlayer.
+
+The original and deformed flower pictures are split 90%/10% into training
+and testing subsets.
 
 
 
@@ -402,7 +395,7 @@ no normalization is applied within the discrminator's first superlayer.
 
 
 
-## Image inpainting
+## Image inpainting results
 
 
 
@@ -432,7 +425,7 @@ pattern of figure BB.*
 
 
 
-## Image colorizing
+## Image colorizing results
 
 In closing, we note that "real-world" training sets are often imbalanced
 among different classes.  Practical problems can render some classifier
