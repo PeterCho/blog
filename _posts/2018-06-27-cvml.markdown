@@ -425,15 +425,20 @@ $\lambda_{CGAN}$ grows during the other 50% of training.*
 
 *Table 2.  CGAN hyperparameters and their empirically-determined values.*
 
-It is instructive to compare the impact of the separate L1 and CGAN terms
+It is instructive to compare the impacts of the separate L1 and CGAN terms
 in the loss function as well as their time-dependent combination upon
-imagery reconstruction.  We do so in the next section.
+imagery reconstruction.  We do so in the next section where we consider
+flower image inpainting and colorizing.
 
-## Encouraging inpainting and colorizing results
+## Encouraging conditional image GAN results
 
-![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution.jpg)
-*Fig. XX.  Sample image inputs to discriminator and generator and
-corresponding generator outputs at equally spaced intervals during training.*
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution_inpainting.jpg)
+*Fig. XX.  Sample generator inputs and outputs at equally spaced intervals
+during training of the inpainting CGAN.*
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution_colorizing.png)
+*Fig. XX.  Sample generator inputs and outputs at equally spaced intervals
+during training of the colorizing CGAN.*
 
 Once a CGAN is trained, its generator may be used to perform image
 reconstruction on new examples of downgraded pictures which it never
@@ -484,10 +489,7 @@ CENTER COLS: Images colorized by the trained conditional image GAN
 generator.  RIGHT COLS: Progenitor images.*
 
 
-
-
-## Discouraging inpainting and colorizing results
-
+## Discouraging conditional image GAN results
 
 
 
