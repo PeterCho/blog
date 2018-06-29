@@ -427,10 +427,9 @@ $\lambda_{CGAN}$ grows during the other 50% of training.*
 
 It is instructive to compare the impact of the separate L1 and CGAN terms
 in the loss function as well as their time-dependent combination upon
-imagery reconstruction.  We do so in the following sections where we
-present flower image inpainting and colorizing results.
+imagery reconstruction.  We do so in the next section.
 
-## Image inpainting 
+## Encouraging inpainting and colorizing results
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution.jpg)
 *Fig. XX.  Sample image inputs to discriminator and generator and
@@ -473,6 +472,25 @@ nontrivial knowledge about flower morphology, texture and colors.
 inference flower images.  CENTER: Images inpainted by the trained
 conditional image GAN generator.  RIGHT: Progenitor images.*
 
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/qualitatively_similar_colorizations_montage.png)
+*Fig. DD.  LEFT COLS: Greyscale versions of various inference flower images.
+CENTER COLS: Images colorized by the trained conditional image GAN
+generator.  RIGHT COLS: Progenitor images.*
+
+![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/nontrivially_different_colorizations_montage.png)
+*Fig. EE.  LEFT COLS: Greyscale versions of various inference flower images.
+CENTER COLS: Images colorized by the trained conditional image GAN
+generator.  RIGHT COLS: Progenitor images.*
+
+
+
+
+## Discouraging inpainting and colorizing results
+
+
+
+
 Unfortunately, other cases of image inpainting are much less encouraging.
 Figure XX presents obviously poor reconstructions coming from the same
 trained CGAN.  
@@ -486,18 +504,6 @@ flowers.  Training corpus was not sufficiently broad to handle such scenes.
 *Fig. CC. Poor GAN inpainting results.  Columns in this figure follow the
 pattern of figure BB.*
 
-
-## Image colorizing 
-
-![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/qualitatively_similar_colorizations_montage.png)
-*Fig. DD.  LEFT COLS: Greyscale versions of various inference flower images.
-CENTER COLS: Images colorized by the trained conditional image GAN
-generator.  RIGHT COLS: Progenitor images.*
-
-![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/nontrivially_different_colorizations_montage.png)
-*Fig. EE.  LEFT COLS: Greyscale versions of various inference flower images.
-CENTER COLS: Images colorized by the trained conditional image GAN
-generator.  RIGHT COLS: Progenitor images.*
 
 
 
@@ -516,8 +522,9 @@ Translation with Conditional Adversarial Networks," arXiv:1611.07004v2 $\small{(
 2. [M.-E. Nilsback and A. Zisserman, "17 and 102 Category Flower
 Datasets," $\small{(2008)}$.](http://www.robots.ox.ac.uk/~vgg/data/flowers/)
 
-3. [JENA references goes here, "17 and 102 Category Flower
-Datasets," $\small{(2008)}$.](http://www.robots.ox.ac.uk/~vgg/data/flowers/)
+3. [M. Seeland, M. Rzanny, N. Alaqraa, J. Wäldchen and P. Mäder, "Plant Species
+Classification Using Flower Images -- A Comparative Study of Local Feature
+Representations", PLOS ONE 12 $\small{(2017)}$.](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0170629)
 
 4. [See "Improving Flower Image Classification via Conditional GAN Data
 Augmentation" post in this blog series $\small{(2018)}.](https://petercho.github.io.blog//deep/learning/2018/05/18/cvml.html)
