@@ -428,34 +428,42 @@ $\lambda_{CGAN}$ grows during the other 50% of training.*
 It is instructive to compare the impacts of the separate L1 and CGAN terms
 in the loss function as well as their time-dependent combination upon
 imagery reconstruction.  We do so in the next section where we consider
-flower image inpainting and colorizing.
+image-to-image translations for inpainting and colorizing problems.
 
-## Encouraging conditional image GAN results
+## Conditional image GAN results
+
+Our basic approach to CGAN training is to force the discriminator and
+generator to first learn about gross object shapes, colors and textures.
+While training proceeds, object details are refined as low-pass filtering
+is relaxed.  By the end of training, the networks are encouraged to
+incorporate high spatial frequency content into their inputs and outputs.
+Figures XX and XX illustrate these trends for both inpainting and
+colorizing CGANs.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution_inpainting.jpg)
-*Fig. XX.  Sample generator inputs and outputs at equally spaced intervals
+*Fig. XX.  Generator inputs and outputs at equally spaced intervals
 during training of the inpainting CGAN.*
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution_colorizing.png)
-*Fig. XX.  Sample generator inputs and outputs at equally spaced intervals
+*Fig. XX.  Generator inputs and outputs at equally spaced intervals
 during training of the colorizing CGAN.*
 
 Once a CGAN is trained, its generator may be used to perform image
-reconstruction on new examples of downgraded pictures which it never
-previously saw.  CGAN results are then guaranteed to not represent mere
-network memorizations of specific input-output pairs.  So from here on, we
-only work with testing images which were separated off from their training
-counterparts.
+reconstruction on new examples which it never previously saw.  CGAN results
+are then guaranteed to not represent mere network memorizations of specific
+input-output pairs.  So from here on, we only work with inference images
+which were separated off from their training counterparts and genuinely
+test CGAN generalization capabilities.
 
 Figure XX illustrates inpainting reconstructions based upon the L1 and CGAN
 loss terms by themselves as well as their combination following the
 schedule in figure XX.  The L1 reconstructions recover gross shape and
-color information within the masked box regions.  But their blurry forms
-missed high spatial frequency details.  The pure CGAN term reconstructions
-look grossly distorted.  While the combined L1 + CGAN results do not
-precisely match the progenitor flower views appearing in the rightmost
-column of fig XX, their filling in of missing information is remarkably
-plausible.
+color information inside the masked box regions but completely miss high
+spatial frequency details.  The pure CGAN term reconstructions look grossly
+distorted.  In contrast, the combined L1 + CGAN results look remarkably
+plausible.  While reconstructions do not precisely match the progenitor
+flower views in the rightmost column of fig XX, we believe their filling in
+of missing information is compelling.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/inpainting_five_frames_0328_1261.png)
 *Fig. AA.  COL 1: Randomly sized and colored boxes superposed on inference
@@ -465,18 +473,17 @@ Images reconstructed via the loss function with both L1 and CGAN terms
 whose coefficients follow the schedule in figure XX.  COL 5: Progenitor
 flower images.*
 
-Fig XX presents 8 more examples of qualitatively successful flower image
-inpainting results.  In each row of the figure, the first column shows a
-partially masked input image.  The second column illustrates the
-reconstructed flower image while the third column contains the progenitor
-picture.  These examples strongly suggest that the CGAN has learned
-nontrivial knowledge about flower morphology, texture and colors.
+Fig XX presents 8 more examples of generally successful flower image
+inpainting.  The figure's first column contains partially masked input
+images.  The second column presents flower reconstructions while the third
+contains progenitor pictures.  These examples suggest that the inpainting
+CGAN has learned nontrivial knowledge about flower morphology, texture and
+colors.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/decent_inpaintings_montage.png)
 *Fig. BB.  LEFT: Randomly sized and colored boxes superposed on various
 inference flower images.  CENTER: Images inpainted by the trained
 conditional image GAN generator.  RIGHT: Progenitor images.*
-
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/qualitatively_similar_colorizations_montage.png)
 *Fig. DD.  LEFT COLS: Greyscale versions of various inference flower images.
@@ -488,32 +495,42 @@ generator.  RIGHT COLS: Progenitor images.*
 CENTER COLS: Images colorized by the trained conditional image GAN
 generator.  RIGHT COLS: Progenitor images.*
 
+The basic goal of image inpainting is to recover masked pixel content as
+faithfully as possible.  It consequently tries to map one degraded input to
+one reconstructed output.  We consequently did not incorporate any random
+noise input within the inpainting CGAN's generator.  On the other hand,
+image colorizing can potentially one greyscale input to many RGB outputs.
+So for the colorizing CGAN generator, we do concatenate the bottleneck
+layer within the U-net architecture with a random noise descriptor to
+encourage synthetic image variety.  As figure XX illustrates, some
+colorized outputs look qualitatively similar to the progenitor RGB
+pictures.  But in other cases like those shown in figure XX, the trained
+CGAN converts greyscale inputs to colored outputs which nontrivially differ
+from the original RGB pictures.  In a few instances, the synthetically
+colored views look more "realistic" to our eye than the actual progenitors!
 
-## Discouraging conditional image GAN results
-
-
-
-Unfortunately, other cases of image inpainting are much less encouraging.
-Figure XX presents obviously poor reconstructions coming from the same
-trained CGAN.  
-
-CGAN cannot handle highly complex scenes containing many different beyond
-flowers.  Training corpus was not sufficiently broad to handle such scenes.
-
-
+The inpainting and colorizing results presented so far look quite
+encouraging.  But we have also observed several cases where image
+reconstruction obviously failed.  Figures XX and YY display CGAN outputs
+that appear highly unrealistic.  Perhaps some of these poor inference
+examples lie so far away from training data samples that the CGAN is unable
+to reasonably extrapolate.  In other cases, the networks clearly struggle
+with complex scenes containing many different object types.   As we have
+seen in our previous GAN studies, adversarial networks can fail to produce
+sensible outputs for a sizable fraction of their inference inputs.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/bad_inpaintings_montage.png)
 *Fig. CC. Poor GAN inpainting results.  Columns in this figure follow the
 pattern of figure BB.*
 
-
-
-
-
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/bad_colorizations_montage.png)
 *Fig. FF. Poor GAN colorizing results.  Columns in this figure follow the
 pattern of figures DD and EE.*
 
+After looking at O$($100$)$ inpainting and colorizing inference results, we
+estimate ?% qualitatively appear reasonable.  This is consistent with the
+Amazon Turk study findings reported in [1].  Clearly much more work remains
+to be done to improve image-to-image translation robustness in the future.
 
 
 ## References
