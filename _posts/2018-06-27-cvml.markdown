@@ -12,14 +12,15 @@ published:  false
 
 In November 2016, Isola, Zhu, Zhou and Efros posted an arXiv paper entitled
 "Image-to-Image Translation with Conditional Adversarial Networks" which
-demonstrated that conditional GANs can be used to transform pictures in one
-domain into corresponding counterparts in another [1].  These authors
-argued that just as a single verbal concept can be expressed in multiple
-languages, so can a single visual concept be rendered in multiple views.
-Isola *et al.* developed a common framework to translate between image
-pairs.  They subsequently applied it to several problems in computer vision
-and computer graphics such as day-night, photo-map and edge-object image
-conversions.  Their results were stunning.
+demonstrated that conditional generative adversarial networks $($CGANs$)$
+can be used to transform pictures in one domain into corresponding
+counterparts in another [1].  These authors argued that just as a single
+verbal concept can be expressed in multiple languages, so can a single
+visual concept be rendered in multiple views.  Isola *et al.* developed a
+common framework to translate between image pairs.  They subsequently
+applied it to several problems in computer vision and computer graphics
+such as day-night, photo-map and edge-object image conversions.  Their
+results were stunning.
 
 In this blog posting, we build upon the work of ref. [1] and focus upon
 image inpainting and colorizing applications.  In particular, we follow the
@@ -31,7 +32,7 @@ blurring and loss-term coefficient modulation.  We find such temporal
 evolution improves inpainting results' quality.  Furthermore, we
 incorporate random noise descriptor inputs into the CGAN generator.  This
 source of non-determinism can lead to synthesized RGB outputs from
-greyscale inputs which may look more realistic than the colored image
+greyscale inputs which look more realistic than the colored image
 progenitors.
 
 We work with a corpus of O$($15K$)$ 256 $\times$ 256 flower images
@@ -66,7 +67,7 @@ diagram is a minor variant of figure 3 from [1].*
 
 The "superlayers" in the U-net diagram represent combinations of
 convolutions with 5 $\times$ 5 kernels, pixelwise normalizations [6],
-leaky ReLU activations [7], linear projections, stride 2 downsamplings
+leaky ReLU activations [7], linear projections, stride-2 downsamplings
 and nearest-neighbor upscalings [8].  The particular tensor combinations
 and shapes we employ inside the CGAN generator for inpainting applications
 are listed in Table 1a:
@@ -269,8 +270,8 @@ variables.
 
 ii.  Pixelwise normalizations in the generator and discriminator
 superlayers significantly stabilize CGAN training [6].  In particular, we
-never observed discriminator or generator learning curves exhibit
-discontinuous spikes when pixelwise normalizations are utilized.  
+never observed discriminator or generator learning curves suffer from
+discontinuous spikes when pixelwise normalizations are utilized.
 
 iii. Skip connections between generator superlayers are implemented by
 concatenating encoder tensors onto similarly-sized decoder tensors.
@@ -285,18 +286,18 @@ tensor with the same dimensions.  In this case, channel numbers following
 the bottleneck layer in Table 1a are doubled as needed.
 
 We split the progenitor and deformed flower pictures into 90% training and
-10% testing subsets.  The CGAN network's parameters are then trained from
-scratch via the TensorFlow deep learning framework [9].  To facilitate
+10% testing subsets.  We then train the CGAN network's parameters from
+scratch using the TensorFlow deep learning framework [9].  To facilitate
 generation of relatively large 256 $\times$ 256 images, we employ the
 gradual resolution enhancement approach developed in a previous blog
 posting [10].  Image inputs to the discriminator and generator are blurred
 with a gaussian kernel whose radius initially equals 10% of their pixel
-size.  As the blurring schedule in figure XX illustrates, the kernel radius
+size.  As the blurring schedule in figure 3 illustrates, the kernel radius
 ramps down to zero during the first 15% of training.  No low-pass blurring
 is subsequenty performed on input images.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/blur_schedule.jpg)
-*Fig. XX.  Blurring kernel radius for discriminator and generator image
+*Fig. 3.  Blurring kernel radius for discriminator and generator image
 inputs linearly decreases to zero during the first 15% of CGAN training.*
 
 Network training attempts to minimize a loss function containing distinct
@@ -309,31 +310,32 @@ Minimization of the L1 loss
 $$ {\cal{L}}_{L1} = {\bf{E}}_{x, y, z} \bigl{|} x - G(y,z) \bigr{|} $$
 
 encourages the generator to capture low spatial frequency content within
-output imagery.  Minimization of the CGAN function
+output imagery.  Minimization of the CGAN loss
 
 $$ {\cal{L}}_{CGAN} = {\bf{E}}_{x, y} \bigl[ \log D(x,y) \bigr] +
 {\bf{E}}_{y, z} \bigl[ \log(1 - D(G(y,z), y) \bigr]$$
 
 encourages the generator to synthesize high spatial frequencies.  In these
 equations, $x$, $y$ and $z$ respectively represent the progenitor image,
-deformed image and random noise vector.  Our equations follow ref. [1].
-But our nomenclature conventions intentionally differ from those of Isola
-*et al.*
+deformed image and random noise vector.  While these equations follow
+ref. [1], our nomenclature conventions intentionally differ from those of
+Isola *et al.*
 
-It's useful to encourage the generator to first concentrate on recovering
+It is useful to encourage the generator to first concentrate on recovering
 gross progenitor image content and to later fill in fine details.  So we
 take coefficients $\lambda_{L1}$ and $\lambda_{CGAN}$ to be functions of
 training fraction in which the L1 term initially dominates while the CGAN
 term grows over time.  After conducting several experiments, we empirically
-found the coefficient schedules displayed in fig XX to work well for
+found the coefficient schedules displayed in figure 4 to work well for
 inpainting and colorizing applications.  The starting and stopping values
 for $\lambda_{L1}$ and $\lambda_{CGAN}$ are listed in Table 2 along with
 several other CGAN training hyperparameters.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/loss_coeffs_schedule.jpg)
-*Fig. XX.  The L1 and CGAN loss term coefficients remain fixed during the
+*Fig. 4.  The L1 and CGAN loss term coefficients remain fixed during the
 first 30% and last 20% of training.  $\lambda_{L1}$ diminishes while
 $\lambda_{CGAN}$ grows during the other 50% of training.*
+
 
 <table style="width:100%">
   <thead>
@@ -427,110 +429,109 @@ $\lambda_{CGAN}$ grows during the other 50% of training.*
 
 It is instructive to compare the impacts of the separate L1 and CGAN terms
 in the loss function as well as their time-dependent combination upon
-imagery reconstruction.  We do so in the next section where we consider
-image-to-image translations for inpainting and colorizing problems.
+imagery reconstruction.  We do so in the next section where we apply
+image-to-image translations to flower inpainting and colorizing problems.
 
 ## Conditional image GAN results
 
-Our basic approach to CGAN training is to force the discriminator and
-generator to first learn about gross object shapes, colors and textures.
-While training proceeds, object details are refined as low-pass filtering
-is relaxed.  By the end of training, the networks are encouraged to
-incorporate high spatial frequency content into their inputs and outputs.
-Figures XX and XX illustrate these trends for both inpainting and
-colorizing CGANs.
+Our approach to CGAN training forces the discriminator and generator to
+first learn about gross object shapes, colors and textures.  While training
+proceeds, object details are refined as low-pass filtering is relaxed.
+Towards the end of training, the networks incorporate high spatial
+frequency content into their inputs and outputs.  Figures 5a and 5b
+illustrate these basic trends for both inpainting and colorizing CGANs.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution_inpainting.jpg)
-*Fig. XX.  Generator inputs and outputs at equally spaced intervals
+*Fig. 5a.  Generator inputs and outputs at equally spaced intervals
 during training of the inpainting CGAN.*
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/training_evolution_colorizing.png)
-*Fig. XX.  Generator inputs and outputs at equally spaced intervals
+*Fig. 5b.  Generator inputs and outputs at equally spaced intervals
 during training of the colorizing CGAN.*
 
 Once a CGAN is trained, its generator may be used to perform image
-reconstruction on new examples which it never previously saw.  CGAN results
-are then guaranteed to not represent mere network memorizations of specific
-input-output pairs.  So from here on, we only work with inference images
-which were separated off from their training counterparts and genuinely
-test CGAN generalization capabilities.
+reconstruction on new examples which it never previously saw.  CGAN
+reconstructions then cannot merely represent network memorizations of
+specific input-output pairs.  So from here on, we work with inference
+images which were separated off from their training counterparts and
+genuinely test deep learning generalization capabilities.
 
-Figure XX illustrates inpainting reconstructions based upon the L1 and CGAN
-loss terms by themselves as well as their combination following the
-schedule in figure XX.  The L1 reconstructions recover gross shape and
-color information inside the masked box regions but completely miss high
-spatial frequency details.  The pure CGAN term reconstructions look grossly
+Figure 6 illustrates inpainting reconstructions based upon the L1 and CGAN
+loss terms by themselves as well as their combination that followed the
+learning schedule in figure 3.  The L1 reconstructions recover gross shapes
+and colors inside the masked box regions but completely miss high spatial
+frequency details.  The pure CGAN term reconstructions look badly
 distorted.  In contrast, the combined L1 + CGAN results look remarkably
-plausible.  While reconstructions do not precisely match the progenitor
-flower views in the rightmost column of fig XX, we believe their filling in
-of missing information is compelling.
+plausible.  While these reconstructions do not precisely match the
+progenitor flower views within the rightmost column of figure 6, we believe
+their filling-in of missing information is compelling.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/inpainting_five_frames_0328_1261.png)
-*Fig. AA.  COL 1: Randomly sized and colored boxes superposed on inference
+*Fig. 6.  COL 1: Randomly sized and colored boxes superposed on inference
 flower image.  COL 2: Images reconstructed via a pure L1 loss function 
 COL 3: Images reconstructed via a pure CGAN loss function. COL 4:
 Images reconstructed via the loss function with both L1 and CGAN terms
-whose coefficients follow the schedule in figure XX.  COL 5: Progenitor
+whose coefficients follow the schedule in figure 3.  COL 5: Progenitor
 flower images.*
 
-Fig XX presents 8 more examples of generally successful flower image
-inpainting.  The figure's first column contains partially masked input
-images.  The second column presents flower reconstructions while the third
-contains progenitor pictures.  These examples suggest that the inpainting
-CGAN has learned nontrivial knowledge about flower morphology, texture and
-colors.
+Figure 7 presents several more examples of generally successful flower
+image inpainting.  The figure's first column contains partially masked
+input images.  The second column presents L1 + CGAN reconstructions while
+the third displays progenitor pictures.  These examples demonstrate that
+the inpainting networks have developed a nontrivial understanding of flower
+morphology, texture and color patterns.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/decent_inpaintings_montage.png)
-*Fig. BB.  LEFT: Randomly sized and colored boxes superposed on various
+*Fig. 7.  LEFT: Randomly sized and colored boxes superposed on various
 inference flower images.  CENTER: Images inpainted by the trained
 conditional image GAN generator.  RIGHT: Progenitor images.*
 
+The basic goal of image inpainting is to restore lost pixel content as
+faithfully as possible.  It consequently tries to map a degraded picture
+onto a single reconstruction.  We consequently did not incorporate any
+random noise input within the inpainting CGAN's generator.  In contrast,
+image colorizing can potentially map a greyscale picture onto many RGB
+outputs.  So for the colorizing CGAN generator, we concatenate the
+bottleneck layer inside the U-net architecture with a random noise
+descriptor to encourage synthetic image variety.  As figure 8a illustrates,
+some colorized outputs look qualitatively similar to their progenitor RGB
+pictures.  But in other cases like those in figure 8b, the trained CGAN
+converts greyscale inputs to colored outputs which nontrivially differ from
+the originals.  In a few instances, the synthetically colored views look
+more "realistic" to our eye than the actual progenitor pictures!
+
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/qualitatively_similar_colorizations_montage.png)
-*Fig. DD.  LEFT COLS: Greyscale versions of various inference flower images.
+*Fig. 8a.  LEFT COLS: Greyscale versions of various inference flower images.
 CENTER COLS: Images colorized by the trained conditional image GAN
 generator.  RIGHT COLS: Progenitor images.*
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/nontrivially_different_colorizations_montage.png)
-*Fig. EE.  LEFT COLS: Greyscale versions of various inference flower images.
+*Fig. 8b.  LEFT COLS: Greyscale versions of various inference flower images.
 CENTER COLS: Images colorized by the trained conditional image GAN
 generator.  RIGHT COLS: Progenitor images.*
 
-The basic goal of image inpainting is to recover masked pixel content as
-faithfully as possible.  It consequently tries to map one degraded input to
-one reconstructed output.  We consequently did not incorporate any random
-noise input within the inpainting CGAN's generator.  On the other hand,
-image colorizing can potentially one greyscale input to many RGB outputs.
-So for the colorizing CGAN generator, we do concatenate the bottleneck
-layer within the U-net architecture with a random noise descriptor to
-encourage synthetic image variety.  As figure XX illustrates, some
-colorized outputs look qualitatively similar to the progenitor RGB
-pictures.  But in other cases like those shown in figure XX, the trained
-CGAN converts greyscale inputs to colored outputs which nontrivially differ
-from the original RGB pictures.  In a few instances, the synthetically
-colored views look more "realistic" to our eye than the actual progenitors!
-
-The inpainting and colorizing results presented so far look quite
-encouraging.  But we have also observed several cases where image
-reconstruction obviously failed.  Figures XX and YY display CGAN outputs
-that appear highly unrealistic.  Perhaps some of these poor inference
-examples lie so far away from training data samples that the CGAN is unable
-to reasonably extrapolate.  In other cases, the networks clearly struggle
-with complex scenes containing many different object types.   As we have
-seen in our previous GAN studies, adversarial networks can fail to produce
-sensible outputs for a sizable fraction of their inference inputs.
+The conditional image GAN results presented so far look quite encouraging.
+But we have also observed several obvious image reconstruction failures.
+Figures 9 and 10 display inpainting and colorizing examples that appear
+highly unrealistic.  Some of these poor inference results might lie so far
+away from training data samples that the CGAN was unable to reasonably
+extrapolate.  In other cases, the networks clearly struggle with complex
+scenes containing many different object types.  As we have seen in our
+previous GAN studies, adversarial networks can unfortunately fail to
+produce sensible outputs for a sizable fraction of their inference inputs.
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/bad_inpaintings_montage.png)
-*Fig. CC. Poor GAN inpainting results.  Columns in this figure follow the
-pattern of figure BB.*
+*Fig. 9. Poor GAN inpainting results.  Columns in this figure follow the
+pattern of figure 7.*
 
 ![INPAINT_COLOR]({{site.url}}/blog/images/inpainting_colorization/bad_colorizations_montage.png)
-*Fig. FF. Poor GAN colorizing results.  Columns in this figure follow the
-pattern of figures DD and EE.*
+*Fig. 10. Poor GAN colorizing results.  Columns in this figure follow the
+pattern of figures 8a and 8b.*
 
 After looking at O$($100$)$ inpainting and colorizing inference results, we
 estimate ?% qualitatively appear reasonable.  This is consistent with the
-Amazon Turk study findings reported in [1].  Clearly much more work remains
-to be done to improve image-to-image translation robustness in the future.
+Amazon Turk study findings reported in [1].  Clearly more work remains to
+be done in the future to improve image-to-image translation robustness.
 
 
 ## References
